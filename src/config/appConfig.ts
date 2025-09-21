@@ -113,16 +113,6 @@ export const appConfig = {
             viewDetails: "View Details",
             filterLabel: "Filter by Category:",
             categories: ["All Items", "Appetizers", "Main Course", "Desserts", "Beverages"]
-        },
-        chatbot: {
-            welcomeMessage: "Hi! I'm your managerial assistant. Ask about stock or forecasts.",
-            placeholder: "Ask: what items are low on stock?",
-            sendButton: "Send",
-            responses: {
-                stock: "Tomatoes at 45kg; reorder point 20kg. No action needed today.",
-                forecast: "Cheese demand tomorrow: 6kg ± 2kg.",
-                default: "Sorry, demo bot answers stock/forecast questions."
-            }
         }
     },
 
