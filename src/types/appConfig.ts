@@ -91,18 +91,6 @@ export interface ChefSpaceText {
     categories: string[];
 }
 
-export interface ChatbotResponses {
-    stock: string;
-    forecast: string;
-    default: string;
-}
-
-export interface ChatbotText {
-    welcomeMessage: string;
-    placeholder: string;
-    sendButton: string;
-    responses: ChatbotResponses;
-}
 
 export interface TextConfig {
     searchPlaceholder: string;
@@ -111,7 +99,6 @@ export interface TextConfig {
     loginFormLabels: LoginFormLabels;
     socialSignIn: SocialSignInText;
     chefSpace: ChefSpaceText;
-    chatbot: ChatbotText;
 }
 
 export interface RefreshConfig {
@@ -240,18 +227,6 @@ export interface ChefSpaceConfig {
     categoryStyles: CategoryStyles;
 }
 
-// Chatbot specific types
-export interface ChatbotUIConfig {
-    height: number;
-    padding: number;
-    maxWidth: number;
-}
-
-export interface ChatbotConfig {
-    text: ChatbotText;
-    ui: ChatbotUIConfig;
-    responses: ChatbotResponses;
-}
 
 // Layout specific types
 export interface LayoutConfig {
