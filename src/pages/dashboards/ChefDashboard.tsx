@@ -6,8 +6,8 @@ export default function ChefDashboard() {
         <table className="table">
           <thead><tr><th>Raw Material</th><th>Reason</th><th>Qty</th><th>Cost Loss</th></tr></thead>
           <tbody>
-            <tr><td>Tomatoes</td><td>Spoilage</td><td>4 kg</td><td>$12</td></tr>
-            <tr><td>Cheese</td><td>Expired</td><td>1 kg</td><td>$8</td></tr>
+            <tr><td>Tomatoes</td><td>Spoilage</td><td>4 kg</td><td>₹12</td></tr>
+            <tr><td>Cheese</td><td>Expired</td><td>1 kg</td><td>₹8</td></tr>
           </tbody>
         </table>
       </div>

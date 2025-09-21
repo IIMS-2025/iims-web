@@ -10,16 +10,27 @@ import InventoryPage from "./pages/Inventory";
 import MenuOrdersPage from "./pages/MenuOrders";
 import AnalyticsPage from "./pages/Analytics";
 import HomePage from "./pages/Home";
+import ChefSpace from "./pages/ChefSpace";
+import OrdersInsights from "./pages/OrdersInsights";
+import appConfig from "./config/appConfig";
 
 export default function App() {
+  // App routing configuration (can be loaded from backend)
+  const routingConfig = {
+    routes: appConfig.routes,
+    features: appConfig.features
+  };
+
   return (
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path={routingConfig.routes.login} element={<Login />} />
+          <Route path={routingConfig.routes.default} element={<HomePage />} />
+          <Route path="/orders-insights" element={<OrdersInsights />} />
+          <Route path="/chefspace" element={<ChefSpace />} />
           <Route element={<AppLayout />}>
-            <Route index element={<Navigate to="/owner" replace />} />
-            <Route path="/home" element={<HomePage />} />
+            <Route index element={<Navigate to={routingConfig.routes.default} replace />} />
             <Route path="/owner" element={<OwnerDashboard />} />
             <Route path="/manager" element={<ManagerDashboard />} />
             <Route path="/chef" element={<ChefDashboard />} />
@@ -27,7 +38,7 @@ export default function App() {
             <Route path="/menu" element={<MenuOrdersPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
           </Route>
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to={routingConfig.routes.fallback} replace />} />
         </Routes>
       </BrowserRouter>
     </Provider>

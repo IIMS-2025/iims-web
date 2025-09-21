@@ -6,8 +6,8 @@ export default function MenuOrdersPage() {
         <table className="table">
           <thead><tr><th>Item</th><th>Category</th><th>Price</th></tr></thead>
           <tbody>
-            <tr><td>Pizza Margherita</td><td>Pizza</td><td>$12</td></tr>
-            <tr><td>Pasta Arrabbiata</td><td>Pasta</td><td>$11</td></tr>
+            <tr><td>Pizza Margherita</td><td>Pizza</td><td>₹12</td></tr>
+            <tr><td>Pasta Arrabbiata</td><td>Pasta</td><td>₹11</td></tr>
           </tbody>
         </table>
       </div>
@@ -16,8 +16,8 @@ export default function MenuOrdersPage() {
         <table className="table">
           <thead><tr><th>Order ID</th><th>Menu Item</th><th>Qty</th><th>Price</th></tr></thead>
           <tbody>
-            <tr><td>o1</td><td>Pizza Margherita</td><td>2</td><td>$24</td></tr>
-            <tr><td>o2</td><td>Pasta Arrabbiata</td><td>1</td><td>$11</td></tr>
+            <tr><td>o1</td><td>Pizza Margherita</td><td>2</td><td>₹24</td></tr>
+            <tr><td>o2</td><td>Pasta Arrabbiata</td><td>1</td><td>₹11</td></tr>
           </tbody>
         </table>
       </div>
