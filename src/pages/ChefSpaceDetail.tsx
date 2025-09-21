@@ -100,43 +100,13 @@ export default function ChefSpaceDetail() {
             <main className="home-main">
                 {/* Header */}
                 <Header
-                    className="detail-header"
-                    actionButtons={[
-                        {
-                            label: "Print Recipe",
-                            variant: "primary",
-                            icon: (
-                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                                    <path d="M11 4L5 10L1 6" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            ),
-                            onClick: () => {
-                                console.log("Print Recipe clicked");
-                                // Add print functionality here
-                            }
-                        },
-                        {
-                            label: "Mark as Prepared",
-                            variant: "secondary",
-                            icon: (
-                                <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
-                                    <path d="M6 1V13M1 7H11" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            ),
-                            onClick: () => {
-                                console.log("Mark as Prepared clicked");
-                                // Add mark as prepared functionality here
-                            }
-                        }
-                    ]}
-                >
-                    <div className="header-left">
-                        <Link to="/chefspace" className="back-button">
-                            <svg width="15.75" height="18" viewBox="0 0 15.75 18" fill="none">
-                                <path d="M10 14L4 8L10 2" fill="#6B7280" strokeWidth="0" />
-                            </svg>
-                        </Link>
-                        <h1 className="detail-title">{item.name}</h1>
+                    titleSection={{
+                        title: "Recipe Details",
+                    }}
+                    showSearch={true}
+                    showNotification={true}
+                    >
+                    <div className="header-actions">
                     </div>
                 </Header>
 
