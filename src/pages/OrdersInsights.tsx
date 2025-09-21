@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { colors } from '../styles/colors';
+import Header from '../components/Header';
+import Sidebar from '../components/Sidebar';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -710,127 +711,25 @@ export default function OrdersInsights() {
     return (
         <div className="home-page">
             {/* Sidebar */}
-            <aside className="home-sidebar">
-                {/* Brand Section */}
-                <div className="sidebar-brand">
-                    <div className="brand-icon">
-                        <svg width="16" height="18" viewBox="0 0 16 18" fill="none">
-                            <path d="M8 0L8 18M0 9L16 9M2 4L14 4M2 14L14 14" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" />
-                        </svg>
-                    </div>
-                    <div className="brand-text">Reztro</div>
-                </div>
-
-                {/* Navigation */}
-                <nav className="sidebar-nav">
-                    <Link to="/home" className="nav-item">
-                        <div className="nav-icon">
-                            <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
-                                <path d="M2 16H18M2 16V8L10 2L18 8V16M2 16H6M18 16H14M6 16V12H14V16M6 16H14" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </div>
-                        <div className="nav-text">Home</div>
-                    </Link>
-
-                    <Link to="/inventory" className="nav-item">
-                        <div className="nav-icon">
-                            <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
-                                <path d="M3 3H17L15 13H5L3 3ZM3 3L2 1H1M7 17C7.55228 17 8 16.5523 8 16C8 15.4477 7.55228 15 7 15C6.44772 15 6 15.4477 6 16C6 16.5523 6.44772 17 7 17ZM15 17C15.5523 17 16 16.5523 16 16C16 15.4477 15.5523 15 15 15C14.4477 15 14 15.4477 14 16C14 16.5523 14.4477 17 15 17Z" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </div>
-                        <div className="nav-text">Inventory Dashboard</div>
-                    </Link>
-
-                    <div className="nav-item active">
-                        <div className="nav-icon">
-                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                                <path d="M9 1V17M1 9H17M13 5L5 13M5 5L13 13" stroke="#5F63F2" strokeWidth="2" strokeLinecap="round" />
-                            </svg>
-                        </div>
-                        <div className="nav-text">Orders & Insights</div>
-                    </div>
-
-                    <div className="nav-item">
-                        <div className="nav-icon">
-                            <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
-                                <path d="M3 7H17L15 17H5L3 7ZM3 7L2 1H1M12 7V5C12 3.89543 11.1046 3 10 3C8.89543 3 8 3.89543 8 5V7" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </div>
-                        <div className="nav-text">Inventory Usage</div>
-                    </div>
-
-                    <Link to="/chefspace" className="nav-item">
-                        <div className="nav-icon">
-                            <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
-                                <path d="M10 1L3 5V11C3 14.866 6.134 18 10 18C13.866 18 17 14.866 17 11V5L10 1Z" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </div>
-                        <div className="nav-text">Chef Space</div>
-                    </Link>
-                </nav>
-
-                {/* User Profile Section */}
-                <div className="sidebar-bottom">
-                    <div className="user-profile">
-                        <img
-                            src="https://dummyimage.com/40x40/6366F1/ffffff&text=AM"
-                            alt="Anna Miller"
-                            className="user-avatar"
-                        />
-                        <div className="user-info">
-                            <div className="user-name">Anna Miller</div>
-                            <div className="user-role">Store Manager</div>
-                        </div>
-                        <button className="user-menu-btn">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M8 9C8.55228 9 9 8.55228 9 8C9 7.44772 8.55228 7 8 7C7.44772 7 7 7.44772 7 8C7 8.55228 7.44772 9 8 9ZM8 4C8.55228 4 9 3.55228 9 3C9 2.44772 8.55228 2 8 2C7.44772 2 7 2.44772 7 3C7 3.55228 7.44772 4 8 4ZM8 14C8.55228 14 9 13.5523 9 13C9 12.4477 8.55228 12 8 12C7.44772 12 7 12.4477 7 13C7 13.5523 7.44772 14 8 14Z" fill="#6B7280" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </aside>
+            <Sidebar />
 
             {/* Main Content */}
             <main className="home-main">
                 {/* Header */}
-                <header className="home-header">
-                    <div className="header-left">
-                        <h1 className="header-title">Orders & Insights</h1>
-                        <p className="header-subtitle">Comprehensive analytics and order management dashboard.</p>
+                <Header
+                    titleSection={{
+                        title: "Orders & Insights",
+                        badge: {
+                            text: "Dashboard"
+                        }
+                    }}
+                    showSearch={true}
+                    showNotification={true}
+                >
+                    <div className="header-actions">
+
                     </div>
-                    <div className="header-right">
-                        <div className="search-container">
-                            <div className="search-icon">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M7.33333 12.6667C10.2789 12.6667 12.6667 10.2789 12.6667 7.33333C12.6667 4.38781 10.2789 2 7.33333 2C4.38781 2 2 4.38781 2 7.33333C2 10.2789 4.38781 12.6667 7.33333 12.6667Z" stroke="#6B7280" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M14 14L11.1 11.1" stroke="#6B7280" strokeWidth="1.33333" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </div>
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                className="search-input"
-                            />
-                        </div>
-                        <button className="notification-btn">
-                            <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
-                                <path d="M13 6C13 4.67392 12.4732 3.40215 11.5355 2.46447C10.5979 1.52678 9.32608 1 8 1C6.67392 1 5.40215 1.52678 4.46447 2.46447C3.52678 3.40215 3 4.67392 3 6C3 13 0 15 0 15H16C16 15 13 13 13 6Z" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                <path d="M9.73 19C9.5542 19.3031 9.3019 19.5547 8.99827 19.7295C8.69465 19.9044 8.35025 19.9965 8 19.9965C7.64975 19.9965 7.30535 19.9044 7.00173 19.7295C6.6981 19.5547 6.4458 19.3031 6.27 19" stroke="#6B7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                            <span className="notification-badge"></span>
-                        </button>
-                        <button className="profile-btn">
-                            <img
-                                src="https://dummyimage.com/36x36/6366F1/ffffff&text=AM"
-                                alt="Anna Miller"
-                                className="profile-avatar"
-                            />
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                <path d="M3 4.5L6 7.5L9 4.5" stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </button>
-                    </div>
-                </header>
+                </Header>
 
                 {/* Content Sections */}
                 <div className="home-content">
