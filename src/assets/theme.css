@@ -314,6 +314,9 @@ body {
 
 /* Global Tabs Component Styles */
 .tabs-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 16px;
 }
 
@@ -1119,7 +1122,6 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  border-bottom: 1px solid #F1F3F4;
   gap: 16px;
 }
 
@@ -1540,7 +1542,7 @@ body {
 
 .action-dropdown {
   width: 100%;
-  max-width: 300px;
+  max-width: 200px;
   padding: 10px 14px;
   border: 1px solid #D1D5DB;
   border-radius: 8px;
@@ -2226,7 +2228,6 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
   gap: 12px;
 }
 
@@ -3281,13 +3282,13 @@ body {
 .home-content {
   width: 100%;
   min-height: calc(100vh - 85px);
-  padding: 32px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 2px;
   background: #F9FAFB;
   position: relative;
-  margin-top: 85px;
+  margin-top: 64px;
   overflow-y: auto;
 }
 

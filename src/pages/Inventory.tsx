@@ -22,7 +22,7 @@ import {
 
 export default function InventoryPage() {
   const dispatch = useDispatch();
-  const items = useSelector((s: RootState) => s.inventory.items || []);
+  const inventoryItems = useSelector((s: RootState) => s.inventory.items || []);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [activeProductType, setActiveProductType] = useState("all");
@@ -31,6 +31,7 @@ export default function InventoryPage() {
   const [selectedItem, setSelectedItem] = useState<Inventory | null>(null);
   const [restockQuantity, setRestockQuantity] = useState("");
   const [showStockUpdateModal, setShowStockUpdateModal] = useState(false);
+  const [filteredItems, setFilteredItems] = useState<Inventory[]>([]);
 
   const { data: inventoryData } = useGetInventoryQuery();
 
@@ -39,6 +40,14 @@ export default function InventoryPage() {
       dispatch(setInventory(inventoryData));
     }
   }, [dispatch, inventoryData]);
+
+  useEffect(() => {
+    if(activeProductType !== "all") {
+      setFilteredItems(inventoryItems?.filter(item => item.type === activeProductType));
+    } else {
+      setFilteredItems(inventoryItems);
+    }
+  }, [activeProductType, inventoryItems]);
 
   const getStockStatus = (item: Inventory) => {
     if (item.available_qty <= item.critical_point) return "critical";
@@ -89,7 +98,6 @@ export default function InventoryPage() {
   const handleConfirmRestock = () => {
     if (selectedItem && restockQuantity && parseFloat(restockQuantity) > 0) {
       // Here you would typically call an API to add to restock list
-      console.log(`Adding ${selectedItem.id} - Quantity: ${restockQuantity} to restock list`);
       setShowRestockModal(false);
       setSelectedItem(null);
       setRestockQuantity("");
@@ -175,9 +183,6 @@ export default function InventoryPage() {
     }
   };
 
-  // Debug: Check if items are being loaded
-  console.log("Inventory items:", items);
-
 
   // Define product type tabs
   const productTypeTabs: Tab[] = [
@@ -189,17 +194,17 @@ export default function InventoryPage() {
           <path d="M2 4H14M2 8H14M2 12H14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
         </svg>
       ),
-      count: items.filter(item => !item.id.toLowerCase().includes('pizza') && !item.id.toLowerCase().includes('salad')).length
+      count: inventoryItems?.length,
     },
     {
-      id: "raw",
+      id: "raw_material",
       label: "Raw Materials",
       icon: (
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="M8 2L14 6V14L8 10L2 14V6L8 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      count: items.filter(item => item.id.toLowerCase().includes('raw') || item.id.toLowerCase().includes('tomato') || item.id.toLowerCase().includes('cheese') || item.id.toLowerCase().includes('lettuce') || item.id.toLowerCase().includes('chicken') || item.id.toLowerCase().includes('flour')).length
+      count: filteredItems?.filter(item => item.type === "raw_material").length,
     },
     {
       id: "sub_product",
@@ -209,94 +214,15 @@ export default function InventoryPage() {
           <path d="M8 1L15 8L8 15L1 8L8 1Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      count: items.filter(item => item.id.toLowerCase().includes('sub') || item.id.toLowerCase().includes('sauce') || item.id.toLowerCase().includes('dough') || item.id.toLowerCase().includes('spice')).length
+      count: filteredItems?.filter(item => item.type === "sub_product").length,
     }
   ];
 
-  const filteredItems = items
-    .filter(item => {
-      const matchesSearch = item.id.toLowerCase().includes(searchTerm.toLowerCase());
-      const status = getStockStatus(item);
-      const matchesFilter = filterStatus === "all" || status === filterStatus;
-      
-      // Quick filter logic
-      let matchesQuickFilter = true;
-      if (quickFilter) {
-        switch (quickFilter) {
-          case "expiring":
-            matchesQuickFilter = isExpiringSoon(item);
-            break;
-          case "low":
-            matchesQuickFilter = status === "low";
-            break;
-          case "dead":
-            matchesQuickFilter = isDeadStock(item);
-            break;
-          default:
-            matchesQuickFilter = true;
-        }
-      }
-      
-      // Product type filtering
-      let matchesProductType = true;
-      if (activeProductType !== "all") {
-        if (activeProductType === "raw") {
-          matchesProductType = item.id.toLowerCase().includes('raw') || 
-                              item.id.toLowerCase().includes('tomato') || 
-                              item.id.toLowerCase().includes('cheese') ||
-                              item.id.toLowerCase().includes('lettuce') ||
-                              item.id.toLowerCase().includes('chicken') ||
-                              item.id.toLowerCase().includes('flour');
-        } else if (activeProductType === "sub_product") {
-          matchesProductType = item.id.toLowerCase().includes('sub') || 
-                              item.id.toLowerCase().includes('sauce') ||
-                              item.id.toLowerCase().includes('dough') ||
-                              item.id.toLowerCase().includes('spice');
-        }
-      }
-      
-      // Exclude menu items from inventory completely
-      const isMenuItemExcluded = !item.id.toLowerCase().includes('pizza') && 
-                                 !item.id.toLowerCase().includes('salad');
-      
-      return matchesSearch && matchesFilter && matchesQuickFilter && matchesProductType && isMenuItemExcluded;
-    });
-
-
-  // Calculate stock counts based on filtered items
-  const getFilteredItems = () => {
-    return items.filter(item => {
-      // Always exclude menu items from inventory
-      const isNotMenuItem = !item.id.toLowerCase().includes('pizza') && 
-                           !item.id.toLowerCase().includes('salad');
-      
-      if (!isNotMenuItem) return false;
-      
-      if (activeProductType === "all") return true;
-      
-      if (activeProductType === "raw") {
-        return item.id.toLowerCase().includes('raw') || 
-               item.id.toLowerCase().includes('tomato') || 
-               item.id.toLowerCase().includes('cheese') ||
-               item.id.toLowerCase().includes('lettuce') ||
-               item.id.toLowerCase().includes('chicken') ||
-               item.id.toLowerCase().includes('flour');
-      } else if (activeProductType === "sub_product") {
-        return item.id.toLowerCase().includes('sub') || 
-               item.id.toLowerCase().includes('sauce') ||
-               item.id.toLowerCase().includes('dough') ||
-               item.id.toLowerCase().includes('spice');
-      }
-      return true;
-    });
-  };
-
-  const filteredForStats = getFilteredItems();
   const stockCounts = {
-    total: filteredForStats.length,
-    expiring: filteredForStats.filter(item => isExpiringSoon(item)).length,
-    low: filteredForStats.filter(item => getStockStatus(item) === "low").length,
-    dead: filteredForStats.filter(item => isDeadStock(item)).length,
+    total: inventoryItems.length,
+    expiring: inventoryItems.filter(item => isExpiringSoon(item)).length,
+    low: inventoryItems.filter(item => getStockStatus(item) === "low").length,
+    dead: inventoryItems.filter(item => isDeadStock(item)).length,
   };
 
   return (
@@ -615,7 +541,7 @@ export default function InventoryPage() {
         <StockUpdateModal
           isOpen={showStockUpdateModal}
           onClose={() => setShowStockUpdateModal(false)}
-          inventoryItems={items}
+          inventoryItems={inventoryItems}
           onUpdateStock={handleStockUpdate}
         />
         </>

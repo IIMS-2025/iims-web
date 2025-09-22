@@ -47,11 +47,15 @@ export interface ProductBOM {
 }
 
 export interface Inventory {
+  name: string;
   location_id: ID;
   id: ID;
   available_qty: number;
+  unit: string;
+  price: number;
   reorder_point: number;
   critical_point: number;
+  type: string;
   last_updated: string; // ISO date
 }
 
