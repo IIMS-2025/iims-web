@@ -81,12 +81,12 @@ export default function Sidebar({ className = "home-sidebar" }: SidebarProps) {
                     <div className="nav-text">Insights</div>
                 </Link>
 
-                <div className="nav-item">
+                <Link to="/restock" className={`nav-item ${isActive("/restock") ? "active" : ""}`}>
                     <div className="nav-icon">
                         <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
                             <path
                                 d="M3 7H17L15 17H5L3 7ZM3 7L2 1H1M12 7V5C12 3.89543 11.1046 3 10 3C8.89543 3 8 3.89543 8 5V7"
-                                stroke="#6B7280"
+                                stroke={isActive("/restock") ? "#5F63F2" : "#6B7280"}
                                 strokeWidth="2"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
@@ -94,7 +94,7 @@ export default function Sidebar({ className = "home-sidebar" }: SidebarProps) {
                         </svg>
                     </div>
                     <div className="nav-text">Restock List</div>
-                </div>
+                </Link>
 
                 <Link to="/chefspace" className={`nav-item ${isActive("/chefspace") ? "active" : ""}`}>
                     <div className="nav-icon">

@@ -167,4 +167,46 @@ export interface ApiResponse<T> {
   error?: string;
 }
 
+// Restock-related types
+export type RestockPriority = "low" | "medium" | "high" | "critical";
+export type RestockStatus = "pending" | "ordered" | "received" | "cancelled";
+
+export interface RestockItem {
+  id: ID;
+  product_id: ID;
+  product_name: string;
+  category: string;
+  current_stock: number;
+  forecasted_requirement: number;
+  required_quantity: number;
+  unit: string;
+  price_per_unit: number;
+  estimated_cost: number;
+  priority: RestockPriority;
+  status: RestockStatus;
+  forecast_period_days: number;
+  supplier?: string;
+  last_updated: string;
+  created_at: string;
+}
+
+export interface RestockList {
+  id: ID;
+  name: string;
+  location_id: ID;
+  created_by: ID;
+  items: RestockItem[];
+  total_cost: number;
+  status: RestockStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RestockFilter {
+  category?: string;
+  priority?: RestockPriority;
+  status?: RestockStatus;
+  search?: string;
+}
+
 
