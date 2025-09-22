@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getInventory } from "../services/api";
 import { setInventory } from "../store/slices/inventorySlice";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
+// Layout provides Sidebar and Header
 import Tabs from "../components/Tabs";
 import { 
   TotalItemsIcon, 
@@ -229,26 +228,9 @@ export default function InventoryPage() {
   };
 
   return (
-    <div className="home-page">
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main Content */}
-      <main className="home-main">
-        {/* Header */}
-        <Header
-          titleSection={{
-            title: "Inventory Management",
-          }}
-          showSearch={true}
-          showNotification={true}
-        >
-          <div className="header-actions">
-          </div>
-        </Header>
-
+        <>
         {/* Content */}
-        <div className="home-content">
+        <>
           {/* Quick Filter Stats Cards */}
       <div className="inventory-stats">
         <div 
@@ -480,8 +462,6 @@ export default function InventoryPage() {
           </div>
         )}
       </div>
-        </div>
-
         {/* Restock Modal */}
         {showRestockModal && selectedItem && (
           <div className="modal-overlay" onClick={handleCancelRestock}>
@@ -566,7 +546,7 @@ export default function InventoryPage() {
           inventoryItems={items}
           onUpdateStock={handleStockUpdate}
         />
-      </main>
-    </div>
+        </>
+        </>
   );
 }

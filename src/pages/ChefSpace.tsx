@@ -1,6 +1,4 @@
 import { Link } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import {
     margheritaPizza,
     caesarSalad,
@@ -113,30 +111,9 @@ export default function ChefSpace() {
     ];
 
     return (
-        <div className="home-page">
-            {/* Sidebar */}
-            <Sidebar />
-
-            {/* Main Content */}
-            <main className="home-main">
-                {/* Header */}
-                <Header
-                    titleSection={{
-                        title: "Chef Space",
-                        badge: {
-                            text: "Menu Management"
-                        }
-                    }}
-                    showSearch={true}
-                    showNotification={true}
-                >
-                    <div className="header-actions">
-
-                    </div>
-                </Header>
-
+        <>
                 {/* Content */}
-                <div className="home-content">
+                <>
                     {/* Filter Section */}
                     <section className="filter-section">
                         <div className="filter-container">
@@ -209,8 +186,7 @@ export default function ChefSpace() {
                             </button>
                         </div>
                     </section>
-                </div>
-            </main>
-        </div>
+                </>
+        </>
     );
 }

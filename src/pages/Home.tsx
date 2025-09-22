@@ -1,6 +1,5 @@
 // import { Link } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
+// Layout provides Sidebar and Header
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -152,27 +151,9 @@ export default function HomePage() {
   };
 
   return (
-    <div className="home-page">
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main Content */}
-      <main className="home-main">
-                {/* Header */}
-                <Header
-                    titleSection={{
-                        title: "Welcome Back!",
-                    }}
-                    showSearch={true}
-                    showNotification={true}
-                >
-                    <div className="header-actions">
-
-                    </div>
-                </Header>
-
+    <>
         {/* Content Sections */}
-        <div className="home-content">
+        <>
           <section className="dashboard-section">
             <div className="dashboard-card">
               {/* Header Section */}
@@ -543,9 +524,8 @@ export default function HomePage() {
               </div>
             </div>
           </section>
-        </div>
-      </main>
-    </div>
+        </>
+    </>
   );
 }
 

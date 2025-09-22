@@ -7,6 +7,7 @@ import ChefSpace from "./pages/ChefSpace";
 import ChefSpaceDetail from "./pages/ChefSpaceDetail";
 import OrdersInsights from "./pages/OrdersInsights";
 import RestockList from "./pages/RestockList";
+import AppLayout from "./layouts/AppLayout";
 import appConfig from "./config/appConfig";
 import InventoryPage from "./pages/Inventory";
 
@@ -21,14 +22,17 @@ export default function App() {
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Navigate to={routingConfig.routes.default} replace />} />
           <Route path={routingConfig.routes.login} element={<Login />} />
-          <Route path={routingConfig.routes.default} element={<HomePage />} />
-          <Route path="/orders-insights" element={<OrdersInsights />} />
-          <Route path="/chefspace" element={<ChefSpace />} />
-          <Route path="/chefspace/:id" element={<ChefSpaceDetail />} />
-          <Route path="/inventory" element={<InventoryPage />} />
-          <Route path="/restock" element={<RestockList />} />
-          </Routes>
+          <Route element={<AppLayout />}>
+            <Route path={routingConfig.routes.default} element={<HomePage />} />
+            <Route path="/orders-insights" element={<OrdersInsights />} />
+            <Route path="/chefspace" element={<ChefSpace />} />
+            <Route path="/chefspace/:id" element={<ChefSpaceDetail />} />
+            <Route path="/inventory" element={<InventoryPage />} />
+            <Route path="/restock" element={<RestockList />} />
+          </Route>
+        </Routes>
       </BrowserRouter>
     </Provider>
   );

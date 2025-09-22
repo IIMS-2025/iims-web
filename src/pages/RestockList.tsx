@@ -224,26 +224,8 @@ export default function RestockList() {
     });
 
     return (
-        <div className="home-page">
-            {/* Sidebar */}
-            <Sidebar />
-
-            {/* Main Content */}
-            <main className="home-main">
-                {/* Header */}
-                <Header
-                    titleSection={{
-                        title: "Restock List",
-                    }}
-                    showSearch={true}
-                    showNotification={true}
-                >
-                    <div className="header-actions">
-                    </div>
-                </Header>
-
-                {/* Content */}
-                <div className="home-content">
+        <div>
+                <>
                     {/* Category Tabs with Controls */}
                     <Tabs
                         tabs={categoryTabs}
@@ -399,8 +381,8 @@ export default function RestockList() {
                             <button className="page-btn">›</button>
                         </div>
                     </div>
-                </div>
-            </main>
+                </>
+
         </div>
     );
 }

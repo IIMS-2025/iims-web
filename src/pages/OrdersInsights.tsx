@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { colors } from '../styles/colors';
-import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
+// Layout provides Header and Sidebar
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -709,30 +708,9 @@ export default function OrdersInsights() {
     };
 
     return (
-        <div className="home-page">
-            {/* Sidebar */}
-            <Sidebar />
-
-            {/* Main Content */}
-            <main className="home-main">
-                {/* Header */}
-                <Header
-                    titleSection={{
-                        title: "Orders & Insights",
-                        badge: {
-                            text: "Dashboard"
-                        }
-                    }}
-                    showSearch={true}
-                    showNotification={true}
-                >
-                    <div className="header-actions">
-
-                    </div>
-                </Header>
-
+        <>
                 {/* Content Sections */}
-                <div className="home-content">
+                <>
                     <section className="dashboard-section">
                         <div style={{
                             padding: 32,
@@ -887,8 +865,7 @@ export default function OrdersInsights() {
                             </div>
                         </div>
                     </section>
-                </div>
-            </main>
-        </div>
+                </>
+        </>
     );
 }
