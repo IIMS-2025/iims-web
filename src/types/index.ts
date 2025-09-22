@@ -126,10 +126,34 @@ export interface Wastage {
   recorded_at: string;
 }
 
+export interface Ingredient {
+  id: string;
+  name?: string;
+  quantity?: string;
+  unit?: string;
+  statusColor?: string;
+  textColor?: string;
+  status?: string;
+}
+
 export interface CookbookItem {
-  product_id: ID; // menu item or sub-product
-  recipe_steps: string[];
-  yield_factor: number; // output per batch vs inputs
+  product_id: string;
+  name: string;
+  price: string;
+  instructions?: string;
+  created_by?: string;
+  image_path?: string;
+  image_url?: string;
+  ingredient_ids?: string[];
+  ingredients?: Ingredient[];
+  chefTips?: string[];
+  prepTime?: string;
+  cookTime?: string;
+  servings?: string;
+  rating?: string;
+  reviews?: string;
+  category?: string;
+  description?: string;
 }
 
 export type RecommendationType =
@@ -203,9 +227,9 @@ export interface RestockList {
 }
 
 export interface RestockFilter {
-  category?: string;
-  priority?: RestockPriority;
-  status?: RestockStatus;
+  category?: string | "all";
+  priority?: RestockPriority | "all";
+  status?: RestockStatus | "all";
   search?: string;
 }
 

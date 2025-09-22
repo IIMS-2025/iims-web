@@ -1,4 +1,5 @@
 import axios from 'axios';
+import appConfig from '../config/appConfig';
 import type {
     DashboardData,
     OrdersInsightsMetrics,
@@ -18,7 +19,7 @@ import type {
     ApiResponse
 } from '../types/dashboardData';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001';
+const API_BASE_URL = appConfig.api.baseUrl;
 
 // Create axios instance with default config
 const api = axios.create({
