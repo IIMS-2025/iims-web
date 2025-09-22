@@ -12,9 +12,10 @@ interface TabsProps {
   activeTab: string;
   onTabChange: (tabId: string) => void;
   className?: string;
+  rightContent?: ReactNode;
 }
 
-export default function Tabs({ tabs, activeTab, onTabChange, className = "" }: TabsProps) {
+export default function Tabs({ tabs, activeTab, onTabChange, className = "", rightContent }: TabsProps) {
   return (
     <div className={`tabs-container ${className}`}>
       <div className="tabs-list">
@@ -32,6 +33,11 @@ export default function Tabs({ tabs, activeTab, onTabChange, className = "" }: T
           </button>
         ))}
       </div>
+      {rightContent && (
+        <div className="tabs-right-content">
+          {rightContent}
+        </div>
+      )}
     </div>
   );
 }
