@@ -8,10 +8,7 @@ import {
     toggleItemSelection,
     selectAllItems,
     clearSelection,
-    setSearchTerm,
     setCategoryFilter,
-    setPriorityFilter,
-    setStatusFilter,
     selectRestockItems,
     selectSelectedItems,
     selectRestockFilter,
@@ -21,8 +18,6 @@ import {
     setBulkOperationsLoading,
     updateMultipleRestockItems,
 } from "../store/slices/restockSlice";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import Tabs from "../components/Tabs";
 import type { RootState } from "../store";
 import type { RestockItem, RestockPriority, RestockStatus } from "../types";

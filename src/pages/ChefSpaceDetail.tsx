@@ -112,7 +112,7 @@ export default function ChefSpaceDetail() {
                                                             <span>{ingredient.name}</span>
                                                         </div>
                                                     </td>
-                                                    <td className="quantity">{ingredient.quantity}</td>
+                                                    <td className="quantity">{ingredient.available_qty}</td>
                                                     <td className="unit">{ingredient.unit}</td>
                                                     <td>
                                                         <span
@@ -122,7 +122,7 @@ export default function ChefSpaceDetail() {
                                                                 color: ingredient.textColor
                                                             }}
                                                         >
-                                                            {ingredient.status}
+                                                            {ingredient.stock_status}
                                                         </span>
                                                     </td>
                                                 </tr>

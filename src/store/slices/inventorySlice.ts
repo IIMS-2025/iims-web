@@ -23,7 +23,7 @@ const inventorySlice = createSlice({
       const idx = state.items.findIndex(
         (i) =>
           i.location_id === action.payload.location_id &&
-          i.product_id === action.payload.product_id
+          i.id === action.payload.id
       );
       if (idx >= 0) {
         state.items[idx] = action.payload;

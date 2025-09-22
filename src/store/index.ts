@@ -4,6 +4,7 @@ import ordersReducer from "./slices/ordersSlice";
 import forecastsReducer from "./slices/forecastsSlice";
 import restockReducer from "./slices/restockSlice";
 import { cookbookApi } from "../services/cookbookApi";
+import { inventoryApi } from "../services/inventoryApi";
 
 
 export const store = configureStore({
@@ -13,10 +14,12 @@ export const store = configureStore({
     forecasts: forecastsReducer,
     restock: restockReducer,
     [cookbookApi.reducerPath]: cookbookApi.reducer,
+    [inventoryApi.reducerPath]: inventoryApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       cookbookApi.middleware,
+      inventoryApi.middleware,
     ),
 });
 

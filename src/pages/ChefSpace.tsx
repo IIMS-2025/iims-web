@@ -120,7 +120,7 @@ export default function ChefSpace() {
                         </div>
                       </div>
                       <Link
-                        to={`/chefspace/${item.product_id}`}
+                        to={`/chefspace/${item.id}`}
                         className="view-details-btn"
                       >
                         {chefSpaceConfig.ui.viewDetails}

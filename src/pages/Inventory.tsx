@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getInventory } from "../services/api";
 import { setInventory } from "../store/slices/inventorySlice";
 // Layout provides Sidebar and Header
 import Tabs from "../components/Tabs";
@@ -15,10 +14,15 @@ import StockUpdateModal from "../components/StockUpdateModal";
 import type { RootState } from "../store";
 import type { Inventory } from "../types";
 import type { Tab } from "../components/Tabs";
+import { 
+  useGetInventoryQuery,
+  useUpdateStockBatchMutation,
+  useUpdateStockSingleMutation,
+} from "../services/inventoryApi";
 
 export default function InventoryPage() {
   const dispatch = useDispatch();
-  const items = useSelector((s: RootState) => s.inventory.items);
+  const items = useSelector((s: RootState) => s.inventory.items || []);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [activeProductType, setActiveProductType] = useState("all");
@@ -28,12 +32,13 @@ export default function InventoryPage() {
   const [restockQuantity, setRestockQuantity] = useState("");
   const [showStockUpdateModal, setShowStockUpdateModal] = useState(false);
 
+  const { data: inventoryData } = useGetInventoryQuery();
+
   useEffect(() => {
-    (async () => {
-      const res = await getInventory();
-      dispatch(setInventory(res.data));
-    })();
-  }, [dispatch]);
+    if (inventoryData) {
+      dispatch(setInventory(inventoryData));
+    }
+  }, [dispatch, inventoryData]);
 
   const getStockStatus = (item: Inventory) => {
     if (item.available_qty <= item.critical_point) return "critical";
@@ -84,7 +89,7 @@ export default function InventoryPage() {
   const handleConfirmRestock = () => {
     if (selectedItem && restockQuantity && parseFloat(restockQuantity) > 0) {
       // Here you would typically call an API to add to restock list
-      console.log(`Adding ${selectedItem.product_id} - Quantity: ${restockQuantity} to restock list`);
+      console.log(`Adding ${selectedItem.id} - Quantity: ${restockQuantity} to restock list`);
       setShowRestockModal(false);
       setSelectedItem(null);
       setRestockQuantity("");
@@ -97,10 +102,77 @@ export default function InventoryPage() {
     setRestockQuantity("");
   };
 
-  const handleStockUpdate = (updates: { product_id: string; quantity: number }[]) => {
-    // Here you would typically call an API to update stock
-    console.log("Bulk stock update:", updates);
-    // You could also update the local state here if needed
+  const [updateStockBatch] = useUpdateStockBatchMutation();
+  const [updateStockSingle] = useUpdateStockSingleMutation();
+
+  const handleStockUpdate = async (updates: {
+    id: string;
+    qty: number;
+    unit: string;
+    tx_type: "purchase" | "adjustment";
+    reason?: string;
+    expiry_date?: string;
+  }[]) => {
+    try {
+      // Split by tx_type
+      const purchaseItems = updates.filter(u => u.tx_type === "purchase");
+      const adjustmentItems = updates.filter(u => u.tx_type === "adjustment");
+
+      // For purchases: group by expiry_date (API expects top-level expiry_date)
+      const groupsByExpiry: Record<string, typeof purchaseItems> = {};
+      for (const item of purchaseItems) {
+        const key = item.expiry_date || "__no_expiry__";
+        if (!groupsByExpiry[key]) groupsByExpiry[key] = [];
+        groupsByExpiry[key].push(item);
+      }
+
+      // Execute batches for purchases
+      for (const [expiry, items] of Object.entries(groupsByExpiry)) {
+        if (items.length === 0) continue;
+        if (items.length === 1 && expiry !== "__no_expiry__") {
+          // Single item with expiry -> use single endpoint
+          const i = items[0];
+          await updateStockSingle({
+            id: i.id,
+            qty: i.qty,
+            unit: i.unit,
+            tx_type: "purchase",
+            expiry_date: i.expiry_date,
+            reason: i.reason,
+          }).unwrap();
+        } else if (items.length === 1 && expiry === "__no_expiry__") {
+          const i = items[0];
+          await updateStockSingle({
+            id: i.id,
+            qty: i.qty,
+            unit: i.unit,
+            tx_type: "purchase",
+            reason: i.reason,
+          }).unwrap();
+        } else {
+          // Batch
+          await updateStockBatch({
+            batch_id: `BATCH_${Date.now()}`,
+            tx_type: "purchase",
+            expiry_date: expiry === "__no_expiry__" ? undefined : expiry,
+            items: items.map(i => ({ id: i.id, qty: i.qty, unit: i.unit, reason: i.reason })),
+          }).unwrap();
+        }
+      }
+
+      // Adjustments can be batched together
+      if (adjustmentItems.length > 0) {
+        await updateStockBatch({
+          batch_id: `ADJ_${Date.now()}`,
+          tx_type: "adjustment",
+          items: adjustmentItems.map(i => ({ id: i.id, qty: i.qty, unit: i.unit, reason: i.reason })),
+        }).unwrap();
+      }
+
+      console.log("Stock update successful");
+    } catch (err) {
+      console.error("Stock update failed", err);
+    }
   };
 
   // Debug: Check if items are being loaded
@@ -117,7 +189,7 @@ export default function InventoryPage() {
           <path d="M2 4H14M2 8H14M2 12H14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
         </svg>
       ),
-      count: items.filter(item => !item.product_id.toLowerCase().includes('pizza') && !item.product_id.toLowerCase().includes('salad')).length
+      count: items.filter(item => !item.id.toLowerCase().includes('pizza') && !item.id.toLowerCase().includes('salad')).length
     },
     {
       id: "raw",
@@ -127,7 +199,7 @@ export default function InventoryPage() {
           <path d="M8 2L14 6V14L8 10L2 14V6L8 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      count: items.filter(item => item.product_id.toLowerCase().includes('raw') || item.product_id.toLowerCase().includes('tomato') || item.product_id.toLowerCase().includes('cheese') || item.product_id.toLowerCase().includes('lettuce') || item.product_id.toLowerCase().includes('chicken') || item.product_id.toLowerCase().includes('flour')).length
+      count: items.filter(item => item.id.toLowerCase().includes('raw') || item.id.toLowerCase().includes('tomato') || item.id.toLowerCase().includes('cheese') || item.id.toLowerCase().includes('lettuce') || item.id.toLowerCase().includes('chicken') || item.id.toLowerCase().includes('flour')).length
     },
     {
       id: "sub_product",
@@ -137,13 +209,13 @@ export default function InventoryPage() {
           <path d="M8 1L15 8L8 15L1 8L8 1Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
-      count: items.filter(item => item.product_id.toLowerCase().includes('sub') || item.product_id.toLowerCase().includes('sauce') || item.product_id.toLowerCase().includes('dough') || item.product_id.toLowerCase().includes('spice')).length
+      count: items.filter(item => item.id.toLowerCase().includes('sub') || item.id.toLowerCase().includes('sauce') || item.id.toLowerCase().includes('dough') || item.id.toLowerCase().includes('spice')).length
     }
   ];
 
   const filteredItems = items
     .filter(item => {
-      const matchesSearch = item.product_id.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = item.id.toLowerCase().includes(searchTerm.toLowerCase());
       const status = getStockStatus(item);
       const matchesFilter = filterStatus === "all" || status === filterStatus;
       
@@ -169,23 +241,23 @@ export default function InventoryPage() {
       let matchesProductType = true;
       if (activeProductType !== "all") {
         if (activeProductType === "raw") {
-          matchesProductType = item.product_id.toLowerCase().includes('raw') || 
-                              item.product_id.toLowerCase().includes('tomato') || 
-                              item.product_id.toLowerCase().includes('cheese') ||
-                              item.product_id.toLowerCase().includes('lettuce') ||
-                              item.product_id.toLowerCase().includes('chicken') ||
-                              item.product_id.toLowerCase().includes('flour');
+          matchesProductType = item.id.toLowerCase().includes('raw') || 
+                              item.id.toLowerCase().includes('tomato') || 
+                              item.id.toLowerCase().includes('cheese') ||
+                              item.id.toLowerCase().includes('lettuce') ||
+                              item.id.toLowerCase().includes('chicken') ||
+                              item.id.toLowerCase().includes('flour');
         } else if (activeProductType === "sub_product") {
-          matchesProductType = item.product_id.toLowerCase().includes('sub') || 
-                              item.product_id.toLowerCase().includes('sauce') ||
-                              item.product_id.toLowerCase().includes('dough') ||
-                              item.product_id.toLowerCase().includes('spice');
+          matchesProductType = item.id.toLowerCase().includes('sub') || 
+                              item.id.toLowerCase().includes('sauce') ||
+                              item.id.toLowerCase().includes('dough') ||
+                              item.id.toLowerCase().includes('spice');
         }
       }
       
       // Exclude menu items from inventory completely
-      const isMenuItemExcluded = !item.product_id.toLowerCase().includes('pizza') && 
-                                 !item.product_id.toLowerCase().includes('salad');
+      const isMenuItemExcluded = !item.id.toLowerCase().includes('pizza') && 
+                                 !item.id.toLowerCase().includes('salad');
       
       return matchesSearch && matchesFilter && matchesQuickFilter && matchesProductType && isMenuItemExcluded;
     });
@@ -195,25 +267,25 @@ export default function InventoryPage() {
   const getFilteredItems = () => {
     return items.filter(item => {
       // Always exclude menu items from inventory
-      const isNotMenuItem = !item.product_id.toLowerCase().includes('pizza') && 
-                           !item.product_id.toLowerCase().includes('salad');
+      const isNotMenuItem = !item.id.toLowerCase().includes('pizza') && 
+                           !item.id.toLowerCase().includes('salad');
       
       if (!isNotMenuItem) return false;
       
       if (activeProductType === "all") return true;
       
       if (activeProductType === "raw") {
-        return item.product_id.toLowerCase().includes('raw') || 
-               item.product_id.toLowerCase().includes('tomato') || 
-               item.product_id.toLowerCase().includes('cheese') ||
-               item.product_id.toLowerCase().includes('lettuce') ||
-               item.product_id.toLowerCase().includes('chicken') ||
-               item.product_id.toLowerCase().includes('flour');
+        return item.id.toLowerCase().includes('raw') || 
+               item.id.toLowerCase().includes('tomato') || 
+               item.id.toLowerCase().includes('cheese') ||
+               item.id.toLowerCase().includes('lettuce') ||
+               item.id.toLowerCase().includes('chicken') ||
+               item.id.toLowerCase().includes('flour');
       } else if (activeProductType === "sub_product") {
-        return item.product_id.toLowerCase().includes('sub') || 
-               item.product_id.toLowerCase().includes('sauce') ||
-               item.product_id.toLowerCase().includes('dough') ||
-               item.product_id.toLowerCase().includes('spice');
+        return item.id.toLowerCase().includes('sub') || 
+               item.id.toLowerCase().includes('sauce') ||
+               item.id.toLowerCase().includes('dough') ||
+               item.id.toLowerCase().includes('spice');
       }
       return true;
     });
@@ -380,9 +452,9 @@ export default function InventoryPage() {
                 const isCritical = item.available_qty <= item.critical_point;
                 
                 return (
-                  <tr key={item.product_id} className="table-row">
+                  <tr key={item.id} className="table-row">
                     <td className="name-cell">
-                      <div className="item-name">{item.product_id}</div>
+                      <div className="item-name">{item.name}</div>
                     </td>
                     
                     <td className="price-cell">
@@ -480,7 +552,7 @@ export default function InventoryPage() {
                   <div className="item-header">
                     <img src={productIcon} alt="Product" className="product-icon" />
                     <div className="item-info">
-                      <h4>{selectedItem.product_id}</h4>
+                      <h4>{selectedItem.id}</h4>
                       <p className="item-category">Raw Material</p>
                     </div>
                   </div>

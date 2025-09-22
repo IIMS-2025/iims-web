@@ -7,11 +7,18 @@ interface StockUpdateModalProps {
   isOpen: boolean;
   onClose: () => void;
   inventoryItems: Inventory[];
-  onUpdateStock: (updates: { product_id: string; quantity: number }[]) => void;
+  onUpdateStock: (updates: {
+    id: string;
+    qty: number;
+    unit: string;
+    tx_type: "purchase" | "adjustment";
+    reason?: string;
+    expiry_date?: string;
+  }[]) => void;
 }
 
 interface StockUpdate {
-  product_id: string;
+  id: string;
   current_stock: number;
   new_quantity: string;
   unit: string;
@@ -33,7 +40,7 @@ export default function StockUpdateModal({
     console.log("StockUpdateModal - inventoryItems:", inventoryItems);
     if (inventoryItems && inventoryItems.length > 0) {
       const newStockUpdates = inventoryItems.map(item => ({
-        product_id: item.product_id,
+        id: item.id,
         current_stock: item.available_qty,
         new_quantity: "",
         unit: "kg",
@@ -54,7 +61,7 @@ export default function StockUpdateModal({
   const handleQuantityChange = (productId: string, quantity: string) => {
     setStockUpdates(prev => 
       prev.map(item => 
-        item.product_id === productId 
+        item.id === productId 
           ? { ...item, new_quantity: quantity }
           : item
       )
@@ -64,7 +71,7 @@ export default function StockUpdateModal({
   const handleReasonChange = (productId: string, reason: string) => {
     setStockUpdates(prev => 
       prev.map(item => 
-        item.product_id === productId 
+        item.id === productId 
           ? { ...item, reason: reason }
           : item
       )
@@ -74,7 +81,7 @@ export default function StockUpdateModal({
   const handleExpiryDateChange = (productId: string, expiryDate: string) => {
     setStockUpdates(prev => 
       prev.map(item => 
-        item.product_id === productId 
+        item.id === productId 
           ? { ...item, expiry_date: expiryDate }
           : item
       )
@@ -88,15 +95,28 @@ export default function StockUpdateModal({
       return hasQuantity && hasExpiryForOrder;
     });
 
-    const updates = validUpdates.map(item => ({
-      product_id: item.product_id,
-      quantity: parseFloat(item.new_quantity),
-      action: actionType,
-      reason: item.reason || "",
-      expiry_date: item.expiry_date || "",
-      // For closing/opening stock, we're setting new stock level, not adding
-      isStockUpdate: actionType === "closing_stock" || actionType === "opening_stock"
-    }));
+    const updates = validUpdates.map(item => {
+      if (actionType === "order_update") {
+        return {
+          id: item.id,
+          qty: parseFloat(item.new_quantity),
+          unit: item.unit,
+          tx_type: "purchase" as const,
+          reason: item.reason || undefined,
+          expiry_date: item.expiry_date || undefined,
+        };
+      }
+      // closing/opening stock: send adjustment by delta (target - current)
+      const targetQty = parseFloat(item.new_quantity);
+      const delta = targetQty - item.current_stock;
+      return {
+        id: item.id,
+        qty: delta,
+        unit: item.unit,
+        tx_type: "adjustment" as const,
+        reason: item.reason || undefined,
+      };
+    });
     
     if (updates.length > 0) {
       onUpdateStock(updates);
@@ -143,8 +163,8 @@ export default function StockUpdateModal({
   };
 
   const filteredItems = stockUpdates.filter(item => {
-    const matchesSearch = item.product_id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = activeProductType === "all" || getProductType(item.product_id) === activeProductType;
+    const matchesSearch = item.id.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = activeProductType === "all" || getProductType(item.id) === activeProductType;
     return matchesSearch && matchesType;
   });
 
@@ -161,8 +181,8 @@ export default function StockUpdateModal({
 
   // Calculate counts for each product type
   const allProductsCount = stockUpdates.length;
-  const rawMaterialsCount = stockUpdates.filter(item => getProductType(item.product_id) === 'raw').length;
-  const subProductsCount = stockUpdates.filter(item => getProductType(item.product_id) === 'sub_product').length;
+  const rawMaterialsCount = stockUpdates.filter(item => getProductType(item.id) === 'raw').length;
+  const subProductsCount = stockUpdates.filter(item => getProductType(item.id) === 'sub_product').length;
 
   // Create tabs data
   const productTypeTabs = [
@@ -282,13 +302,13 @@ export default function StockUpdateModal({
             ) : (
               <div className="products-grid">
                 {filteredItems.map((item) => (
-              <div key={item.product_id} className="product-update-card">
+              <div key={item.id} className="product-update-card">
                 <div className="product-header">
                   <img src={productIcon} alt="Product" className="product-icon-sm" />
                   <div className="product-info">
-                    <h4 className="product-name">{item.product_id}</h4>
+                    <h4 className="product-name">{item.id}</h4>
                     <p className="product-category">
-                      {getProductType(item.product_id) === 'raw' ? 'Raw Material' : 'Sub Product'}
+                      {getProductType(item.id) === 'raw' ? 'Raw Material' : 'Sub Product'}
                     </p>
                   </div>
                 </div>
@@ -318,7 +338,7 @@ export default function StockUpdateModal({
                       step="0.1"
                       placeholder="0"
                       value={item.new_quantity}
-                      onChange={(e) => handleQuantityChange(item.product_id, e.target.value)}
+                      onChange={(e) => handleQuantityChange(item.id, e.target.value)}
                       className="quantity-input-sm"
                     />
                     <span className="input-unit">{item.unit}</span>
@@ -333,7 +353,7 @@ export default function StockUpdateModal({
                       <input
                         type="date"
                         value={item.expiry_date || ""}
-                        onChange={(e) => handleExpiryDateChange(item.product_id, e.target.value)}
+                        onChange={(e) => handleExpiryDateChange(item.id, e.target.value)}
                         className="expiry-field"
                         required
                         min={new Date().toISOString().split('T')[0]} // Today's date as minimum
@@ -349,7 +369,7 @@ export default function StockUpdateModal({
                         type="text"
                         placeholder="Enter reason for stock adjustment..."
                         value={item.reason || ""}
-                        onChange={(e) => handleReasonChange(item.product_id, e.target.value)}
+                        onChange={(e) => handleReasonChange(item.id, e.target.value)}
                         className="reason-field"
                       />
                     </div>
@@ -382,15 +402,15 @@ export default function StockUpdateModal({
                 {stockUpdates
                   .filter(item => item.new_quantity && parseFloat(item.new_quantity) > 0)
                   .map((item) => (
-                    <div key={item.product_id} className="review-item">
+                    <div key={item.id} className="review-item">
                       <div className="review-product">
                         <div className="review-icon">
-                          {item.product_id.charAt(0).toUpperCase()}{item.product_id.charAt(1).toUpperCase()}
+                          {item.id.charAt(0).toUpperCase()}{item.id.charAt(1).toUpperCase()}
                         </div>
                         <div className="review-info">
-                          <span className="review-name">{item.product_id}</span>
+                          <span className="review-name">{item.id}</span>
                           <span className="review-type">
-                            {getProductType(item.product_id) === 'raw' ? 'Raw Material' : 'Sub Product'}
+                            {getProductType(item.id) === 'raw' ? 'Raw Material' : 'Sub Product'}
                           </span>
                         </div>
                       </div>

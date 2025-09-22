@@ -32,7 +32,7 @@ export const cookbookApi = createApi({
     }),
     updateCookbookItem: builder.mutation<CookbookItem, CookbookItem>({
       query: (cookbookItem) => ({
-        url: `/api/v1/cookbook/${cookbookItem?.product_id}`,
+        url: `/api/v1/cookbook/${cookbookItem.id}`,
         method: "PUT",
         body: cookbookItem,
       }),

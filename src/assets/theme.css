@@ -3138,7 +3138,7 @@ body {
   top: 0;
   left: 257px;
   width: calc(100% - 256px);
-  z-index: 1100;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -4169,11 +4169,6 @@ body {
   .home-main {
     width: 100%;
     margin-left: 0;
-  }
-
-  .home-content {
-    position: static;
-    height: auto;
   }
 
   .analytics-container,
