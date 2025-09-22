@@ -26,7 +26,7 @@
 }
 
 .badge-text {
-    font-family: Inter, sans-serif;
+
     font-weight: 500;
     font-size: 12px;
     line-height: 15px;
@@ -76,7 +76,7 @@
 }
 
 .detail-title {
-    font-family: Inter, sans-serif;
+
     font-weight: 700;
     font-size: 24px;
     line-height: 1.33;
@@ -131,7 +131,7 @@
 }
 
 .category-tag span {
-    font-family: Inter, sans-serif;
+
     font-weight: 500;
     font-size: 14px;
     line-height: 1.21;
@@ -143,7 +143,7 @@
 }
 
 .recipe-title {
-    font-family: Inter, sans-serif;
+
     font-weight: 700;
     font-size: 24px;
     line-height: 1.33;
@@ -152,7 +152,7 @@
 }
 
 .recipe-description {
-    font-family: Inter, sans-serif;
+
     font-weight: 400;
     font-size: 16px;
     line-height: 1.5;
@@ -177,7 +177,7 @@
 }
 
 .meta-label {
-    font-family: Inter, sans-serif;
+
     font-weight: 400;
     font-size: 14px;
     line-height: 1.21;
@@ -186,7 +186,7 @@
 }
 
 .meta-value {
-    font-family: Inter, sans-serif;
+
     font-weight: 600;
     font-size: 16px;
     line-height: 1.21;
@@ -201,7 +201,7 @@
 }
 
 .price {
-    font-family: Inter, sans-serif;
+
     font-weight: 700;
     font-size: 24px;
     line-height: 1.33;
@@ -215,7 +215,7 @@
 }
 
 .rating {
-    font-family: Inter, sans-serif;
+
     font-weight: 600;
     font-size: 16px;
     line-height: 1.5;
@@ -223,7 +223,7 @@
 }
 
 .reviews {
-    font-family: Inter, sans-serif;
+
     font-weight: 400;
     font-size: 14px;
     line-height: 1.43;
@@ -234,7 +234,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-family: Inter, sans-serif;
+
     font-weight: 400;
     font-size: 14px;
     line-height: 1.43;
@@ -264,7 +264,7 @@
 }
 
 .section-header h3 {
-    font-family: Inter, sans-serif;
+
     font-weight: 700;
     font-size: 20px;
     line-height: 1.4;
@@ -279,7 +279,7 @@
     padding: 4px 11px;
     background: none;
     border: none;
-    font-family: Inter, sans-serif;
+
     font-weight: 500;
     font-size: 14px;
     line-height: 1.21;
@@ -305,7 +305,7 @@
 
 .ingredients-table th {
     text-align: left;
-    font-family: Inter, sans-serif;
+
     font-weight: 600;
     font-size: 16px;
     line-height: 1.21;
@@ -340,7 +340,7 @@
 }
 
 .ingredient-name span {
-    font-family: Inter, sans-serif;
+
     font-weight: 500;
     font-size: 16px;
     line-height: 1.5;
@@ -348,7 +348,7 @@
 }
 
 .quantity {
-    font-family: Inter, sans-serif;
+
     font-weight: 500;
     font-size: 16px;
     line-height: 1.21;
@@ -357,7 +357,7 @@
 }
 
 .unit {
-    font-family: Inter, sans-serif;
+
     font-weight: 400;
     font-size: 16px;
     line-height: 1.21;
@@ -369,7 +369,7 @@
     display: inline-block;
     padding: 4px 8px;
     border-radius: 9999px;
-    font-family: Inter, sans-serif;
+
     font-weight: 500;
     font-size: 12px;
     line-height: 1.21;
@@ -378,7 +378,7 @@
 
 /* Instructions */
 .instructions-section h3 {
-    font-family: Inter, sans-serif;
+
     font-weight: 700;
     font-size: 20px;
     line-height: 1.21;
@@ -408,7 +408,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: Inter, sans-serif;
+
     font-weight: 600;
     font-size: 14px;
     line-height: 1.21;
@@ -417,7 +417,7 @@
 }
 
 .instruction-content h4 {
-    font-family: Inter, sans-serif;
+
     font-weight: 600;
     font-size: 16px;
     line-height: 1.5;
@@ -426,7 +426,7 @@
 }
 
 .instruction-content p {
-    font-family: Inter, sans-serif;
+
     font-weight: 400;
     font-size: 16px;
     line-height: 1.5;
@@ -449,7 +449,7 @@
 }
 
 .tips-content h4 {
-    font-family: Inter, sans-serif;
+
     font-weight: 600;
     font-size: 16px;
     line-height: 1.5;
@@ -464,7 +464,7 @@
 }
 
 .tips-content li {
-    font-family: Inter, sans-serif;
+
     font-weight: 400;
     font-size: 14px;
     line-height: 1.21;

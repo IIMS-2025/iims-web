@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import {
@@ -344,8 +344,8 @@ export default function HomePage() {
               <div className="analytics-card">
                 <h3 className="analytics-title">Revenue by Category</h3>
                 <div className="chart-container">
-                  <div className="chart-placeholder" style={{ position: 'relative', height: '256px', minWidth: '450px' }}>
-                    <div style={{ position: 'absolute', left: 0, top: 0, width: '250px', height: '256px' }}>
+                  <div className="chart-placeholder chart-donut">
+                    <div className="chart-donut-canvas">
                       <Doughnut
                         data={{
                           labels: revenueByCategory.categories.map(cat => cat.label),
@@ -383,47 +383,18 @@ export default function HomePage() {
                           elements: { arc: { borderWidth: 2 } }
                         }}
                       />
+                      <div className="chart-center">
+                        <div className="chart-center-label">Total</div>
+                        <div className="chart-center-value">₹{revenueByCategory.total.toLocaleString()}</div>
+                      </div>
                     </div>
-
-                    {/* Center text overlay */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '125px',
-                      top: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      textAlign: 'center',
-                      pointerEvents: 'none'
-                    }}>
-                      <div style={{ fontSize: '12px', fontWeight: '500', color: '#6B7280' }}>Total</div>
-                      <div style={{ fontSize: '16px', fontWeight: '700', color: '#111827' }}>₹{revenueByCategory.total.toLocaleString()}</div>
-                    </div>
-
-                    {/* Legend */}
-                    <div style={{
-                      position: 'absolute',
-                      left: '280px',
-                      top: '60px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '20px'
-                    }}>
+                    <div className="chart-legend">
                       {revenueByCategory.categories.map((item) => (
-                        <div key={item.label} style={{ display: 'flex', alignItems: 'flex-start', gap: '15px' }}>
-                          <div style={{
-                            width: '12px',
-                            height: '12px',
-                            borderRadius: '50%',
-                            backgroundColor: item.color,
-                            marginTop: '2px',
-                            flexShrink: 0
-                          }} />
-                          <div>
-                            <div style={{ fontSize: '12px', fontWeight: '500', color: '#111827', lineHeight: '1.2' }}>
-                              {item.label}
-                            </div>
-                            <div style={{ fontSize: '11px', color: '#6B7280', lineHeight: '1.2' }}>
-                              ₹{item.amount.toLocaleString()} ({item.percentage}%)
-                            </div>
+                        <div key={item.label} className="legend-item">
+                          <span className="legend-dot" style={{ backgroundColor: item.color }} />
+                          <div className="legend-text">
+                            <div className="legend-label">{item.label}</div>
+                            <div className="legend-sub">₹{item.amount.toLocaleString()} ({item.percentage}%)</div>
                           </div>
                         </div>
                       ))}
@@ -436,7 +407,7 @@ export default function HomePage() {
               <div className="analytics-card">
                 <h3 className="analytics-title">Revenue Trend (7 Days)</h3>
                 <div className="chart-container">
-                  <div className="chart-placeholder" style={{ height: '256px', minWidth: '450px' }}>
+                  <div className="chart-placeholder" style={{ height: '256px' }}>
                     <Line
                       data={{
                         labels: revenueTrend.labels,
@@ -480,7 +451,7 @@ export default function HomePage() {
                             grid: { display: false },
                             ticks: {
                               color: '#6B7280',
-                              font: { family: 'Inter', size: 12, weight: 500 }
+                              font: { family: 'Lexend', size: 12, weight: 500 }
                             },
                             border: { display: true, color: '#E5E7EB' }
                           },
@@ -490,7 +461,7 @@ export default function HomePage() {
                             ticks: {
                               stepSize: 700,
                               color: '#6B7280',
-                              font: { family: 'Inter', size: 12, weight: 500 },
+                              font: { family: 'Lexend', size: 12, weight: 500 },
                               callback: function (value: any) {
                                 return '₹' + (value / 1000).toFixed(1) + 'k';
                               }

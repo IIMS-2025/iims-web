@@ -268,7 +268,7 @@ export default function OrdersInsights() {
                     ticks: {
                         color: '#6B7280',
                         font: {
-                            family: 'Inter',
+                            family: 'Lexend',
                             size: 11
                         }
                     },
@@ -283,7 +283,7 @@ export default function OrdersInsights() {
                         stepSize: 250,
                         color: '#6B7280',
                         font: {
-                            family: 'Inter',
+                            family: 'Lexend',
                             size: 11
                         },
                         callback: function (value: any) {
@@ -346,7 +346,7 @@ export default function OrdersInsights() {
                             padding: '5px 12px',
                             fontSize: 14,
                             fontWeight: 600,
-                            fontFamily: 'Inter',
+                            fontFamily: 'Lexend',
                             color: '#5F63F2',
                             cursor: 'pointer',
                             boxShadow: '0px 1px 2px 0px rgba(0, 0, 0, 0.05)'
@@ -360,7 +360,7 @@ export default function OrdersInsights() {
                             padding: '5px 12px',
                             fontSize: 14,
                             fontWeight: 400,
-                            fontFamily: 'Inter',
+                            fontFamily: 'Lexend',
                             color: '#6B7280',
                             cursor: 'pointer'
                         }}>
@@ -543,7 +543,7 @@ export default function OrdersInsights() {
                     ticks: {
                         color: '#6B7280',
                         font: {
-                            family: 'Inter',
+                            family: 'Lexend',
                             size: 11
                         }
                     },
@@ -556,7 +556,7 @@ export default function OrdersInsights() {
                     ticks: {
                         color: '#6B7280',
                         font: {
-                            family: 'Inter',
+                            family: 'Lexend',
                             size: 11
                         },
                         callback: function (value: any) {
