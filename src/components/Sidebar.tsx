@@ -64,7 +64,7 @@ export default function Sidebar({ className = "home-sidebar" }: SidebarProps) {
                             />
                         </svg>
                     </div>
-                    <div className="nav-text">Inventory Dashboard</div>
+                    <div className="nav-text">Inventory</div>
                 </Link>
 
                 <Link to="/orders-insights" className={`nav-item ${isActive("/orders-insights") ? "active" : ""}`}>
@@ -78,7 +78,7 @@ export default function Sidebar({ className = "home-sidebar" }: SidebarProps) {
                             />
                         </svg>
                     </div>
-                    <div className="nav-text">Orders & Insights</div>
+                    <div className="nav-text">Insights</div>
                 </Link>
 
                 <div className="nav-item">
@@ -93,7 +93,7 @@ export default function Sidebar({ className = "home-sidebar" }: SidebarProps) {
                             />
                         </svg>
                     </div>
-                    <div className="nav-text">Inventory Usage</div>
+                    <div className="nav-text">Restock List</div>
                 </div>
 
                 <Link to="/chefspace" className={`nav-item ${isActive("/chefspace") ? "active" : ""}`}>

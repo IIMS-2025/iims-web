@@ -31,12 +31,12 @@ export default function App() {
           <Route path="/orders-insights" element={<OrdersInsights />} />
           <Route path="/chefspace" element={<ChefSpace />} />
           <Route path="/chefspace/:id" element={<ChefSpaceDetail />} />
+          <Route path="/inventory" element={<InventoryPage />} />
           <Route element={<AppLayout />}>
             <Route index element={<Navigate to={routingConfig.routes.default} replace />} />
             <Route path="/owner" element={<OwnerDashboard />} />
             <Route path="/manager" element={<ManagerDashboard />} />
             <Route path="/chef" element={<ChefDashboard />} />
-            <Route path="/inventory" element={<InventoryPage />} />
             <Route path="/menu" element={<MenuOrdersPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
           </Route>
