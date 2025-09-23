@@ -532,11 +532,8 @@ export default function OrdersInsights() {
                 {/* Legend */}
                 <div style={{
                     position: 'absolute',
-                    right: 8,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    display: 'flex',
-                    flexDirection: 'column',
+                    right: 0,
+                    bottom: 0,
                     gap: 16,
                     width: 78
                 }}>
