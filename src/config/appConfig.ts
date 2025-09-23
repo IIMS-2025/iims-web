@@ -76,7 +76,7 @@ export const appConfig = {
     navigation: {
         primary: [
             { id: 'home', label: 'Home', path: '/home', icon: 'home' },
-            { id: 'insights', label: 'Orders & Insights', path: '/insights', icon: 'insights' },
+            { id: 'insights', label: 'Insights', path: '/insights', icon: 'insights' },
             { id: 'chefspace', label: 'Chef Space', path: '/chefspace', icon: 'chef' },
             { id: 'inventory', label: 'Inventory Dashboard', path: '/inventory', icon: 'inventory' },
             { id: 'inventory-usage', label: 'Inventory Usage', path: '/inventory-usage', icon: 'usage' }

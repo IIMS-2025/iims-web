@@ -50,7 +50,7 @@ api.interceptors.response.use(
 
 // Individual API service functions
 export class DashboardService {
-    // Orders & Insights APIs
+    // Insights APIs
     static async getOrdersInsightsMetrics(): Promise<OrdersInsightsMetrics> {
         const response = await api.get<ApiResponse<OrdersInsightsMetrics>>('/api/dashboard/insights');
         return response.data.data;

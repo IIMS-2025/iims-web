@@ -55,7 +55,7 @@ function useApiData<T>(
 
 // Specific hooks for different dashboard sections
 
-// Orders & Insights hooks
+// Insights hooks
 export function useOrdersInsightsMetrics() {
     return useApiData<OrdersInsightsMetrics>(
         DashboardService.getOrdersInsightsMetrics
@@ -215,7 +215,7 @@ export function useDashboardWithRefresh<T>(
     };
 }
 
-// Combined hook for Orders & Insights page
+// Combined hook for Insights page
 export function useOrdersInsightsData() {
     const metrics = useOrdersInsightsMetrics();
     const salesForecast = useSalesVsForecastData();

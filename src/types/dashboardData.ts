@@ -1,6 +1,6 @@
 // TypeScript interfaces for dashboard data structures - for easy backend integration
 
-// Orders & Insights Page Data Types
+// Insights Page Data Types
 export interface MetricCardData {
     title: string;
     value: string;
@@ -123,7 +123,7 @@ export interface OverallRating {
 
 // Combined interface for entire dashboard data
 export interface DashboardData {
-    // Orders & Insights data
+    // Insights data
     ordersInsights: {
         metrics: OrdersInsightsMetrics;
         salesVsForecast: SalesVsForecastData;

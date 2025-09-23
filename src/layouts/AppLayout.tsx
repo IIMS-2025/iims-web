@@ -10,7 +10,7 @@ export default function AppLayout() {
     "/": "Welcome Back!",
     "/home": "Welcome Back!",
     "/inventory": "Inventory Management",
-    "/insights": "Orders & Insights",
+    "/insights": "Insights",
     "/restock": "Restock List",
     "/chefspace": "Chef's Space",
   };
