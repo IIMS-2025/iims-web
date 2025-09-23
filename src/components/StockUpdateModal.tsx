@@ -1,21 +1,40 @@
 import type { RootState } from "../store";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useMemo, useState } from "react";
 import { CloseIcon, SearchIcon } from "./icons/InventoryIcons";
+import { useUpdateStockBatchMutation, useGetInventoryQuery } from "../services/inventoryApi";
+import { setInventory } from "../store/slices/inventorySlice";
+
+export interface StagedItem {
+  id: string;
+  qty: number;
+}
+
+export interface BulkUpdateItem {
+  product_id: string;
+  qty: number;
+  unit: string;
+  reason: string;
+}
 
 
 interface StockUpdateModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onUpdateStock: () => void;
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
 }
 
 export default function StockUpdateModal({
   isOpen,
   onClose,
-  onUpdateStock,
+  onSuccess,
+  onError,
 }: StockUpdateModalProps) {
+  const dispatch = useDispatch();
   const inventoryItems = useSelector((s: RootState) => s.inventory.items || []);
+  const [updateStockBatch, { isLoading }] = useUpdateStockBatchMutation();
+  const { refetch: refetchInventory } = useGetInventoryQuery();
 
   // Local UI state for bulk update
   const [query, setQuery] = useState("");
@@ -30,7 +49,9 @@ export default function StockUpdateModal({
   }, [inventoryItems, query]);
 
   const stagedEntries = useMemo(
-    () => Object.entries(staged).filter(([, qty]) => qty > 0),
+    () => Object.entries(staged)
+      .filter(([, qty]) => qty > 0)
+      .map(([id, qty]): StagedItem => ({ id, qty })),
     [staged]
   );
 
@@ -49,10 +70,45 @@ export default function StockUpdateModal({
 
   const handleDiscardAll = () => setStaged({});
 
-  const handleApplyUpdates = () => {
-    // Pass control to parent; parent can use current redux list
-    onUpdateStock();
-    setStaged({});
+  const transformStagedToBulkItems = (stagedItems: StagedItem[]): BulkUpdateItem[] => {
+    return stagedItems.map(({ id, qty }) => {
+      const item = inventoryItems.find((inv: any) => String(inv.id) === String(id));
+      return {
+        product_id: id,
+        qty: Number(qty),
+        unit: item?.unit || "kg",
+        reason: item?.name || 'Item'
+      };
+    });
+  };
+
+  const createBulkUpdatePayload = (items: BulkUpdateItem[]) => ({
+    batch_id: `BULK_UPDATE_${Date.now()}`,
+    expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 year from now
+    tx_type: "purchase" as const,
+    items
+  });
+
+  const handleApplyUpdates = async () => {
+    try {
+      const bulkItems = transformStagedToBulkItems(stagedEntries);
+      const payload = createBulkUpdatePayload(bulkItems);
+
+      await updateStockBatch(payload).unwrap();
+      
+      // Refetch inventory data and update global state
+      const updatedInventory = await refetchInventory().unwrap();
+      if (updatedInventory?.inventoryList) {
+        dispatch(setInventory(updatedInventory.inventoryList));
+      }
+      
+      setStaged({});
+      onClose();
+      onSuccess?.();
+    } catch (error) {
+      console.error('Failed to update stock:', error);
+      onError?.(error);
+    }
   };
 
   if (!isOpen) return null;
@@ -169,7 +225,7 @@ export default function StockUpdateModal({
               <div className="text-sm text-gray-500">No items staged yet. Use the list to add quantities.</div>
             ) : (
               <div className="space-y-2 overflow-y-auto">
-                {stagedEntries.map(([id, qty]) => {
+                {stagedEntries.map(({ id, qty }) => {
                   const item: any = inventoryItems.find((it: any) => String(it.id) === String(id));
                   if (!item) return null;
                   return (
@@ -182,7 +238,7 @@ export default function StockUpdateModal({
                         <button
                           type="button"
                           aria-label="Decrease"
-                          onClick={() => adjustStageQty(String(item.id), -1)}
+                          onClick={() => adjustStageQty(id, -1)}
                           className="inline-flex items-center justify-center w-8 h-8 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
                         >
                           −
@@ -191,13 +247,13 @@ export default function StockUpdateModal({
                           type="text"
                           value={qty}
                           min={0}
-                          onChange={(e) => handleStageQty(String(item.id), parseFloat(e.target.value))}
+                          onChange={(e) => handleStageQty(id, parseFloat(e.target.value))}
                           className="w-10 text-center h-9 rounded-md border border-gray-300 bg-white px-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400"
                         />
                         <button
                           type="button"
                           aria-label="Increase"
-                          onClick={() => adjustStageQty(String(item.id), 1)}
+                          onClick={() => adjustStageQty(id, 1)}
                           className="inline-flex items-center justify-center w-8 h-8 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
                         >
                           +
@@ -214,8 +270,16 @@ export default function StockUpdateModal({
 
         {/* Footer */}
         <div className="modal-footer">
-          <button className="btn-cancel" onClick={handleDiscardAll}>Discard updates</button>
-          <button className="btn-confirm" disabled={stagedEntries.length === 0} onClick={handleApplyUpdates}>Update stock</button>
+          <button className="btn-cancel" onClick={handleDiscardAll} disabled={isLoading}>
+            Discard updates
+          </button>
+          <button 
+            className="btn-confirm" 
+            disabled={stagedEntries.length === 0 || isLoading} 
+            onClick={handleApplyUpdates}
+          >
+            {isLoading ? 'Updating...' : 'Update stock'}
+          </button>
         </div>
       </div>
     </div>

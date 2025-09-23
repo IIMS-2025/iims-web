@@ -102,9 +102,15 @@ export default function InventoryPage() {
     setRestockQuantity("");
   };
 
-const handleStockUpdate = () => {
+const handleStockUpdateSuccess = () => {
   setShowStockUpdateModal(false);
-}
+  // TODO: Add success notification
+};
+
+const handleStockUpdateError = (error: any) => {
+  console.error('Failed to update stock:', error);
+  // TODO: Add error notification
+};
 
   // Define product type tabs
   const productTypeTabs: Tab[] = [
@@ -468,7 +474,8 @@ const handleStockUpdate = () => {
         <StockUpdateModal
           isOpen={showStockUpdateModal}
           onClose={() => setShowStockUpdateModal(false)}
-          onUpdateStock={handleStockUpdate}
+          onSuccess={handleStockUpdateSuccess}
+          onError={handleStockUpdateError}
         />
     </div>
   );
