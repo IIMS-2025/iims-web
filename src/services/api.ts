@@ -30,11 +30,11 @@ const mock = {
     { id: "raw-flour", tenant_id: "t1", name: "Raw Flour", type: "raw", unit: "kg", price: 3, category: "Grains" },
   ] as Product[],
   inventory: [
-    { location_id: "loc1", product_id: "Fresh Tomatoes", available_qty: 150, reorder_point: 50, critical_point: 20, last_updated: new Date().toISOString(), price_per_unit: 2.50, unit: "kg", category: "Vegetables", forecast_days: 12 },
-    { location_id: "loc1", product_id: "Mozzarella Cheese", available_qty: 25, reorder_point: 30, critical_point: 15, last_updated: new Date().toISOString(), price_per_unit: 10.20, unit: "kg", category: "Dairy", forecast_days: 6 },
-    { location_id: "loc1", product_id: "Olive Oil", available_qty: 5, reorder_point: 15, critical_point: 8, last_updated: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), price_per_unit: 15.00, unit: "liter", category: "Oils & Spices", forecast_days: 4 },
-    { location_id: "loc1", product_id: "Chicken Breast", available_qty: 45, reorder_point: 30, critical_point: 15, last_updated: new Date().toISOString(), price_per_unit: 8.75, unit: "kg", category: "Meat", forecast_days: 18 },
-    { location_id: "loc1", product_id: "Basil Leaves", available_qty: 200, reorder_point: 300, critical_point: 150, last_updated: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), price_per_unit: 12.00, unit: "100g", category: "Herbs", forecast_days: 7 },
+    { location_id: "loc1", id: "Fresh Tomatoes", available_qty: 150, reorder_point: 50, critical_point: 20, last_updated: new Date().toISOString(), price_per_unit: 2.50, unit: "kg", category: "Vegetables", forecast_days: 12 },
+    { location_id: "loc1", id: "Mozzarella Cheese", available_qty: 25, reorder_point: 30, critical_point: 15, last_updated: new Date().toISOString(), price_per_unit: 10.20, unit: "kg", category: "Dairy", forecast_days: 6 },
+    { location_id: "loc1", id: "Olive Oil", available_qty: 5, reorder_point: 15, critical_point: 8, last_updated: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), price_per_unit: 15.00, unit: "liter", category: "Oils & Spices", forecast_days: 4 },
+    { location_id: "loc1", id: "Chicken Breast", available_qty: 45, reorder_point: 30, critical_point: 15, last_updated: new Date().toISOString(), price_per_unit: 8.75, unit: "kg", category: "Meat", forecast_days: 18 },
+    { location_id: "loc1", id: "Basil Leaves", available_qty: 200, reorder_point: 300, critical_point: 150, last_updated: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), price_per_unit: 12.00, unit: "100g", category: "Herbs", forecast_days: 7 },
   ] as any[],
   orders: [
     {
@@ -46,14 +46,14 @@ const mock = {
     },
   ] as Order[],
   forecasts: [
-    { product_id: "p1", date: new Date(Date.now() + 86400000 * 1).toISOString(), forecast_qty: 12 },
-    { product_id: "p2", date: new Date(Date.now() + 86400000 * 1).toISOString(), forecast_qty: 6 },
+    { id: "p1", date: new Date(Date.now() + 86400000 * 1).toISOString(), forecast_qty: 12 },
+    { id: "p2", date: new Date(Date.now() + 86400000 * 1).toISOString(), forecast_qty: 6 },
   ] as Forecast[],
   ledger: [] as InventoryTransaction[],
   restockItems: [
     {
       id: "r1",
-      product_id: "Fresh Tomatoes",
+      id: "Fresh Tomatoes",
       product_name: "Fresh Tomatoes",
       category: "Vegetables",
       current_stock: 150,
@@ -71,7 +71,7 @@ const mock = {
     },
     {
       id: "r2",
-      product_id: "Mozzarella Cheese",
+      id: "Mozzarella Cheese",
       product_name: "Mozzarella Cheese",
       category: "Dairy",
       current_stock: 25,
@@ -89,7 +89,7 @@ const mock = {
     },
     {
       id: "r3",
-      product_id: "Olive Oil",
+      id: "Olive Oil",
       product_name: "Olive Oil",
       category: "Oils & Spices",
       current_stock: 5,
@@ -107,7 +107,7 @@ const mock = {
     },
     {
       id: "r4",
-      product_id: "Chicken Breast",
+      id: "Chicken Breast",
       product_name: "Chicken Breast",
       category: "Meat",
       current_stock: 45,
@@ -125,7 +125,7 @@ const mock = {
     },
     {
       id: "r5",
-      product_id: "Basil Leaves",
+      id: "Basil Leaves",
       product_name: "Basil Leaves",
       category: "Herbs",
       current_stock: 200,
@@ -143,7 +143,7 @@ const mock = {
     },
     {
       id: "r6",
-      product_id: "pasta-dough",
+      id: "pasta-dough",
       product_name: "Pizza Dough",
       category: "Bakery",
       current_stock: 8,
@@ -189,7 +189,7 @@ export async function postInventoryTx(tx: InventoryTransaction): Promise<ApiResp
   if (useMock) {
     await delay(150);
     mock.ledger.push(tx);
-    const inv = mock.inventory.find(i => i.location_id === tx.location_id && i.product_id === tx.product_id);
+    const inv = mock.inventory.find(i => i.location_id === tx.location_id && i.id === tx.id);
     const signedQty = ["purchase", "transfer_in", "adjustment"].includes(tx.tx_type) ? tx.qty : -tx.qty;
     if (inv) {
       inv.available_qty += signedQty;

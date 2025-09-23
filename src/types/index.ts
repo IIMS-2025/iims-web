@@ -47,11 +47,15 @@ export interface ProductBOM {
 }
 
 export interface Inventory {
+  name: string;
   location_id: ID;
-  product_id: ID;
+  id: ID;
   available_qty: number;
+  unit: string;
+  price: number;
   reorder_point: number;
   critical_point: number;
+  type: string;
   last_updated: string; // ISO date
 }
 
@@ -66,7 +70,6 @@ export type InventoryTxType =
 export interface InventoryTransaction {
   id: ID;
   location_id: ID;
-  product_id: ID;
   tx_type: InventoryTxType;
   qty: number; // positive for in, negative for out if needed
   unit: string;
@@ -96,7 +99,7 @@ export interface ForecastBounds {
 }
 
 export interface Forecast {
-  product_id: ID;
+  id: ID;
   date: string; // ISO date day-granularity
   forecast_qty: number;
   bounds?: ForecastBounds;
@@ -106,7 +109,7 @@ export type AnomalySeverity = "low" | "medium" | "high";
 export type AnomalyStatus = "open" | "acknowledged" | "resolved";
 
 export interface Anomaly {
-  product_id: ID;
+  id: ID;
   date_detected: string;
   severity: AnomalySeverity;
   status: AnomalyStatus;
@@ -117,19 +120,44 @@ export type WastageReason = "spoilage" | "theft" | "expired" | "prep_error";
 
 export interface Wastage {
   id: ID;
-  product_id: ID;
   location_id: ID;
   reason: WastageReason;
-  qty: number;
+  stock_status: string | number;
+  available_qty: string | number;
   unit: string;
   cost_loss: number;
   recorded_at: string;
 }
 
+export interface Ingredient {
+  id: string;
+  name?: string;
+  available_qty: string | number;
+  stock_status: string | number;
+  unit?: string;
+  statusColor?: string;
+  textColor?: string;
+  status?: string;
+}
+
 export interface CookbookItem {
-  product_id: ID; // menu item or sub-product
-  recipe_steps: string[];
-  yield_factor: number; // output per batch vs inputs
+  id: string;
+  name: string;
+  price: string;
+  instructions?: string;
+  created_by?: string;
+  image_path?: string;
+  image_url?: string;
+  ingredient_ids?: string[];
+  ingredients?: Ingredient[];
+  chefTips?: string[];
+  prepTime?: string;
+  cookTime?: string;
+  servings?: string;
+  rating?: string;
+  reviews?: string;
+  category?: string;
+  description?: string;
 }
 
 export type RecommendationType =
@@ -140,7 +168,6 @@ export type RecommendationType =
 
 export interface MenuRecommendation {
   id: ID;
-  product_id?: ID;
   recommendation_type: RecommendationType;
   reason: string;
   created_at: string;
@@ -173,7 +200,6 @@ export type RestockStatus = "pending" | "ordered" | "received" | "cancelled";
 
 export interface RestockItem {
   id: ID;
-  product_id: ID;
   product_name: string;
   category: string;
   current_stock: number;
@@ -203,9 +229,9 @@ export interface RestockList {
 }
 
 export interface RestockFilter {
-  category?: string;
-  priority?: RestockPriority;
-  status?: RestockStatus;
+  category?: string | "all";
+  priority?: RestockPriority | "all";
+  status?: RestockStatus | "all";
   search?: string;
 }
 

@@ -8,10 +8,7 @@ import {
     toggleItemSelection,
     selectAllItems,
     clearSelection,
-    setSearchTerm,
     setCategoryFilter,
-    setPriorityFilter,
-    setStatusFilter,
     selectRestockItems,
     selectSelectedItems,
     selectRestockFilter,
@@ -21,8 +18,6 @@ import {
     setBulkOperationsLoading,
     updateMultipleRestockItems,
 } from "../store/slices/restockSlice";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import Tabs from "../components/Tabs";
 import type { RootState } from "../store";
 import type { RestockItem, RestockPriority, RestockStatus } from "../types";
@@ -224,26 +219,8 @@ export default function RestockList() {
     });
 
     return (
-        <div className="home-page">
-            {/* Sidebar */}
-            <Sidebar />
-
-            {/* Main Content */}
-            <main className="home-main">
-                {/* Header */}
-                <Header
-                    titleSection={{
-                        title: "Restock List",
-                    }}
-                    showSearch={true}
-                    showNotification={true}
-                >
-                    <div className="header-actions">
-                    </div>
-                </Header>
-
-                {/* Content */}
-                <div className="home-content">
+        <div>
+                <>
                     {/* Category Tabs with Controls */}
                     <Tabs
                         tabs={categoryTabs}
@@ -399,8 +376,8 @@ export default function RestockList() {
                             <button className="page-btn">›</button>
                         </div>
                     </div>
-                </div>
-            </main>
+                </>
+
         </div>
     );
 }

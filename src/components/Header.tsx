@@ -29,15 +29,12 @@ export default function Header({
     className = "home-header",
     actionButtons,
     titleSection,
-    showSearch = false,
     showNotification = false
 }: HeaderProps) {
-    const config = {
-        user: appConfig.defaultUser
-    };
 
     return (
         <header className={className}>
+            <div className="header-left-section">
             {/* Title Section with Badge - Rendered if provided */}
             {titleSection && (
                 <div className="header-title-section">
@@ -52,6 +49,7 @@ export default function Header({
 
             {/* Page-specific content */}
             {children}
+            </div>
 
             {/* Right Section Container */}
             <div className="header-right-section">

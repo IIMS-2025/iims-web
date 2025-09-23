@@ -23,9 +23,12 @@ export const appConfig = {
 
     // API configuration
     api: {
-        baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001',
+        baseUrl: import.meta.env.VITE_API_BASE_URL || 'http://0.0.0.0:8000',
         timeout: 10000,
-        retryAttempts: 3
+        retryAttempts: 3,
+        tenantHeader: 'X-Tenant-ID',
+        tenantId: '11111111-1111-1111-1111-111111111111',
+        assetPrefix: import.meta.env.ASSET_PREFIX || 'http://localhost:4566/iims-media/'
     },
 
     // Authentication settings
@@ -164,7 +167,7 @@ export const getAppConfig = () => {
             ...appConfig,
             api: {
                 ...appConfig.api,
-                baseUrl: 'http://localhost:3001'
+                baseUrl: 'http://0.0.0.0:8000'
             },
             features: {
                 ...appConfig.features,

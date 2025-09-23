@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { colors } from '../styles/colors';
-import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
+// Layout provides Header and Sidebar
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -268,7 +267,7 @@ export default function OrdersInsights() {
                     ticks: {
                         color: '#6B7280',
                         font: {
-                            family: 'Inter',
+                            family: 'Lexend',
                             size: 11
                         }
                     },
@@ -283,7 +282,7 @@ export default function OrdersInsights() {
                         stepSize: 250,
                         color: '#6B7280',
                         font: {
-                            family: 'Inter',
+                            family: 'Lexend',
                             size: 11
                         },
                         callback: function (value: any) {
@@ -346,7 +345,7 @@ export default function OrdersInsights() {
                             padding: '5px 12px',
                             fontSize: 14,
                             fontWeight: 600,
-                            fontFamily: 'Inter',
+                            fontFamily: 'Lexend',
                             color: '#5F63F2',
                             cursor: 'pointer',
                             boxShadow: '0px 1px 2px 0px rgba(0, 0, 0, 0.05)'
@@ -360,7 +359,7 @@ export default function OrdersInsights() {
                             padding: '5px 12px',
                             fontSize: 14,
                             fontWeight: 400,
-                            fontFamily: 'Inter',
+                            fontFamily: 'Lexend',
                             color: '#6B7280',
                             cursor: 'pointer'
                         }}>
@@ -543,7 +542,7 @@ export default function OrdersInsights() {
                     ticks: {
                         color: '#6B7280',
                         font: {
-                            family: 'Inter',
+                            family: 'Lexend',
                             size: 11
                         }
                     },
@@ -556,7 +555,7 @@ export default function OrdersInsights() {
                     ticks: {
                         color: '#6B7280',
                         font: {
-                            family: 'Inter',
+                            family: 'Lexend',
                             size: 11
                         },
                         callback: function (value: any) {
@@ -709,30 +708,9 @@ export default function OrdersInsights() {
     };
 
     return (
-        <div className="home-page">
-            {/* Sidebar */}
-            <Sidebar />
-
-            {/* Main Content */}
-            <main className="home-main">
-                {/* Header */}
-                <Header
-                    titleSection={{
-                        title: "Orders & Insights",
-                        badge: {
-                            text: "Dashboard"
-                        }
-                    }}
-                    showSearch={true}
-                    showNotification={true}
-                >
-                    <div className="header-actions">
-
-                    </div>
-                </Header>
-
+        <>
                 {/* Content Sections */}
-                <div className="home-content">
+                <>
                     <section className="dashboard-section">
                         <div style={{
                             padding: 32,
@@ -887,8 +865,7 @@ export default function OrdersInsights() {
                             </div>
                         </div>
                     </section>
-                </div>
-            </main>
-        </div>
+                </>
+        </>
     );
 }
