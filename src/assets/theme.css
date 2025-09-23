@@ -136,14 +136,18 @@ body {
 
 .btn.ghost {
   background: transparent;
-  border: 1px solid var(--border);
+  border: 0.5px solid var(--border);
+}
+
+.inventory-page {
+  height: 100%;
 }
 
 .input {
   width: 100%;
   padding: 0.65rem 0.8rem;
   background: #FFFFFF;
-  border: 1px solid var(--border);
+  border: 0.5px solid var(--border);
   color: var(--text);
   border-radius: 0.5rem;
 }
@@ -157,13 +161,13 @@ body {
 
 .card {
   background: var(--card);
-  border: 1px solid var(--border);
+  border: 0.5px solid var(--border);
   border-radius: 1rem;
 }
 
 .panel {
   background: var(--panel);
-  border: 1px solid var(--border);
+  border: 0.5px solid var(--border);
   border-radius: 1rem;
 }
 
@@ -286,7 +290,7 @@ body {
 .badge {
   padding: .25rem .5rem;
   border-radius: .35rem;
-  border: 1px solid var(--border);
+  border: 0.5px solid var(--border);
   background: #FFFFFF;
   font-size: .75rem;
   color: var(--muted);
@@ -295,7 +299,7 @@ body {
 .alert {
   padding: .75rem;
   border-radius: .75rem;
-  border: 1px solid var(--border);
+  border: 0.5px solid var(--border);
   background: #FFFFFF;
 }
 
@@ -420,6 +424,9 @@ body {
   overflow: hidden;
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.06);
   margin-top: 16px;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #E5E7EB;
 }
 
 .table-header {
@@ -449,7 +456,7 @@ body {
   gap: 6px;
   padding: 6px 12px;
   background: #FFFFFF;
-  border: 1px solid #E1E5E9;
+  border: 0.5px solid #E1E5E9;
   border-radius: 6px;
   font-family: Inter, sans-serif;
   font-weight: 500;
@@ -749,7 +756,7 @@ body {
 .page-btn {
   width: 28px;
   height: 28px;
-  border: 1px solid #E1E5E9;
+  border: 0.5px solid #E1E5E9;
   background: #FFFFFF;
   border-radius: 4px;
   font-family: Inter, sans-serif;
@@ -903,7 +910,7 @@ body {
 
 .stock-info.highlighted {
   background: #F0FDF4;
-  border: 1px solid #BBF7D0;
+  border: 0.5px solid #BBF7D0;
   border-radius: 8px;
   padding: 12px 16px;
   position: relative;
@@ -952,7 +959,7 @@ body {
 .input-group {
   display: flex;
   align-items: center;
-  border: 1px solid #D1D5DB;
+  border: 0.5px solid #D1D5DB;
   border-radius: 8px;
   overflow: hidden;
   transition: border-color 0.2s ease;
@@ -991,7 +998,7 @@ body {
   align-items: center;
   padding: 12px 16px;
   background: #F8FAFF;
-  border: 1px solid #E0E7FF;
+  border: 0.5px solid #E0E7FF;
   border-radius: 8px;
 }
 
@@ -1019,7 +1026,7 @@ body {
 
 .btn-cancel {
   padding: 10px 20px;
-  border: 1px solid #D1D5DB;
+  border: 0.5px solid #D1D5DB;
   background: #FFFFFF;
   color: #6B7280;
   border-radius: 8px;
@@ -1131,12 +1138,12 @@ body {
   background: #F9FAFB;
   border-radius: 8px;
   padding: 4px;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
 }
 
 .btn-outline-sm {
   padding: 6px 12px;
-  border: 1px solid #D1D5DB;
+  border: 0.5px solid #D1D5DB;
   background: #FFFFFF;
   color: #6B7280;
   border-radius: 6px;
@@ -1230,7 +1237,7 @@ body {
 
 .product-update-card {
   background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
   border-radius: 12px;
   padding: 16px;
   transition: all 0.2s ease;
@@ -1378,7 +1385,7 @@ body {
 .reason-field {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #D1D5DB;
+  border: 0.5px solid #D1D5DB;
   border-radius: 6px;
   font-family: Inter, sans-serif;
   font-weight: 400;
@@ -1418,7 +1425,7 @@ body {
 .expiry-field {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #D1D5DB;
+  border: 0.5px solid #D1D5DB;
   border-radius: 6px;
   font-family: Inter, sans-serif;
   font-weight: 400;
@@ -1544,7 +1551,7 @@ body {
   width: 100%;
   max-width: 200px;
   padding: 10px 14px;
-  border: 1px solid #D1D5DB;
+  border: 0.5px solid #D1D5DB;
   border-radius: 8px;
   background: #FFFFFF;
   font-family: Inter, sans-serif;
@@ -1604,7 +1611,7 @@ body {
   gap: 16px;
   padding: 16px;
   background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
   border-radius: 8px;
   transition: all 0.2s ease;
 }
@@ -1795,7 +1802,7 @@ body {
   background: #F8F9FA;
   padding: 4px;
   border-radius: 8px;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
 }
 
 .stock-update-tabs .tab-button {
@@ -1825,7 +1832,7 @@ body {
   background: #FFFFFF;
   color: #5F63F2;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px rgba(0, 0, 0, 0.06);
-  border: 1px solid #E0E7FF;
+  border: 0.5px solid #E0E7FF;
 }
 
 .stock-update-tabs .tab-icon {
@@ -2095,7 +2102,7 @@ body {
 .btn-secondary {
   background: #FFFFFF;
   color: #374151;
-  border: 1px solid #D1D5DB;
+  border: 0.5px solid #D1D5DB;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
 }
 
@@ -2107,7 +2114,7 @@ body {
 .btn-outline {
   background: transparent;
   color: #6B7280;
-  border: 1px solid #D1D5DB;
+  border: 0.5px solid #D1D5DB;
 }
 
 .btn-outline:hover {
@@ -2154,7 +2161,7 @@ body {
 .stat-card.clickable.active {
   border-color: #5F63F2;
   background: #F8FAFF;
-  box-shadow: 0px 4px 12px rgba(95, 99, 242, 0.25), 0px 2px 4px rgba(95, 99, 242, 0.15);
+  box-shadow: 0px 4px 4px rgba(95, 99, 242, 0.25), 0px 2px 2px rgba(95, 99, 242, 0.15);
 }
 
 .stat-icon {
@@ -2232,9 +2239,11 @@ body {
 }
 
 .search-container {
+  width: 256px;
+  height: 44px;
   position: relative;
-  flex: 1;
-  max-width: 400px;
+  display: flex;
+  align-items: center;
 }
 
 .search-icon {
@@ -2248,9 +2257,9 @@ body {
 
 .search-input {
   width: 100%;
-  height: 40px;
+  height: 44px;
   padding: 10px 14px 10px 36px;
-  border: 1px solid #D1D5DB;
+  border: 0.5px solid #D1D5DB;
   border-radius: 6px;
   background: #FFFFFF;
   font-family: Inter, sans-serif;
@@ -2278,9 +2287,9 @@ body {
 }
 
 .filter-select {
-  height: 40px;
+  height: 44px;
   padding: 10px 14px;
-  border: 1px solid #D1D5DB;
+  border: 0.5px solid #D1D5DB;
   border-radius: 6px;
   background: #FFFFFF;
   font-family: Inter, sans-serif;
@@ -2294,13 +2303,11 @@ body {
 
 .filter-select:focus {
   outline: none;
-  border-color: #5F63F2;
-  box-shadow: 0px 0px 0px 4px rgba(95, 99, 242, 0.1);
 }
 
 .inventory-table-container {
   background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px rgba(0, 0, 0, 0.06);
@@ -2513,9 +2520,14 @@ body {
 }
 
 .empty-state {
+  display: flex;
+  flex-direction: column;
   text-align: center;
-  padding: 64px 32px;
   color: #6B7280;
+  padding: 64px 32px;
+  min-height: 60%;
+  justify-content: center;
+  align-items: center;
 }
 
 .empty-icon {
@@ -2554,9 +2566,6 @@ body {
     align-items: stretch;
   }
   
-  .search-container {
-    max-width: none;
-  }
 }
 
 @media (max-width: 768px) {
@@ -2703,7 +2712,7 @@ body {
   width: 100%;
   height: 50px;
   background: #F9FAFB;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
   border-radius: 8px;
   padding: 0 44px 0 16px;
   
@@ -2758,7 +2767,7 @@ body {
   width: 100%;
   height: 50px;
   background: #5F63F2;
-  border: 1px solid transparent;
+  border: 0.5px solid transparent;
   border-radius: 8px;
   box-shadow: 0px 4px 6px 0px rgba(0, 0, 0, 0.1), 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
   
@@ -2821,7 +2830,7 @@ body {
   width: 216px;
   height: 54px;
   background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
   border-radius: 8px;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
   cursor: pointer;
@@ -3041,7 +3050,8 @@ body {
 
 .nav-item.active {
   background: #F1F2FE;
-  box-shadow: 0px 4px 12px rgba(30, 33, 121, 0.25), 0px 2px 4px rgba(95, 99, 242, 0.15);
+  border: 1px solid #5F63F2;
+  box-shadow: 0px 2px 2px rgba(95, 99, 242, 0.25), 0px 1px 1px rgba(95, 99, 242, 0.15);
 }
 
 .nav-item.active .nav-text {
@@ -3203,32 +3213,6 @@ body {
   top: 23px;
 }
 
-.search-container {
-  width: 256px;
-  height: 38px;
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-input {
-  width: 100%;
-  height: 38px;
-  background: #F9FAFB;
-  border: 1px solid #E5E7EB;
-  border-radius: 8px;
-  padding: 0 16px 0 40px;
-  
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 1.43;
-  color: #111827;
-}
-
-.search-input::placeholder {
-  color: #ADAEBC;
-}
-
 .search-icon {
   position: absolute;
   left: 16px;
@@ -3306,7 +3290,7 @@ body {
   width: 100%;
   flex: 1;
   background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
   border-radius: 16px;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
   padding: 33px;
@@ -3389,7 +3373,7 @@ body {
 .metric-card {
   height: 106px;
   border-radius: 12px;
-  border: 1px solid;
+  border: 0.5px solid;
   padding: 17px;
   display: flex;
   flex-direction: column;
@@ -3609,7 +3593,7 @@ body {
 .recommendation-card {
   height: 106px;
   background: #FFFFFF;
-  border: 1px solid #F3F4F6;
+  border: 0.5px solid #F3F4F6;
   border-radius: 8px;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
   padding: 17px;
@@ -3655,7 +3639,7 @@ body {
   min-height: 466px;
   background: #FFFFFF;
   border-radius: 16px;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
 }
 
@@ -3665,7 +3649,7 @@ body {
   min-height: 386px;
   background: #FFFFFF;
   border-radius: 16px;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
   margin-bottom: 16px;
 }
@@ -3682,10 +3666,7 @@ body {
   width: 100%;
   flex: 1;
   min-height: 364px;
-  background: #FFFFFF;
   border-radius: 16px;
-  border: 1px solid #E5E7EB;
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
 }
 
 /* Customer Reviews Section (Section 2) */
@@ -3755,7 +3736,7 @@ body {
   align-items: center;
   gap: 8px;
   background: #FEFCE8;
-  border: 1px solid #FEF08A;
+  border: 0.5px solid #FEF08A;
   border-radius: 8px;
   padding: 9px 17px;
   
@@ -3789,7 +3770,7 @@ body {
 .review-card {
   min-height: 134px;
   border-radius: 12px;
-  border: 1px solid;
+  border: 0.5px solid;
   padding: 17px;
   display: flex;
   flex-direction: column;
@@ -3916,7 +3897,7 @@ body {
 
 .analytics-card {
   background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
   border-radius: 16px;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
   padding: 24px;
@@ -4013,7 +3994,7 @@ body {
 
 .inventory-card {
   background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
   border-radius: 16px;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
   padding: 24px;
@@ -4048,7 +4029,7 @@ body {
   justify-content: space-between;
   align-items: center;
   background: #FEFCE8;
-  border: 1px solid;
+  border: 0.5px solid;
   border-radius: 8px;
   padding: 12px 16px;
   min-height: 64px;
@@ -4247,31 +4228,6 @@ body {
   height: 38px;
 }
 
-.search-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 256px;
-  height: 38px;
-}
-
-.search-input {
-  width: 256px;
-  height: 38px;
-  background: #F9FAFB;
-  border: 1px solid #E5E7EB;
-  border-radius: 8px;
-  padding: 0 16px 0 40px;
-  font-family: Inter;
-  font-weight: 400;
-  font-size: 14px;
-  color: #111827;
-}
-
-.search-input::placeholder {
-  color: #ADAEBC;
-}
-
 .search-icon {
   position: absolute;
   left: 16px;
@@ -4366,7 +4322,7 @@ body {
 
 .filter-btn {
   padding: 9px 16px;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
   border-radius: 8px;
   background: #FFFFFF;
   font-family: Inter;
@@ -4403,7 +4359,7 @@ body {
 .menu-item-card {
   width: 100%;
   background: #FFFFFF;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
   border-radius: 16px;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
   overflow: hidden;
@@ -4539,7 +4495,7 @@ body {
   align-items: center;
   justify-content: center;
   background: transparent;
-  border: 1px solid #E5E7EB;
+  border: 0.5px solid #E5E7EB;
   border-radius: 8px;
   font-family: Inter;
   font-weight: 400;
@@ -4638,13 +4594,6 @@ body {
     align-items: stretch;
   }
 
-  .search-container {
-    width: 100%;
-  }
-
-  .search-input {
-    width: 100%;
-  }
 }
 
 /* Avatar Styles */

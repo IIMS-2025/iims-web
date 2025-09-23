@@ -15,22 +15,27 @@ export const inventoryApi = createApi({
   tagTypes: ["Inventory"],
   endpoints: (builder) => ({
     // GET /api/v1/inventory
-    getInventory: builder.query<Inventory[], void>({
+    getInventory: builder.query<
+      { inventoryList: Inventory[]; summary: Record<string, number> },
+      void
+    >({
       query: () => "/api/v1/inventory",
-      transformResponse: (response: { data: any[] }) => (response?.data ?? []) as Inventory[],
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map((item: any) => ({ type: "Inventory" as const, id: item?.id })),
-              { type: "Inventory" as const, id: "LIST" },
-            ]
-          : [{ type: "Inventory" as const, id: "LIST" }],
+      transformResponse: (response: { ingredient_items?: any[]; summary?: Record<string, number> }) => {
+        console.log('response', response);
+        return {
+          inventoryList: response?.ingredient_items ?? [],
+          summary: response?.summary ?? {},
+        }
+      },
     }),
 
     // GET /api/v1/inventory/{id}
     getInventoryItem: builder.query<Inventory | null, string>({
       query: (productId) => `/api/v1/inventory/${productId}`,
-      transformResponse: (response: { data: any[] }) => (response?.data?.[0] ?? null) as Inventory | null,
+      transformResponse: (response: { data: any[] }) => {
+        console.log('response', response);
+        return (response?.data?.[0] ?? null) as Inventory | null
+      },
       providesTags: (result, error, id) => [{ type: "Inventory", id }],
     }),
 

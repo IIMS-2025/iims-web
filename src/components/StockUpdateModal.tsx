@@ -176,7 +176,6 @@ export default function StockUpdateModal({
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
               />
             </div>
             
