@@ -8,8 +8,6 @@ import {
   ExpiringSoonIcon,
   LowStockIcon,
   DeadStockIcon,
-} from "../components/icons/InventoryIcons";
-import {
   ListIcon,
   BoxIcon,
   DiamondIcon,
@@ -18,7 +16,8 @@ import {
   UpdateStockIcon,
   CartOutlineIcon,
   CloseIcon,
-} from "../components/icons/GeneralIcons";
+} from "../components/icons/InventoryIcons";
+
 import { productIcon } from "../assets";
 import StockUpdateModal from "../components/StockUpdateModal";
 import type { RootState } from "../store";
@@ -26,8 +25,6 @@ import type { Inventory } from "../types";
 import type { Tab } from "../components/Tabs";
 import {
   useGetInventoryQuery,
-  useUpdateStockBatchMutation,
-  useUpdateStockSingleMutation,
 } from "../services/inventoryApi";
 
 export default function InventoryPage() {
@@ -105,9 +102,6 @@ export default function InventoryPage() {
     setRestockQuantity("");
   };
 
-  const [updateStockBatch] = useUpdateStockBatchMutation();
-  const [updateStockSingle] = useUpdateStockSingleMutation();
-
 const handleStockUpdate = () => {
   setShowStockUpdateModal(false);
 }
@@ -137,7 +131,7 @@ const handleStockUpdate = () => {
   ];
 
   return (
-    <div className="inventory-page">
+    <div className="inventory-page tw-w-full tw-h-full">
         {/* Quick Filter Stats Cards */}
         <div className="inventory-stats">
           <div
@@ -209,12 +203,12 @@ const handleStockUpdate = () => {
         />
 
         {/* Modern Inventory Table */}
-        <div className="modern-inventory-table">
+        <div className="modern-inventory-table tw-w-full">
           <div className="table-header">
             <div className="table-title">Inventory</div>
-            <div className="table-actions">
+            <div className="table-actions tw-items-center">
               <div className="inventory-controls">
-                <div className="search-container">
+                <div className="search-container tw-w-64">
                   <SearchIcon className="search-icon" />
                   <input
                     type="text"
@@ -225,7 +219,7 @@ const handleStockUpdate = () => {
                   />
                 </div>
 
-                <div className="filter-controls">
+                <div className="filter-controls tw-flex tw-items-center tw-gap-3">
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
@@ -254,7 +248,7 @@ const handleStockUpdate = () => {
             </div>
           </div>
 
-          <div className="table-container">
+          <div className="table-container tw-overflow-x-auto">
             <table className="modern-table">
               <thead>
                 <tr>
