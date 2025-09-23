@@ -76,7 +76,7 @@ export const appConfig = {
     navigation: {
         primary: [
             { id: 'home', label: 'Home', path: '/home', icon: 'home' },
-            { id: 'orders-insights', label: 'Orders & Insights', path: '/orders-insights', icon: 'insights' },
+            { id: 'insights', label: 'Orders & Insights', path: '/insights', icon: 'insights' },
             { id: 'chefspace', label: 'Chef Space', path: '/chefspace', icon: 'chef' },
             { id: 'inventory', label: 'Inventory Dashboard', path: '/inventory', icon: 'inventory' },
             { id: 'inventory-usage', label: 'Inventory Usage', path: '/inventory-usage', icon: 'usage' }
@@ -167,7 +167,7 @@ export const getAppConfig = () => {
             ...appConfig,
             api: {
                 ...appConfig.api,
-                baseUrl: 'http://0.0.0.0:8000'
+                baseUrl: 'http://localhost:8000'
             },
             features: {
                 ...appConfig.features,

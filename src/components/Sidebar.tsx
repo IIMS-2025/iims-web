@@ -15,6 +15,9 @@ export default function Sidebar({ className = "home-sidebar" }: SidebarProps) {
         if (path === "/chefspace") {
             return location.pathname.startsWith("/chefspace");
         }
+        if (path === "/insights") {
+            return location.pathname.startsWith("/insights");
+        }
         return location.pathname === path;
     };
 
@@ -67,12 +70,12 @@ export default function Sidebar({ className = "home-sidebar" }: SidebarProps) {
                     <div className="nav-text">Inventory</div>
                 </Link>
 
-                <Link to="/orders-insights" className={`nav-item ${isActive("/orders-insights") ? "active" : ""}`}>
+                <Link to="/insights" className={`nav-item ${isActive("/insights") ? "active" : ""}`}>
                     <div className="nav-icon">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                             <path
                                 d="M9 1V17M1 9H17M13 5L5 13M5 5L13 13"
-                                stroke={isActive("/orders-insights") ? "#5F63F2" : "#6B7280"}
+                                stroke={isActive("/insights") ? "#5F63F2" : "#6B7280"}
                                 strokeWidth="2"
                                 strokeLinecap="round"
                             />
@@ -108,7 +111,7 @@ export default function Sidebar({ className = "home-sidebar" }: SidebarProps) {
                             />
                         </svg>
                     </div>
-                    <div className="nav-text">Chef Space</div>
+                    <div className="nav-text">Chef's Space</div>
                 </Link>
             </nav>
 

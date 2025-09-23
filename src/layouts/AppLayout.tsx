@@ -10,8 +10,9 @@ export default function AppLayout() {
     "/": "Welcome Back!",
     "/home": "Welcome Back!",
     "/inventory": "Inventory Management",
-    "/orders-insights": "Orders & Insights",
-    "/chefspace": "Chef Space",
+    "/insights": "Orders & Insights",
+    "/restock": "Restock List",
+    "/chefspace": "Chef's Space",
   };
   const currentPath = location.pathname.replace(/\/$/, "");
   const headerTitle = titleMap[currentPath] || appConfig.branding.brandName;

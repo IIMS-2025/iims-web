@@ -26,7 +26,7 @@ export default function App() {
           <Route path={routingConfig.routes.login} element={<Login />} />
           <Route element={<AppLayout />}>
             <Route path={routingConfig.routes.default} element={<HomePage />} />
-            <Route path="/orders-insights" element={<OrdersInsights />} />
+            <Route path="/insights" element={<OrdersInsights />} />
             <Route path="/chefspace" element={<ChefSpace />} />
             <Route path="/chefspace/:id" element={<ChefSpaceDetail />} />
             <Route path="/inventory" element={<InventoryPage />} />
