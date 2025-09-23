@@ -158,7 +158,7 @@ export interface DashboardApiResponse extends ApiResponse<DashboardData> { }
 
 // Helper type for API endpoints
 export type DashboardEndpoints = {
-    '/api/dashboard/orders-insights': OrdersInsightsMetrics;
+    '/api/dashboard/insights': OrdersInsightsMetrics;
     '/api/dashboard/sales-forecast': SalesVsForecastData;
     '/api/dashboard/category-distribution': CategoryDistributionData;
     '/api/dashboard/cost-profit': CostProfitItem[];

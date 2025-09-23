@@ -570,15 +570,15 @@
     transition: all 0.2s ease;
 }
 
-.filter-btn:hover {
-    border-color: #7C3AED;
-    color: #7C3AED;
+.filter-btn:hover:not(.active) {
+    border-color: #D1D5DB;
 }
 
 .filter-btn.active {
-    border-color: #7C3AED;
-    color: #7C3AED;
-    border-bottom: 2px solid #7C3AED;
+    background: #5F63F2;
+    color: #FFFFFF;
+    border-color: #5F63F2;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
 }
 
 .filter-btn svg {
@@ -788,7 +788,7 @@
 
 .select-all-btn.select-all {
     color: #7C3AED;
-    
+
 }
 
 .action-btn.clear-selection {

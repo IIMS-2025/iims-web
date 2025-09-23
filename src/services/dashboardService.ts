@@ -52,7 +52,7 @@ api.interceptors.response.use(
 export class DashboardService {
     // Orders & Insights APIs
     static async getOrdersInsightsMetrics(): Promise<OrdersInsightsMetrics> {
-        const response = await api.get<ApiResponse<OrdersInsightsMetrics>>('/api/dashboard/orders-insights');
+        const response = await api.get<ApiResponse<OrdersInsightsMetrics>>('/api/dashboard/insights');
         return response.data.data;
     }
 
