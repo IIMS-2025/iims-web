@@ -1105,9 +1105,9 @@ body {
 }
 
 .stock-update-modal {
-  max-width: 900px;
+  max-width: 90%;
   width: 100%;
-  max-height: 85vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
 }

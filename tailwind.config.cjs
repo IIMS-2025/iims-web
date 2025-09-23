@@ -4,7 +4,6 @@ module.exports = {
     './index.html',
     './src/**/*.{ts,tsx,js,jsx,html}',
   ],
-  prefix: 'tw-',
   corePlugins: {
     preflight: false,
   },

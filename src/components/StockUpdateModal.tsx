@@ -1,388 +1,221 @@
-import { useEffect, useState } from "react";
-import type { Inventory } from "../types";
-import { productIcon } from "../assets";;
+import type { RootState } from "../store";
+import { useSelector } from "react-redux";
+import { useMemo, useState } from "react";
+import { CloseIcon, SearchIcon } from "./icons/InventoryIcons";
+
 
 interface StockUpdateModalProps {
   isOpen: boolean;
   onClose: () => void;
-  inventoryItems: Inventory[];
-  onUpdateStock: (updates: {
-    id: string;
-    qty: number;
-    unit: string;
-    tx_type: "purchase" | "adjustment";
-    reason?: string;
-    expiry_date?: string;
-  }[]) => void;
+  onUpdateStock: () => void;
 }
 
-interface StockUpdate {
-  name?: string;
-  id: string;
-  current_stock: number;
-  new_quantity?: string;
-  unit: string;
-  price: number;
-  reason?: string;
-  expiry_date?: string;
-}
-
-export default function StockUpdateModal({ 
-  isOpen, 
-  onClose, 
-  inventoryItems, 
-  onUpdateStock 
+export default function StockUpdateModal({
+  isOpen,
+  onClose,
+  onUpdateStock,
 }: StockUpdateModalProps) {
-  const [stockUpdates, setStockUpdates] = useState<StockUpdate[]>([]);
-  
-  // Update stockUpdates when inventoryItems changes
-  useEffect(() => {
+  const inventoryItems = useSelector((s: RootState) => s.inventory.items || []);
 
-      const newStockUpdates = inventoryItems.map(item => ({
-        id: item.id,
-        name: item?.name || "",
-        current_stock: item.available_qty,
-        new_quantity: "",
-        unit: item?.unit || "",
-        price: 2.50,
-        reason: "",
-        expiry_date: ""
-      }));
-  
-      setStockUpdates(newStockUpdates);
-  }, [inventoryItems]);
+  // Local UI state for bulk update
+  const [query, setQuery] = useState("");
+  const [staged, setStaged] = useState<Record<string, number>>({});
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [actionType, setActionType] = useState("order_update");
-  const [currentStep, setCurrentStep] = useState<"update" | "review">("update");
-
-  const handleQuantityChange = (productId: string, quantity: string) => {
-    setStockUpdates(prev => 
-      prev.map(item => 
-        item.id === productId 
-          ? { ...item, new_quantity: quantity }
-          : item
-      )
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return inventoryItems;
+    return inventoryItems.filter((it: any) =>
+      `${it.name} ${it.category || ""}`.toLowerCase().includes(q)
     );
+  }, [inventoryItems, query]);
+
+  const stagedEntries = useMemo(
+    () => Object.entries(staged).filter(([, qty]) => qty > 0),
+    [staged]
+  );
+
+  const handleStageQty = (id: string, qty: number) => {
+    const next = Number.isFinite(qty) && !Number.isNaN(qty) ? qty : 0;
+    setStaged((prev) => ({ ...prev, [id]: Math.max(0, next) }));
   };
 
-  const handleReasonChange = (productId: string, reason: string) => {
-    setStockUpdates(prev => 
-      prev.map(item => 
-        item.id === productId 
-          ? { ...item, reason: reason }
-          : item
-      )
-    );
-  };
-
-
-  const handleSubmit = () => {
-    const validUpdates = stockUpdates.filter(item => {
-      const hasQuantity = item.new_quantity && parseFloat(item.new_quantity) > 0;
-      const hasExpiryForOrder = actionType !== "order_update" || (item.expiry_date && item.expiry_date.trim());
-      return hasQuantity && hasExpiryForOrder;
+  const adjustStageQty = (id: string, delta: number) => {
+    setStaged((prev) => {
+      const current = Number(prev[id] || 0);
+      const next = Math.max(0, current + delta);
+      return { ...prev, [id]: next };
     });
-
-    const updates = validUpdates.map(item => {
-      if (actionType === "order_update") {
-        return {
-          id: item.id,
-          qty: parseFloat(item.new_quantity || ''),
-          unit: item.unit,
-          tx_type: "purchase" as const,
-          reason: item.reason || undefined,
-        };
-      }
-      // closing/opening stock: send adjustment by delta (target - current)
-      const targetQty = parseFloat(item.new_quantity || '');
-      const delta = targetQty - item.current_stock;
-      return {
-        id: item.id,
-        qty: delta,
-        unit: item.unit,
-        tx_type: "adjustment" as const,
-        reason: item.reason || undefined,
-      };
-    });
-    
-    if (updates.length > 0) {
-      onUpdateStock(updates);
-      onClose();
-      // Reset states
-      setCurrentStep("update");
-      setActionType("order_update");
-      // Reset stock updates
-      setStockUpdates(prev => prev.map(item => ({ 
-        ...item, 
-        new_quantity: "", 
-        reason: "", 
-        expiry_date: "" 
-      })));
-    }
   };
 
-  const handleProceedToReview = () => {
-    setCurrentStep("review");
+  const handleDiscardAll = () => setStaged({});
+
+  const handleApplyUpdates = () => {
+    // Pass control to parent; parent can use current redux list
+    onUpdateStock();
+    setStaged({});
   };
-
-  const handleBackToUpdate = () => {
-    setCurrentStep("update");
-  };
-
-
-  const totalUpdates = stockUpdates.filter(item => {
-    item.new_quantity?.length && item.new_quantity.length > 0;
-  }).length;
-
-  const totalCost = stockUpdates.reduce((sum, item) => {
-    const quantity = parseFloat(item.new_quantity || '') || 0;
-    return sum + (quantity * item.price);
-  }, 0);
 
   if (!isOpen) return null;
 
   return (
     <div className="modal-overlay stock-update-overlay" onClick={onClose}>
-      <div className="modal-content stock-update-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-content stock-update-modal flex flex-col" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="modal-header">
           <div className="header-info">
-            <h3>{currentStep === "update" ? "Bulk Stock Update" : "Review Changes"}</h3>
+            <h3>Bulk Stock Update</h3>
             <p className="header-subtitle">
-              {currentStep === "update" 
-                ? "Update stock quantities for multiple products" 
-                : "Review and confirm your stock updates"
-              }
+              Update stock quantities for multiple products
             </p>
           </div>
           <button className="modal-close" onClick={onClose}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            <CloseIcon size={24} />
           </button>
         </div>
 
-        {/* Search and Actions - Only show in update step */}
-        {currentStep === "update" && (
-          <div className="modal-controls">
-            <div className="search-container">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="search-icon">
-                <path d="M7 13C10.3137 13 13 10.3137 13 7C13 3.68629 10.3137 1 7 1C3.68629 1 1 3.68629 1 7C1 10.3137 3.68629 13 7 13Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M13 13L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+        {/* Body */}
+        <div className="modal-body flex gap-4 flex-1 overflow-hidden">
+
+
+          {/* Right: Search + Full Inventory List */}
+          <div className="flex-1 md:basis-2/3 flex flex-col gap-3 min-h-0">
+            <div className="relative w-full md:w-64">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                <SearchIcon size={16} />
+              </div>
               <input
                 type="text"
-                placeholder="Search products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search inventory..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="w-full h-10 rounded-md border border-gray-300 bg-white pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400"
               />
             </div>
-            
-            <select 
-              id="actionType"
-              value={actionType} 
-              onChange={(e) => setActionType(e.target.value)}
-              className="action-dropdown"
-            >
-              <option value="order_update">Order Update</option>
-              <option value="closing_stock">Closing Stock</option>
-              <option value="opening_stock">Opening Stock</option>
-            </select>
-          </div>
-        )}
 
-        {/* Main Content Area */}
-        <div className="modal-body stock-update-body">
-          {currentStep === "update" ? (
-            // Update Page
-            stockUpdates.length === 0 ? (
-              <div className="no-products-message">
-                <p>No inventory items available to update.</p>
-              </div>
-            ) : stockUpdates.length === 0 ? (
-              <div className="no-products-message">
-                <p>No products match your current filters.</p>
-              </div>
-            ) : (
-              <div className="products-grid">
-                {stockUpdates.map((item) => (
-              <div key={item.id} className="product-update-card">
-                <div className="product-header">
-                  <img src={productIcon} alt="Product" className="product-icon-sm" />
-                  <div className="product-info">
-                    <h4 className="product-name">{item.name}</h4>
-                  </div>
-                </div>
-
-                <div className="stock-info-grid">
-                  <div className="current-stock-info">
-                    <span className="label">Current Stock</span>
-                    <span className="current-value">{item.current_stock} {item.unit}</span>
-                  </div>
-                  
-                  <div className="price-info">
-                    <span className="label">Unit Price</span>
-                    <span className="price-value">${item.price.toFixed(2)}</span>
-                  </div>
-                </div>
-
-                <div className="update-input-section">
-                  <label className="update-label">
-                    {actionType === "order_update" ? "Add Stock Quantity" : 
-                     actionType === "closing_stock" ? "Closing Stock Count" : 
-                     "Opening Stock Count"}
-                  </label>
-                  <div className="input-group">
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.1"
-                      placeholder="0"
-                      value={item.new_quantity}
-                      onChange={(e) => handleQuantityChange(item.id, e.target.value)}
-                      className="quantity-input-sm"
-                    />
-                    <span className="input-unit">{item.unit}</span>
-                  </div>
-
-                  {/* Reason field for closing/opening stock */}
-                  {(actionType === "closing_stock" || actionType === "opening_stock") && (
-                    <div className="reason-input">
-                      <label className="reason-label">Reason (Optional):</label>
-                      <input
-                        type="text"
-                        placeholder="Enter reason for stock adjustment..."
-                        value={item.reason || ""}
-                        onChange={(e) => handleReasonChange(item.id, e.target.value)}
-                        className="reason-field"
-                      />
-                    </div>
-                  )}
-                  
-                  {item.new_quantity && parseFloat(item.new_quantity) > 0 && (
-                    <div className="cost-preview">
-                      <span className="cost-label">
-                        {actionType === "order_update" ? "Cost: " : "Value: "}
-                      </span>
-                      <span className="cost-amount">
-                        ${(parseFloat(item.new_quantity) * item.price).toFixed(2)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-                ))}
-              </div>
-            )
-          ) : (
-            // Review Page
-            <div className="review-page">
-              <div className="review-header">
-                <h4>Action: {actionType.replace('_', ' ').toUpperCase()}</h4>
-                <p>{stockUpdates.filter(item => item.new_quantity && parseFloat(item.new_quantity) > 0).length} products will be updated</p>
-              </div>
-              
-              <div className="review-list">
-                {stockUpdates
-                  .filter(item => item.new_quantity && parseFloat(item.new_quantity) > 0)
-                  .map((item) => (
-                    <div key={item.id} className="review-item">
-                      <div className="review-product">
-                        <div className="review-icon">
-                          {item.id.charAt(0).toUpperCase()}{item.id.charAt(1).toUpperCase()}
+            <div className="border border-gray-200 rounded-lg bg-white flex-1 overflow-y-auto min-h-0">
+              <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Item</th>
+                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Price Per Item</th>
+                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Available</th>
+                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Add Qty</th>
+                  <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wide px-3 py-2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((item: any) => {
+                  const qty = staged[String(item.id)] || 0;
+                  return (
+                    <tr key={item.id} className="border-t border-gray-100 hover:bg-gray-50">
+                      <td className="px-3 py-2">
+                        <div className="font-medium text-gray-900">{item.name}</div>
+                        <div className="text-xs text-gray-500">{item.category || 'General'}</div>
+                      </td>
+                      <td className="px-3 py-2 text-gray-700">
+                        {`$${Number(item.price_per_unit ?? 2.5).toFixed(2)}`} <span className="text-gray-400">/ {item.unit || ''}</span>
+                      </td>
+                      <td className="px-3 py-2 text-gray-700">{item.available_qty} {item.unit || ''}</td>
+                      <td className="px-3 py-2">
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            aria-label="Decrease"
+                            onClick={() => adjustStageQty(String(item.id), -1)}
+                            className="inline-flex items-center justify-center w-6 h-6 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+                          >
+                            −
+                          </button>
+                          <input
+                            type="text"
+                            min={0}
+                            value={qty}
+                            onChange={(e) => handleStageQty(String(item.id), parseFloat(e.target.value))}
+                            className="w-[40px] h-9 rounded-md border border-gray-300 bg-white px-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 text-center"
+                          />
+                          <button
+                            type="button"
+                            aria-label="Increase"
+                            onClick={() => adjustStageQty(String(item.id), 1)}
+                            className="inline-flex items-center justify-center w-6 h-6 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+                          >
+                            +
+                          </button>
                         </div>
-                        <div className="review-info">
-                          <span className="review-name">{item.id}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="review-middle">
-                        <div className="review-changes">
-                          <div className="change-item">
-                            <span className="change-label">Current:</span>
-                            <span className="change-value">{item.current_stock} {item.unit}</span>
-                          </div>
-                          <div className="change-arrow">→</div>
-                          <div className="change-item">
-                            <span className="change-label">
-                              {actionType === "order_update" ? "Add:" : "Set to:"}
-                            </span>
-                            <span className="change-value highlight">
-                              {actionType === "order_update" ? "+" : ""}{item.new_quantity} {item.unit}
-                            </span>
-                          </div>
-                          <div className="change-arrow">→</div>
-                          <div className="change-item">
-                            <span className="change-label">New Total:</span>
-                            <span className="change-value total">
-                              {actionType === "order_update" 
-                                ? item.current_stock + parseFloat(item.new_quantity || '')
-                                : parseFloat(item.new_quantity || '')
-                              } {item.unit}
-                            </span>
-                          </div>
-                        </div>
-
-                        {(actionType === "closing_stock" || actionType === "opening_stock") && item.reason && (
-                          <div className="review-reason">
-                            <span className="reason-label">Reason:</span>
-                            <span className="reason-text">{item.reason}</span>
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="review-cost">
-                        ${(parseFloat(item.new_quantity || '') * item.price).toFixed(2)}
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Summary and Footer */}
-        <div className="modal-footer stock-update-footer">
-          <div className="update-summary">
-            <div className="summary-item">
-              <span className="summary-label">Products to Update:</span>
-              <span className="summary-value">{totalUpdates}</span>
-            </div>
-            <div className="summary-item">
-              <span className="summary-label">Total Cost:</span>
-              <span className="summary-value total-cost">${totalCost.toFixed(2)}</span>
+                      </td>
+                      <td className="px-3 py-2 text-right">
+                        <button
+                          className="text-xs text-indigo-600 hover:underline"
+                          onClick={() => handleStageQty(String(item.id), 0)}
+                        >
+                          Clear
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+              </table>
             </div>
           </div>
-          
-          <div className="action-buttons">
-            {currentStep === "update" ? (
-              <>
-                <button className="btn-cancel" onClick={onClose}>
-                  Cancel
-                </button>
-                <button 
-                  className="btn-confirm" 
-                  onClick={handleProceedToReview}
-                  disabled={totalUpdates === 0}
-                >
-                  Review {totalUpdates} Update{totalUpdates !== 1 ? 's' : ''}
-                </button>
-              </>
+
+          {/* Left: Staged Items */}
+          <div className="flex-1 border border-gray-200 min-w-[400px] overflow-y-scroll rounded-lg bg-white p-3 min-h-0">
+            <div className="flex items-center justify-between mb-2">
+              <h4 className="text-sm font-semibold text-gray-800">Current Updates</h4>
+              <span className="text-xs text-gray-500">{stagedEntries.length} item(s)</span>
+            </div>
+            {stagedEntries.length === 0 ? (
+              <div className="text-sm text-gray-500">No items staged yet. Use the list to add quantities.</div>
             ) : (
-              <>
-                <button className="btn-cancel" onClick={handleBackToUpdate}>
-                  Back to Edit
-                </button>
-                <button 
-                  className="btn-confirm" 
-                  onClick={handleSubmit}
-                >
-                  Confirm Updates
-                </button>
-              </>
+              <div className="space-y-2 overflow-y-auto">
+                {stagedEntries.map(([id, qty]) => {
+                  const item: any = inventoryItems.find((it: any) => String(it.id) === String(id));
+                  if (!item) return null;
+                  return (
+                    <div key={id} className="flex items-center justify-between gap-3 border border-gray-100 rounded-md px-3 py-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-medium text-gray-900 truncate">{item.name}</div>
+                        <div className="text-xs text-gray-500">Current: {item.available_qty} {item.unit || ""}</div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          aria-label="Decrease"
+                          onClick={() => adjustStageQty(String(item.id), -1)}
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="text"
+                          value={qty}
+                          min={0}
+                          onChange={(e) => handleStageQty(String(item.id), parseFloat(e.target.value))}
+                          className="w-10 text-center h-9 rounded-md border border-gray-300 bg-white px-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400"
+                        />
+                        <button
+                          type="button"
+                          aria-label="Increase"
+                          onClick={() => adjustStageQty(String(item.id), 1)}
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50"
+                        >
+                          +
+                        </button>
+                        <span className="text-xs text-gray-500">{item.unit || ""}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="modal-footer">
+          <button className="btn-cancel" onClick={handleDiscardAll}>Discard updates</button>
+          <button className="btn-confirm" disabled={stagedEntries.length === 0} onClick={handleApplyUpdates}>Update stock</button>
         </div>
       </div>
     </div>

@@ -131,7 +131,7 @@ const handleStockUpdate = () => {
   ];
 
   return (
-    <div className="inventory-page tw-w-full tw-h-full">
+    <div className="inventory-page w-full h-full">
         {/* Quick Filter Stats Cards */}
         <div className="inventory-stats">
           <div
@@ -203,12 +203,12 @@ const handleStockUpdate = () => {
         />
 
         {/* Modern Inventory Table */}
-        <div className="modern-inventory-table tw-w-full">
+        <div className="modern-inventory-table w-full">
           <div className="table-header">
             <div className="table-title">Inventory</div>
-            <div className="table-actions tw-items-center">
+            <div className="table-actions items-center">
               <div className="inventory-controls">
-                <div className="search-container tw-w-64">
+                <div className="search-container w-64">
                   <SearchIcon className="search-icon" />
                   <input
                     type="text"
@@ -219,7 +219,7 @@ const handleStockUpdate = () => {
                   />
                 </div>
 
-                <div className="filter-controls tw-flex tw-items-center tw-gap-3">
+                <div className="filter-controls flex items-center gap-3">
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
@@ -248,7 +248,7 @@ const handleStockUpdate = () => {
             </div>
           </div>
 
-          <div className="table-container tw-overflow-x-auto">
+          <div className="table-container overflow-x-auto">
             <table className="modern-table">
               <thead>
                 <tr>
@@ -355,7 +355,7 @@ const handleStockUpdate = () => {
             </table>
           </div>
 
-          {filteredItems.length > 0 && (
+          {/* {filteredItems.length > 0 && (
             <div className="table-footer">
               <div className="entries-info">
                 Showing {Math.min(filteredItems.length, 5)} to{" "}
@@ -369,7 +369,7 @@ const handleStockUpdate = () => {
                 <button className="page-btn">›</button>
               </div>
             </div>
-          )}
+          )} */}
 
           {filteredItems.length === 0 && (
             <div className="empty-state">
@@ -401,7 +401,7 @@ const handleStockUpdate = () => {
                       className="product-icon"
                     />
                     <div className="item-info">
-                      <h4>{selectedItem.id}</h4>
+                      <h4>{selectedItem.name}</h4>
                       <p className="item-category">Raw Material</p>
                     </div>
                   </div>
@@ -468,7 +468,6 @@ const handleStockUpdate = () => {
         <StockUpdateModal
           isOpen={showStockUpdateModal}
           onClose={() => setShowStockUpdateModal(false)}
-          inventoryItems={inventoryItems}
           onUpdateStock={handleStockUpdate}
         />
     </div>
