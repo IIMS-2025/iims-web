@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getRestockItems, bulkUpdateRestockItems } from "../services/api";
+import { getRestockItems } from "../services/api";
 import {
   setLoading,
   setError,
@@ -12,34 +12,48 @@ import {
   selectRestockItems,
   selectSelectedItems,
   selectRestockFilter,
-  selectRestockLoading,
-  selectFilteredRestockItems,
   selectRestockStats,
-  setBulkOperationsLoading,
-  updateMultipleRestockItems,
 } from "../store/slices/restockSlice";
 import Tabs from "../components/Tabs";
+import {
+  RawMaterialIcon,
+  SubProductIcon,
+  ExportIcon,
+  PreviousIcon,
+  NextIcon,
+} from "../components/icons/RestockIcons";
 import type { RootState } from "../store";
-import type { RestockItem, RestockPriority, RestockStatus } from "../types";
 import type { Tab } from "../components/Tabs";
+import { useGetInventoryQuery } from "../services/inventoryApi";
+import { setInventory } from "../store/slices/inventorySlice";
 
 export default function RestockList() {
   const dispatch = useDispatch();
   const items = useSelector(selectRestockItems);
-  const filteredItems = useSelector(selectFilteredRestockItems);
   const selectedItems = useSelector(selectSelectedItems);
   const filter = useSelector(selectRestockFilter);
-  const loading = useSelector(selectRestockLoading);
-  const stats = useSelector(selectRestockStats);
+  const inventoryItems= useSelector((s: RootState) => s.inventory.items || []);
   const bulkLoading = useSelector(
     (state: RootState) => state.restock.bulkOperationsLoading
   );
 
   const [activeTab, setActiveTab] = useState("raw");
-  const [sortBy, setSortBy] = useState<string>("priority");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [showExportModal, setShowExportModal] = useState(false);
   const [categoryFilter, setCategoryFilterLocal] = useState<string>("all");
+
+
+  const { data: inventory } = useGetInventoryQuery();
+
+  const { inventoryList, summary } = inventory || {};
+
+  useEffect(() => {
+    if (inventoryList) {
+      dispatch(setInventory(inventoryList));
+    }
+  }, [dispatch, inventoryList]);
+
+  const filteredItems = inventoryItems.filter((item) => (item.stock_status !== "in_stock" && item.stock_status !== "dead_stock"));
+
 
   useEffect(() => {
     loadRestockItems();
@@ -77,54 +91,10 @@ export default function RestockList() {
   };
 
   const handleSelectAll = () => {
-    if (selectedItems.length === filteredItems.length) {
+    if (selectedItems.length === sortedItems.length) {
       dispatch(clearSelection());
     } else {
-      dispatch(selectAllItems(filteredItems.map((item) => item.id)));
-    }
-  };
-
-  const handleBulkPriorityUpdate = async (priority: RestockPriority) => {
-    if (selectedItems.length === 0) return;
-
-    try {
-      dispatch(setBulkOperationsLoading(true));
-      const updates = selectedItems.map((id) => ({
-        id,
-        updates: { priority },
-      }));
-
-      const response = await bulkUpdateRestockItems(updates);
-      dispatch(updateMultipleRestockItems(response.data));
-      dispatch(clearSelection());
-    } catch (error) {
-      dispatch(
-        setError(
-          error instanceof Error ? error.message : "Failed to update priorities"
-        )
-      );
-    }
-  };
-
-  const handleBulkStatusUpdate = async (status: RestockStatus) => {
-    if (selectedItems.length === 0) return;
-
-    try {
-      dispatch(setBulkOperationsLoading(true));
-      const updates = selectedItems.map((id) => ({
-        id,
-        updates: { status },
-      }));
-
-      const response = await bulkUpdateRestockItems(updates);
-      dispatch(updateMultipleRestockItems(response.data));
-      dispatch(clearSelection());
-    } catch (error) {
-      dispatch(
-        setError(
-          error instanceof Error ? error.message : "Failed to update status"
-        )
-      );
+      dispatch(selectAllItems(sortedItems.map((item) => item.id)));
     }
   };
 
@@ -141,20 +111,20 @@ export default function RestockList() {
       "Current Stock",
       "Required Quantity",
       "Unit",
-      "Priority",
+      "Stock Status",
       "Estimated Cost",
     ];
     const csvContent = [
       headers.join(","),
       ...dataToExport.map((item) =>
         [
-          `"${item.product_name}"`,
+          `"${item.name}"`,
           `"${item.category}"`,
-          item.current_stock,
-          item.required_quantity,
+          item.available_qty,
+          Math.max(0, parseFloat(item.reorder_point) - parseFloat(item.available_qty)),
           `"${item.unit}"`,
-          `"${item.priority}"`,
-          item.estimated_cost.toFixed(2),
+          `"${item.stock_status}"`,
+          (Math.max(0, parseFloat(item.reorder_point) - parseFloat(item.available_qty)) * parseFloat(item.price)).toFixed(2),
         ].join(",")
       ),
     ].join("\n");
@@ -170,52 +140,12 @@ export default function RestockList() {
     setShowExportModal(false);
   };
 
-  const getPriorityColor = (priority: RestockPriority) => {
-    switch (priority) {
-      case "critical":
-        return "critical";
-      case "high":
-        return "high";
-      case "medium":
-        return "medium";
-      case "low":
-        return "low";
-      default:
-        return "medium";
-    }
-  };
-
-  const getStatusColor = (status: RestockStatus) => {
-    switch (status) {
-      case "pending":
-        return "pending";
-      case "ordered":
-        return "ordered";
-      case "received":
-        return "received";
-      case "cancelled":
-        return "cancelled";
-      default:
-        return "pending";
-    }
-  };
-
   // Define category tabs
   const categoryTabs: Tab[] = [
     {
       id: "raw",
       label: "Raw Materials",
-      icon: (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path
-            d="M8 2L14 6V14L8 10L2 14V6L8 2Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
+      icon: <RawMaterialIcon size={16} />,
       count: items.filter(
         (item) =>
           item.category.toLowerCase().includes("vegetables") ||
@@ -228,17 +158,7 @@ export default function RestockList() {
     {
       id: "sub_product",
       label: "Sub Products",
-      icon: (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path
-            d="M8 1L15 8L8 15L1 8L8 1Z"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      ),
+      icon: <SubProductIcon size={16} />,
       count: items.filter(
         (item) =>
           item.category.toLowerCase().includes("bakery") ||
@@ -248,38 +168,39 @@ export default function RestockList() {
     },
   ];
 
+  // Add sorting logic for inventory items
   const sortedItems = [...filteredItems].sort((a, b) => {
-    let aVal: any = a[sortBy as keyof RestockItem];
-    let bVal: any = b[sortBy as keyof RestockItem];
-
-    if (sortBy === "priority") {
-      const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
-      aVal = priorityOrder[a.priority];
-      bVal = priorityOrder[b.priority];
+    // Sort by stock status priority: out_of_stock > low_stock > expiring_soon > in_stock
+    const statusPriority = {
+      'out_of_stock': 4,
+      'low_stock': 3,
+      'expiring_soon': 2,
+      'critical_stock': 4,
+      'dead_stock': 1,
+      'in_stock': 1
+    };
+    
+    const aPriority = statusPriority[a.stock_status] || 1;
+    const bPriority = statusPriority[b.stock_status] || 1;
+    
+    if (aPriority !== bPriority) {
+      return bPriority - aPriority; // Higher priority first
     }
-
-    if (typeof aVal === "string") {
-      aVal = aVal.toLowerCase();
-      bVal = bVal.toLowerCase();
-    }
-
-    if (sortOrder === "asc") {
-      return aVal > bVal ? 1 : -1;
-    } else {
-      return aVal < bVal ? 1 : -1;
-    }
+    
+    // Secondary sort by name
+    return a.name.localeCompare(b.name);
   });
 
   return (
-    <div>
-      <>
-        {/* Category Tabs with Controls */}
+    <div className="h-full flex flex-col">
+      {/* Category Tabs with Controls */}
+      <div className="flex-shrink-0">
         <Tabs
           tabs={categoryTabs}
           activeTab={activeTab}
           onTabChange={handleTabChange}
           rightContent={
-            <div className="tabs-right-content">
+            <div className="flex items-center gap-3 mr-2">
               <select
                 value={categoryFilter}
                 onChange={(e) => {
@@ -290,7 +211,7 @@ export default function RestockList() {
                     dispatch(setCategoryFilter(e.target.value));
                   }
                 }}
-                className="filter-select"
+                className="h-11 px-3 border border-gray-300 bg-white rounded-md text-sm text-gray-700 min-w-32 focus:outline-none focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400"
               >
                 <option value="all">All Categories</option>
                 <option value="vegetables">Vegetables</option>
@@ -302,59 +223,47 @@ export default function RestockList() {
               </select>
 
               <button
-                className="export-btn-inline"
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 border-0 rounded-lg text-white text-sm font-semibold cursor-pointer transition-all duration-200 hover:bg-emerald-700 hover:-translate-y-px disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none"
                 onClick={handleExportList}
                 disabled={bulkLoading}
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path
-                    d="M8 10L5 7M8 10L11 7M8 10V2"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M2 14H14"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
+                <ExportIcon size={14} />
                 Export List
               </button>
             </div>
           }
         />
+      </div>
 
-        <div className="restock-container">
-          {/* Restock Table */}
-          <div className="restock-table-container">
-            <table className="restock-table">
-              <thead>
+      <div className="flex-1 min-h-0 flex flex-col">
+        {/* Restock Table */}
+        <div className="bg-white rounded-t-2xl border border-gray-200 border-b-0 shadow-sm overflow-hidden flex-1 min-h-0 flex flex-col">
+          <div className="flex-1 overflow-auto">
+            <table className="w-full border-collapse text-sm font-inter">
+              <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
                 <tr>
-                  <th className="checkbox-col">
+                  <th className="w-16 px-6 py-4">
                     <input
                       type="checkbox"
                       checked={
-                        selectedItems.length === filteredItems.length &&
-                        filteredItems.length > 0
+                        selectedItems.length === sortedItems.length &&
+                        sortedItems.length > 0
                       }
                       onChange={handleSelectAll}
-                      className="table-checkbox"
+                      className="w-3 h-3 border border-black rounded-sm"
                     />
                   </th>
-                  <th>Item Name</th>
-                  <th>Category</th>
-                  <th>Current Stock</th>
-                  <th>
-                    <div className="header-content">
+                  <th className="text-left text-xs font-bold text-gray-500 uppercase tracking-wide px-6 py-4 border-b border-gray-200">Item Name</th>
+                  <th className="text-left text-xs font-bold text-gray-500 uppercase tracking-wide px-6 py-4 border-b border-gray-200">Category</th>
+                  <th className="text-left text-xs font-bold text-gray-500 uppercase tracking-wide px-6 py-4 border-b border-gray-200">Current Stock</th>
+                  <th className="text-left text-xs font-bold text-gray-500 uppercase tracking-wide px-6 py-4 border-b border-gray-200">
+                    <div className="flex flex-col gap-0.5">
                       <span>Forecasted</span>
                       <span>Requirement</span>
                     </div>
                   </th>
-                  <th>
-                    <div className="header-content">
+                  <th className="text-left text-xs font-bold text-gray-500 uppercase tracking-wide px-6 py-4 border-b border-gray-200">
+                    <div className="flex flex-col gap-0.5">
                       <span>Estimated</span>
                       <span>Cost</span>
                     </div>
@@ -363,56 +272,59 @@ export default function RestockList() {
               </thead>
               <tbody>
                 {sortedItems.map((item) => (
-                  <tr key={item.id} className="table-row">
-                    <td className="checkbox-col">
+                  <tr key={item.id} className="border-b border-gray-200 transition-colors hover:bg-gray-50">
+                    <td className="flex w-16 h-[100%] min-h-[84px] px-2 py-1.5 align-middle justify-center items-center">
                       <input
                         type="checkbox"
                         checked={selectedItems.includes(item.id)}
                         onChange={() => handleItemSelection(item.id)}
-                        className="table-checkbox"
+                        className="w-3 h-3 border border-black rounded-sm"
                       />
                     </td>
 
-                    <td className="name-cell">
-                      <div className="item-name">{item.product_name}</div>
+                    <td className="px-6 py-4 align-middle">
+                      <div className="font-semibold text-base leading-5 text-gray-800">{item.name}</div>
                     </td>
 
-                    <td className="category-cell">
-                      <span
-                        className={`category-badge category-${item.category
-                          .toLowerCase()
-                          .replace(/[^a-z]/g, "")}`}
-                      >
+                    <td className="px-6 py-4 align-middle">
+                      <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        item.category.toLowerCase().includes('vegetables') ? 'bg-green-100 text-green-800' :
+                        item.category.toLowerCase().includes('dairy') ? 'bg-orange-100 text-orange-700' :
+                        item.category.toLowerCase().includes('meat') ? 'bg-red-100 text-red-800' :
+                        item.category.toLowerCase().includes('herbs') ? 'bg-green-100 text-green-700' :
+                        item.category.toLowerCase().includes('oils') ? 'bg-purple-100 text-purple-800' :
+                        'bg-gray-100 text-gray-600'
+                      }`}>
                         {item.category}
                       </span>
                     </td>
 
-                    <td className="stock-cell">
-                      <div className="stock-info">
-                        <span className="quantity">
-                          {item.current_stock} {item.unit}
+                    <td className="px-6 py-4 align-middle">
+                      <div className="flex flex-col gap-1">
+                        <span className="font-medium text-sm leading-5 text-black">
+                          {item.available_qty} {item.unit}
                         </span>
                       </div>
                     </td>
 
-                    <td className="requirement-cell">
-                      <div className="requirement-info">
-                        <span className="requirement-quantity">
-                          {item.required_quantity} {item.unit}
+                    <td className="px-6 py-4 align-middle">
+                      <div className="flex flex-col gap-1">
+                        <span className="font-semibold text-sm leading-5 text-gray-800">
+                          {Math.max(0, parseFloat(item.reorder_point) - parseFloat(item.available_qty))} {item.unit}
                         </span>
-                        <span className="requirement-period">
-                          Next {item.forecast_period_days} days
+                        <span className="font-normal text-xs leading-4 text-gray-500">
+                          To reach reorder point
                         </span>
                       </div>
                     </td>
 
-                    <td className="cost-cell">
-                      <div className="cost-info">
-                        <span className="total-cost">
-                          ${item.estimated_cost.toFixed(2)}
+                    <td className="px-6 py-4 align-middle">
+                      <div className="flex flex-col gap-1">
+                        <span className="font-semibold text-sm leading-5 text-gray-800">
+                          ${(Math.max(0, parseFloat(item.reorder_point) - parseFloat(item.available_qty)) * parseFloat(item.price)).toFixed(2)}
                         </span>
-                        <span className="unit-price">
-                          @${item.price_per_unit.toFixed(2)}/{item.unit}
+                        <span className="font-normal text-xs leading-4 text-gray-500">
+                          @${parseFloat(item.price).toFixed(2)}/{item.unit}
                         </span>
                       </div>
                     </td>
@@ -421,49 +333,31 @@ export default function RestockList() {
               </tbody>
             </table>
           </div>
+        </div>
 
-          {/* Footer Controls */}
-          <div className="restock-footer">
-            <div className="selection-info">
-              <span className="selection-count">
-                {selectedItems.length} items selected
-              </span>
-              <div className="selection-actions">
-                <button
-                  className="select-all-btn select-all"
-                  onClick={handleSelectAll}
-                >
-                  Select All
-                </button>
-                <button
-                  className="clear-selection-btn clear-selection"
-                  onClick={() => dispatch(clearSelection())}
-                >
-                  Clear Selection
-                </button>
-              </div>
+        {/* Footer Controls */}
+        <div className="flex justify-between items-center px-4 py-4 bg-white border border-gray-200 border-t-0 rounded-b-2xl">
+          <div className="flex items-center gap-6 flex-nowrap">
+            <span className="font-medium text-sm leading-5 text-gray-500">
+              {selectedItems.length} items selected
+            </span>
+            <div className="flex items-center gap-4 flex-nowrap">
+              <button
+                className="bg-transparent border-0 font-medium text-sm leading-4 cursor-pointer px-2 py-1 rounded transition-all duration-200 whitespace-nowrap flex-shrink-0 text-purple-600 hover:bg-purple-50"
+                onClick={handleSelectAll}
+              >
+                Select All
+              </button>
+              <button
+                className="bg-transparent border-0 font-medium text-sm leading-4 cursor-pointer px-2 py-1 rounded transition-all duration-200 whitespace-nowrap flex-shrink-0 text-gray-500 hover:bg-gray-50"
+                onClick={() => dispatch(clearSelection())}
+              >
+                Clear Selection
+              </button>
             </div>
           </div>
-
-          {/* Pagination */}
-          {sortedItems.length > 0 && (
-            <div className="restock-pagination">
-              <div className="entries-info">
-                Showing 1 to {Math.min(sortedItems.length, 6)} of {stats.total}{" "}
-                entries
-              </div>
-              <div className="pagination-controls">
-                <button className="page-btn">‹</button>
-                <button className="page-btn active">1</button>
-                <button className="page-btn">2</button>
-                <button className="page-btn">3</button>
-                <button className="page-btn">4</button>
-                <button className="page-btn">›</button>
-              </div>
-            </div>
-          )}
         </div>
-      </>
+      </div>
     </div>
   );
 }
