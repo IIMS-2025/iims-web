@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { useState, useMemo } from "react";
 
 import { useGetCookbookItemQuery } from "../services/cookbookApi";
 import { getIngredientIcon } from "../utils/chefSpaceHelpers";
@@ -10,6 +11,7 @@ import {
   CheckIcon,
   LightBulbIcon,
 } from "../components/icons/ChefSpaceIcons";
+import { SearchIcon } from "../components/icons/InventoryIcons";
 import "../styles/chefSpaceDetail.css";
 import { colors } from "../styles/colors";
 
@@ -17,6 +19,25 @@ export default function ChefSpaceDetail() {
   const { id } = useParams();
   const productId = String(id);
   const { data: cookbookItem } = useGetCookbookItemQuery(productId);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Filter ingredients based on search term
+  const filteredIngredients = useMemo(() => {
+    if (!cookbookItem?.ingredients) return [];
+    
+    if (!searchTerm.trim()) {
+      return cookbookItem.ingredients;
+    }
+    
+    const searchLower = searchTerm.toLowerCase();
+    return cookbookItem.ingredients.filter((ingredient) => {
+      const nameMatch = ingredient.name?.toLowerCase().includes(searchLower);
+      const statusMatch = String(ingredient.stock_status).toLowerCase().includes(searchLower);
+      const unitMatch = ingredient.unit?.toLowerCase().includes(searchLower);
+      
+      return nameMatch || statusMatch || unitMatch;
+    });
+  }, [cookbookItem?.ingredients, searchTerm]);
 
   const getStockStatus = (stockStatus: string | number) => {
     switch (stockStatus) {
@@ -131,14 +152,71 @@ export default function ChefSpaceDetail() {
           {/* Ingredients Section */}
           <div className="bg-white rounded-2xl shadow-sm p-6">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-gray-900">
-                Required Ingredients
-              </h3>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">
+                  Required Ingredients
+                </h3>
+                {searchTerm && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    {filteredIngredients.length} of {cookbookItem?.ingredients?.length || 0} ingredients found
+                  </p>
+                )}
+              </div>
               <button className="flex items-center gap-2 px-3 py-1 text-indigo-600 border border-indigo-600 hover:bg-gray-50 rounded-md transition-colors">
                 <CheckIcon size={14} />
                 Check Availability
               </button>
             </div>
+
+            {/* Search Input */}
+            <div className="relative mb-4">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <SearchIcon className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search ingredients, stock status, or units..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-700 text-gray-400"
+                  aria-label="Clear search"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
+
+            {/* Quick Filter Tags */}
+            {!searchTerm && cookbookItem?.ingredients && cookbookItem.ingredients.length > 0 && (
+              <div className="flex gap-2 mb-4 flex-wrap">
+                <span className="text-sm text-gray-600 font-medium">Quick filters:</span>
+                <button
+                  onClick={() => setSearchTerm("low_stock")}
+                  className="px-3 py-1 text-xs bg-orange-100 text-orange-800 rounded-full hover:bg-orange-200 transition-colors"
+                >
+                  Low Stock
+                </button>
+                <button
+                  onClick={() => setSearchTerm("out_of_stock")}
+                  className="px-3 py-1 text-xs bg-red-100 text-red-800 rounded-full hover:bg-red-200 transition-colors"
+                >
+                  Out of Stock
+                </button>
+                <button
+                  onClick={() => setSearchTerm("available")}
+                  className="px-3 py-1 text-xs bg-green-100 text-green-800 rounded-full hover:bg-green-200 transition-colors"
+                >
+                  Available
+                </button>
+              </div>
+            )}
 
             <div className="ingredients-table">
               <table>
@@ -150,27 +228,35 @@ export default function ChefSpaceDetail() {
                   </tr>
                 </thead>
                 <tbody>
-                  {cookbookItem?.ingredients?.map((ingredient, index) => (
-                    <tr key={index}>
-                      <td className="min-w-[250px]">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="ingredient-dot"
-                            style={{
-                              backgroundColor: getIngredientIcon(ingredient),
-                            }}
-                          />
-                          <span className="text-gray-900 font-medium">
-                            {ingredient.name}
-                          </span>
-                        </div>
+                  {filteredIngredients.length > 0 ? (
+                    filteredIngredients.map((ingredient, index) => (
+                      <tr key={index}>
+                        <td className="min-w-[250px]">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="ingredient-dot"
+                              style={{
+                                backgroundColor: getIngredientIcon(ingredient),
+                              }}
+                            />
+                            <span className="text-gray-900 font-medium">
+                              {ingredient.name}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="text-black font-medium min-w-[150px]">
+                          {`${ingredient.required_quantity} ${ingredient.unit}`}
+                        </td>
+                        <td className="min-w-[150px]">{getStockStatus(ingredient.stock_status)}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={3} className="text-center py-8 text-gray-500">
+                        {searchTerm ? 'No ingredients found matching your search.' : 'No ingredients available.'}
                       </td>
-                      <td className="text-black font-medium min-w-[150px]">
-                        {`${ingredient.required_quantity} ${ingredient.unit}`}
-                      </td>
-                      <td className="min-w-[150px]">{getStockStatus(ingredient.stock_status)}</td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>

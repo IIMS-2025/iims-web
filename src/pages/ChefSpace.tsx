@@ -46,10 +46,7 @@ export default function ChefSpace() {
       {/* Static Filter Section */}
       <div className="flex-shrink-0 pb-[24px]">
         <div className="flex justify-between items-center">
-          <div className="flex flex-wrap gap-1 items-center">
-            <label className="text-sm font-medium text-gray-700">
-              {chefSpaceConfig.ui.filterLabel}
-            </label>
+          <div className="flex flex-wrap gap-1 items-center border-b border-gray-200">
             {chefSpaceConfig.ui.categories.map((category, index) => (
               <button
                 key={category}
