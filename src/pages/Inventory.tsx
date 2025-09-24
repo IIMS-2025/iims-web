@@ -137,7 +137,7 @@ const handleStockUpdateError = (error: any) => {
   ];
 
   return (
-    <div className="inventory-page w-full h-full">
+    <div className="inventory-page w-full h-full p-4">
         {/* Quick Filter Stats Cards */}
         <div className="inventory-stats">
           <div
@@ -243,7 +243,7 @@ const handleStockUpdateError = (error: any) => {
                   </button>
 
                   <button
-                    className="btn-primary"
+                    className="btn-primary user-guilde-stock-update"
                     onClick={() => setShowStockUpdateModal(true)}
                   >
                     <UpdateStockIcon />

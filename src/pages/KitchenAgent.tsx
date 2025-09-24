@@ -160,7 +160,7 @@ const KitchenAgent: React.FC = () => {
   };
 
   return (
-    <div className="kitchen-agent">
+    <div className="kitchen-agent m-4">
       <div className="chat-container">
         <div className="messages-area">
           {messages.map((message) => (

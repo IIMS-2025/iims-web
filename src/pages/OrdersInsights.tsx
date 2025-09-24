@@ -544,7 +544,7 @@ export default function OrdersInsights() {
     return (
         <div className="orders-insights-page w-full h-full">
             <section className="w-full flex flex-col min-h-fit">
-                <div className="px-6 py-8 pb-16 bg-gray-50 w-full min-h-fit">
+                <div className="px-4 py-4 pb-16 bg-gray-50 w-full min-h-fit">
                     {/* Navigation Tabs */}
                     <div className="flex gap-2 mb-8 border-b border-gray-200 pb-2">
                         {TABS.map(tab => (

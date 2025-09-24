@@ -112,7 +112,7 @@ export const ChartsSection: React.FC = () => {
           <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
             <AlertIcon className="text-red-600 w-5 h-5" />
           </div>
-          <h3 className={CSS_CLASSES.TITLE_SECONDARY}>Stock Alerts</h3>
+          <h3 className={`${CSS_CLASSES.TITLE_SECONDARY} user-guilde-stock-alerts`}>Stock Alerts</h3>
         </div>
         <div className="space-y-4">
           {stockAlerts.map((alert, index) => (
