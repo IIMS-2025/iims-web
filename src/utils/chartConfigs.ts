@@ -78,6 +78,35 @@ export const createBarChartData = (revenueTrend: RevenueTrend) => ({
   ]
 });
 
+// New function for real sales and COGS data
+export const createSalesCogsChartData = (
+  labels: string[],
+  salesData: number[],
+  cogsData: number[]
+) => ({
+  labels,
+  datasets: [
+    {
+      label: 'Sales',
+      data: salesData,
+      backgroundColor: '#10B981',
+      borderColor: '#10B981',
+      borderWidth: 1,
+      borderRadius: 4,
+      borderSkipped: false,
+    },
+    {
+      label: 'COGS',
+      data: cogsData,
+      backgroundColor: '#F59E0B',
+      borderColor: '#F59E0B',
+      borderWidth: 1,
+      borderRadius: 4,
+      borderSkipped: false,
+    }
+  ]
+});
+
 export const createBarChartOptions = () => ({
   responsive: true,
   maintainAspectRatio: false,
@@ -141,6 +170,80 @@ export const createBarChartOptions = () => ({
     }
   }
 });
+
+// Dynamic chart options that adjust to real data
+export const createSalesCogsChartOptions = (maxValue?: number) => {
+  const calculatedMax = maxValue ? Math.ceil(maxValue * 1.2 / 1000) * 1000 : 5000;
+  const stepSize = Math.ceil(calculatedMax / 10 / 100) * 100;
+
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top' as const,
+        labels: {
+          usePointStyle: true,
+          pointStyle: 'rect' as const,
+          padding: 20,
+          font: { family: 'Lexend', size: 12, weight: 500 }
+        }
+      },
+      tooltip: {
+        backgroundColor: '#FFFFFF',
+        titleColor: '#111827',
+        bodyColor: '#6B7280',
+        borderColor: '#E5E7EB',
+        borderWidth: 1,
+        cornerRadius: 8,
+        callbacks: {
+          label: function (context: any) {
+            return `${context.dataset.label}: ₹${context.parsed.y.toLocaleString()}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: {
+          color: '#6B7280',
+          font: { family: 'Lexend', size: 12, weight: 500 }
+        }
+      },
+      y: {
+        beginAtZero: true,
+        max: calculatedMax,
+        ticks: {
+          stepSize: stepSize,
+          color: '#6B7280',
+          font: { family: 'Lexend', size: 12, weight: 500 },
+          callback: function (value: any) {
+            if (value >= 1000) {
+              return '₹' + (value / 1000).toFixed(1) + 'k';
+            }
+            return '₹' + value;
+          }
+        },
+        grid: { 
+          color: '#F3F4F6', 
+          lineWidth: 1,
+          drawBorder: false
+        }
+      }
+    },
+    interaction: {
+      mode: 'index' as const,
+      intersect: false,
+    },
+    elements: {
+      bar: {
+        borderWidth: 1,
+      }
+    }
+  };
+};
 
 // Legacy line chart functions (kept for compatibility)
 export const createLineChartData = createBarChartData;

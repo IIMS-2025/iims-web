@@ -22,7 +22,7 @@ import {
 } from '../components/dashboard';
 
 // Local utilities and data
-import { metricsData } from '../utils/homeData';
+import { metricsData, createSalesMetricsData } from '../utils/homeData';
 import { CSS_CLASSES } from '../utils/dashboardHelpers';
 import { 
   ChartBarsIcon,
@@ -31,6 +31,12 @@ import {
   ClockIcon,
   PizzaIcon
 } from '../assets/icons/index';
+
+// API hooks
+import { useGetSalesMetricsQuery } from '../services/salesApi';
+
+// Components
+import { Loader } from '../components/Loader';
 
 // Styles
 import '../styles/home.css';
@@ -49,6 +55,11 @@ ChartJS.register(
 );
 
 export default function HomePage() {
+  const { data: salesMetrics, error: salesError, isLoading: salesLoading } = useGetSalesMetricsQuery();
+
+  // Create dynamic metrics data based on API response
+  const dynamicMetricsData = createSalesMetricsData(salesMetrics, salesLoading, !!salesError);
+
   return (
     <div className={CSS_CLASSES.DASHBOARD_CONTAINER}>
       <div className={CSS_CLASSES.MAIN_CONTENT}>
@@ -65,8 +76,14 @@ export default function HomePage() {
               </div>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-indigo-50 rounded-xl border border-indigo-100">
-              <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-indigo-700">Live AI Analysis</span>
+              {salesLoading ? (
+                <Loader size="sm" />
+              ) : (
+                <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
+              )}
+              <span className="text-sm font-medium text-indigo-700">
+                {salesLoading ? "Loading..." : "Live AI Analysis"}
+              </span>
                   </div>
                 </div>
               </div>
@@ -75,31 +92,35 @@ export default function HomePage() {
         <div className={`${CSS_CLASSES.GRID_4_COLS} ${CSS_CLASSES.SECTION_SPACING}`}>
           <MetricCard
             type="revenue"
-            label={metricsData.revenueImpact.label}
-            value={metricsData.revenueImpact.value}
-            trend={metricsData.revenueImpact.trend}
+            label={dynamicMetricsData.totalSales.label}
+            value={dynamicMetricsData.totalSales.value}
+            trend={dynamicMetricsData.totalSales.trend}
             icon={<DollarIcon className="text-amber-600 w-5 h-5" />}
+            isLoading={salesLoading}
           />
           <MetricCard
             type="orders"
-            label={metricsData.ordersServed.label}
-            value={metricsData.ordersServed.value}
-            trend={metricsData.ordersServed.trend}
+            label={dynamicMetricsData.todaysSales.label}
+            value={dynamicMetricsData.todaysSales.value}
+            trend={dynamicMetricsData.todaysSales.trend}
             icon={<ChartIcon className="text-green-600 w-5 h-5" />}
+            isLoading={salesLoading}
           />
           <MetricCard
             type="hours"
-            label={metricsData.peakHours.label}
-            value={metricsData.peakHours.value}
-            description={metricsData.peakHours.description}
+            label={dynamicMetricsData.cogs.label}
+            value={dynamicMetricsData.cogs.value}
+            description={dynamicMetricsData.cogs.description}
             icon={<ClockIcon className="text-blue-600 w-5 h-5" />}
+            isLoading={salesLoading}
           />
           <MetricCard
             type="categories"
-            label={metricsData.topCategories.label}
-            value={metricsData.topCategories.value}
-            description={metricsData.topCategories.description}
+            label={dynamicMetricsData.profitMargin.label}
+            value={dynamicMetricsData.profitMargin.value}
+            description={dynamicMetricsData.profitMargin.description}
             icon={<PizzaIcon className="text-purple-600 w-5 h-5" />}
+            isLoading={salesLoading}
                     />
                   </div>
 
