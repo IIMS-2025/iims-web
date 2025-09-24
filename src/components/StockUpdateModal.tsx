@@ -11,7 +11,7 @@ export interface StagedItem {
 }
 
 export interface BulkUpdateItem {
-  product_id: string;
+  id: string;
   qty: number;
   unit: string;
   reason: string;
@@ -74,7 +74,7 @@ export default function StockUpdateModal({
     return stagedItems.map(({ id, qty }) => {
       const item = inventoryItems.find((inv: any) => String(inv.id) === String(id));
       return {
-        product_id: id,
+        id: id,
         qty: Number(qty),
         unit: item?.unit || "kg",
         reason: item?.name || 'Item'

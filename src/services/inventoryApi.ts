@@ -62,7 +62,7 @@ export const inventoryApi = createApi({
         batch_id?: string;
         expiry_date?: string;
         tx_type: string;
-        items: Array<{ product_id: string; qty: number; unit: string; reason?: string }>;
+        items: Array<{ id: string; qty: number; unit: string; reason?: string }>;
       }
     >({
       query: (body) => ({
