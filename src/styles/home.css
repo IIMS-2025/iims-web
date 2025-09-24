@@ -1,0 +1,169 @@
+/* Custom styles that cannot be expressed with Tailwind CSS */
+
+/* Chart specific styles */
+.chart-donut-canvas {
+  position: relative;
+  height: 180px;
+  width: 180px;
+}
+
+.chart-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.chart-center-label {
+  font-size: 12px;
+  color: #6B7280;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.chart-center-value {
+  font-size: 18px;
+  color: #111827;
+  font-weight: 700;
+}
+
+/* Metric card icons with specific colored backgrounds */
+.metric-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.metric-icon.green {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+}
+
+.metric-icon.blue {
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+}
+
+.metric-icon.purple {
+  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+}
+
+.metric-icon.orange {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+}
+
+/* Order item colored indicators */
+.order-icon {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.order-icon.red {
+  background-color: #EF4444;
+}
+
+.order-icon.yellow {
+  background-color: #F59E0B;
+}
+
+.order-icon.green {
+  background-color: #10B981;
+}
+
+/* Recommendation card icons */
+.recommendation-icon {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #5F63F2 0%, #4338CA 100%);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+/* Reviewer avatar placeholder */
+.reviewer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+  flex-shrink: 0;
+}
+
+/* Rating circle with gradient */
+.rating-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #10B981 0deg, #10B981 331.2deg, #F3F4F6 331.2deg, #F3F4F6 360deg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.rating-circle::before {
+  content: '';
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: white;
+}
+
+.rating-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  position: relative;
+  z-index: 1;
+}
+
+.rating-change {
+  font-size: 10px;
+  color: #6B7280;
+  position: relative;
+  z-index: 1;
+}
+
+/* Alert severity styles */
+.alert-badge.critical {
+  background-color: #FEF2F2;
+  color: #DC2626;
+}
+
+.alert-badge.warning {
+  background-color: #FFFBEB;
+  color: #D97706;
+}
+
+/* Review card types */
+.review-card.critical {
+  border-left: 4px solid #DC2626;
+}
+
+.review-card.warning {
+  border-left: 4px solid #D97706;
+}
+
+.review-card.positive {
+  border-left: 4px solid #10B981;
+}
+
+/* Forecast card types */
+.forecast-item.purple {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+  border-left: 4px solid #8B5CF6;
+}
+
+.forecast-item.green {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+  border-left: 4px solid #10B981;
+}
+
+.forecast-item.orange {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
+  border-left: 4px solid #F59E0B;
+}
