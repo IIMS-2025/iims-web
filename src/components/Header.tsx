@@ -44,7 +44,7 @@ export default function Header({
         {/* Title Section with Badge - Rendered if provided */}
         {titleSection && (
           <div className="header-title-section">
-            <h1 className="header-main-title">{titleSection.title}</h1>
+            <h1 className="header-main-title user-guilde-header-title">{titleSection.title}</h1>
             {titleSection.badge && (
               <div className="header-badge">
                 <span className="badge-text">{titleSection.badge.text}</span>

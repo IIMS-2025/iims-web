@@ -7,19 +7,20 @@ interface UserGuideProps {
   storageKey?: string;
   onComplete?: () => void;
   onStepChange?: (index: number) => void;
+  enabled?: boolean;
 }
 
 const UserGuide: React.FC<UserGuideProps> = ({ 
   steps, 
   onStepChange,
-  onComplete ,
-
+  onComplete,
+  enabled = true,
 }) => {
   const [run, setRun] = useState(false);
 
   useEffect(() => {
-    setRun(true);
-  }, []);
+    setRun(enabled);
+  }, [enabled]);
 
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status, action, type , index } = data;
@@ -32,6 +33,11 @@ const UserGuide: React.FC<UserGuideProps> = ({
       onStepChange?.(index);
     }
   };
+
+  // Don't render the Joyride component if not enabled
+  if (!enabled) {
+    return null;
+  }
 
   return (
     <Joyride
