@@ -18,6 +18,9 @@ export default function Sidebar({ className = "home-sidebar" }: SidebarProps) {
     if (path === "/insights") {
       return location.pathname.startsWith("/insights");
     }
+    if (path === "/orders") {
+      return location.pathname.startsWith("/orders");
+    }
     return location.pathname === path;
   };
 
@@ -78,6 +81,31 @@ export default function Sidebar({ className = "home-sidebar" }: SidebarProps) {
             </svg>
           </div>
           <div className="nav-text">Insights</div>
+        </Link>
+
+        <Link
+          to="/orders"
+          className={`nav-item ${isActive("/orders") ? "active" : ""}`}
+        >
+          <div className="nav-icon">
+            <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
+              <path
+                d="M9 2C8.44772 2 8 2.44772 8 3V4H4C2.89543 4 2 4.89543 2 6V16C2 17.1046 2.89543 18 4 18H16C17.1046 18 18 17.1046 18 16V6C18 4.89543 17.1046 4 16 4H12V3C12 2.44772 11.5523 2 11 2H9Z"
+                stroke={isActive("/orders") ? "#5F63F2" : "#6B7280"}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M6 8L8 10L14 6"
+                stroke={isActive("/orders") ? "#5F63F2" : "#6B7280"}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          <div className="nav-text">Orders</div>
         </Link>
 
         <Link

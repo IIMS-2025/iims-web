@@ -1,8 +1,8 @@
 import React from 'react';
-import { Line } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import { AlertIcon } from '../../assets/icons/index';
 import { revenueTrend } from '../../utils/homeData';
-import { createLineChartData, createLineChartOptions } from '../../utils/chartConfigs';
+import { createBarChartData, createBarChartOptions } from '../../utils/chartConfigs';
 import { CSS_CLASSES } from '../../utils/dashboardHelpers';
 
 interface StockAlert {
@@ -56,8 +56,8 @@ const StockAlertItem: React.FC<{ alert: StockAlert }> = ({ alert }) => {
 };
 
 export const ChartsSection: React.FC = () => {
-  const lineChartData = createLineChartData(revenueTrend);
-  const lineChartOptions = createLineChartOptions();
+  const barChartData = createBarChartData(revenueTrend);
+  const barChartOptions = createBarChartOptions();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -65,9 +65,9 @@ export const ChartsSection: React.FC = () => {
       <div className={`lg:col-span-2 ${CSS_CLASSES.WHITE_CARD}`}>
         <h3 className={`${CSS_CLASSES.TITLE_SECONDARY} mb-6`}>Sales Trend & COGS (7 Days)</h3>
         <div className="h-80">
-          <Line
-            data={lineChartData}
-            options={lineChartOptions}
+          <Bar
+            data={barChartData}
+            options={barChartOptions}
           />
         </div>
       </div>

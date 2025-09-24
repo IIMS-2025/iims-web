@@ -1,0 +1,303 @@
+/* Order page specific styles that cannot be expressed with Tailwind */
+
+/* Page layout classes */
+.orders-page-container {
+  min-height: 100vh;
+  background-color: #F9FAFB;
+  padding: 1.5rem;
+}
+
+.orders-content-wrapper {
+  width: 100%;
+}
+
+/* Order status progress indicator */
+.order-status-progress {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.order-status-progress::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  background: linear-gradient(90deg, #10B981 0%, #10B981 var(--progress, 0%), #E5E7EB var(--progress, 0%), #E5E7EB 100%);
+  z-index: 1;
+}
+
+.order-status-step {
+  position: relative;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 2px solid #E5E7EB;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.order-status-step.completed {
+  border-color: #10B981;
+  background: #10B981;
+  color: white;
+}
+
+.order-status-step.active {
+  border-color: #3B82F6;
+  background: #3B82F6;
+  color: white;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+/* Order card animations */
+.order-card {
+  transition: all 0.2s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Order type indicator with custom colors */
+.order-type-indicator {
+  position: relative;
+  overflow: hidden;
+}
+
+.order-type-indicator::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--type-color, #6B7280);
+}
+
+.order-type-indicator.delivery::before {
+  background: #3B82F6;
+}
+
+.order-type-indicator.takeaway::before {
+  background: #F59E0B;
+}
+
+.order-type-indicator.dine-in::before {
+  background: #10B981;
+}
+
+/* Print receipt animation */
+@keyframes printSlide {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.print-animation {
+  animation: printSlide 0.3s ease-out;
+}
+
+/* Order timer pulse effect */
+@keyframes timerPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.timer-pulse {
+  animation: timerPulse 2s infinite;
+}
+
+/* Order priority indicators */
+.priority-urgent {
+  position: relative;
+}
+
+.priority-urgent::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: #EF4444;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* Custom scrollbar for order list */
+.order-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.order-list-container::-webkit-scrollbar-track {
+  background: #F3F4F6;
+  border-radius: 3px;
+}
+
+.order-list-container::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.order-list-container::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* Order table specific styles */
+.order-table-row {
+  transition: all 0.2s ease;
+}
+
+.order-table-row:hover {
+  background-color: #F9FAFB;
+  transform: scale(1.001);
+}
+
+/* Table responsive design */
+@media (max-width: 1024px) {
+  .order-list-container {
+    overflow-x: auto;
+  }
+  
+  .order-list-container table {
+    min-width: 800px;
+  }
+}
+
+/* Urgent order highlighting */
+.urgent-order-row {
+  position: relative;
+}
+
+.urgent-order-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #EF4444;
+}
+
+/* Table header improvements */
+.order-table-header {
+  background: linear-gradient(90deg, #F9FAFB 0%, #F3F4F6 100%);
+  border-bottom: 2px solid #E5E7EB;
+}
+
+/* Better mobile table display */
+@media (max-width: 768px) {
+  .order-list-container table th:nth-child(3),
+  .order-list-container table td:nth-child(3) {
+    display: none; /* Hide delivery time column on mobile */
+  }
+  
+  .order-list-container table th:nth-child(4),
+  .order-list-container table td:nth-child(4) {
+    display: none; /* Hide price column on mobile */
+  }
+}
+
+/* More compact table spacing */
+.order-list-container table {
+  border-collapse: collapse;
+}
+
+.order-list-container table td {
+  vertical-align: middle;
+}
+
+/* Compact row height */
+.order-list-container tbody tr {
+  height: 60px;
+}
+
+/* Filter dropdown animations */
+.filter-dropdown {
+  transform-origin: top right;
+  transition: all 0.2s ease;
+}
+
+.filter-dropdown.entering {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+.filter-dropdown.entered {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* Order summary calculations */
+.order-summary-line {
+  position: relative;
+  padding: 8px 0;
+}
+
+.order-summary-line:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #F3F4F6;
+}
+
+.order-total-line {
+  border-top: 2px solid #E5E7EB;
+  margin-top: 8px;
+  padding-top: 12px;
+  font-weight: 700;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .order-status-progress {
+    gap: 8px;
+  }
+  
+  .order-status-step {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+  
+  .order-card {
+    margin-bottom: 12px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .order-status-step {
+    border-width: 3px;
+  }
+  
+  .order-type-indicator::before {
+    width: 6px;
+  }
+}
