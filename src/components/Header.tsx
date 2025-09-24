@@ -63,27 +63,21 @@ export default function Header({
 
         {/* Notification Button - Rendered if enabled */}
         {showNotification && (
-          <button
-            className="relative"
-            onClick={handleNotificationClick}
-            title="View Notifications"
-          >
-            <svg width="17.5" height="20" viewBox="0 0 18 20" fill="none">
-              <path
-                d="M13 6C13 4.67392 12.4732 3.40215 11.5355 2.46447C10.5979 1.52678 9.32608 1 8 1C6.67392 1 5.40215 1.52678 4.46447 2.46447C3.52678 3.40215 3 4.67392 3 6C3 13 0 15 0 15H16C16 15 13 13 13 6Z"
-                stroke="#000"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M9.73 19C9.5542 19.3031 9.3019 19.5547 8.99827 19.7295C8.69465 19.9044 8.35025 19.9965 8 19.9965C7.64975 19.9965 7.30535 19.9044 7.00173 19.7295C6.6981 19.5547 6.4458 19.3031 6.27 19"
-                stroke="#000"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+           <button
+             className="relative"
+             onClick={handleNotificationClick}
+             title="View Notifications"
+           >
+             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+               <path
+                 d="M10 2C10.74 2 11.44 2.16 12.08 2.43C12.95 1.93 14.03 2.18 14.64 3C15.25 3.82 15.1 4.95 14.28 5.59C14.6 6.27 14.78 7.03 14.78 7.83V10.17C14.78 11.23 15.18 12.24 15.88 13L17 14.17C17.39 14.58 17.39 15.24 17 15.65C16.81 15.84 16.55 15.95 16.28 15.95H12.95C12.75 17.11 11.73 18 10.5 18C9.27 18 8.25 17.11 8.05 15.95H3.72C3.45 15.95 3.19 15.84 3 15.65C2.61 15.24 2.61 14.58 3 14.17L4.12 13C4.82 12.24 5.22 11.23 5.22 10.17V7.83C5.22 4.97 7.64 2.55 10.5 2H10Z"
+                 fill="#6B7280"
+               />
+               <path
+                 d="M10 1L11.3 4.7L15 6L11.3 7.3L10 11L8.7 7.3L5 6L8.7 4.7L10 1Z"
+                 fill="#5F63F2"
+               />
+             </svg>
 
             {/* Optional notification badge */}
             <span className="absolute top-[-10px] right-[-10px] bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">

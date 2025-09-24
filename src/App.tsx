@@ -8,6 +8,7 @@ import ChefSpaceDetail from "./pages/ChefSpaceDetail";
 import OrdersInsights from "./pages/OrdersInsights";
 import RestockList from "./pages/RestockList";
 import Notifications from "./pages/Notifications";
+import KitchenAgent from "./pages/KitchenAgent";
 import AppLayout from "./layouts/AppLayout";
 import appConfig from "./config/appConfig";
 import InventoryPage from "./pages/Inventory";
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="/inventory" element={<InventoryPage />} />
             <Route path="/restock" element={<RestockList />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/kitchen-agent" element={<KitchenAgent />} />
           </Route>
         </Routes>
       </BrowserRouter>
