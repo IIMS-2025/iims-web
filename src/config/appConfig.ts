@@ -57,8 +57,8 @@ export const appConfig = {
     // Tenant configuration (can be overridden by backend)
     tenant: {
         name: "Demo Ristorante",
-        currency: "USD",
-        locale: "en-US"
+        currency: "INR",
+        locale: "en-IN"
     },
 
     // Feature flags

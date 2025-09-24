@@ -2,8 +2,10 @@ import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { AlertIcon } from '../../assets/icons/index';
 import { revenueTrend } from '../../utils/homeData';
-import { createBarChartData, createBarChartOptions } from '../../utils/chartConfigs';
+import { createBarChartData, createBarChartOptions, createSalesCogsChartData, createSalesCogsChartOptions } from '../../utils/chartConfigs';
 import { CSS_CLASSES } from '../../utils/dashboardHelpers';
+import { useGetSalesTrendQuery } from '../../services/salesApi';
+import { Loader, ChartLoader } from '../Loader';
 
 interface StockAlert {
   title: string;
@@ -56,19 +58,51 @@ const StockAlertItem: React.FC<{ alert: StockAlert }> = ({ alert }) => {
 };
 
 export const ChartsSection: React.FC = () => {
-  const barChartData = createBarChartData(revenueTrend);
-  const barChartOptions = createBarChartOptions();
+  const { data: salesTrendData, error: salesTrendError, isLoading: salesTrendLoading } = useGetSalesTrendQuery();
+  
+  // Use real data if available, otherwise fallback to static data
+  const chartData = salesTrendData && !salesTrendError 
+    ? createSalesCogsChartData(
+        salesTrendData.labels,
+        salesTrendData.salesData,
+        salesTrendData.cogsData
+      )
+    : createBarChartData(revenueTrend);
+
+  // Calculate max value for dynamic scaling
+  const maxValue = salesTrendData && !salesTrendError
+    ? Math.max(...salesTrendData.salesData, ...salesTrendData.cogsData)
+    : undefined;
+
+  const chartOptions = salesTrendData && !salesTrendError
+    ? createSalesCogsChartOptions(maxValue)
+    : createBarChartOptions();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Sales Trend & COGS (7 Days) */}
       <div className={`lg:col-span-2 ${CSS_CLASSES.WHITE_CARD}`}>
-        <h3 className={`${CSS_CLASSES.TITLE_SECONDARY} mb-6`}>Sales Trend & COGS (7 Days)</h3>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className={`${CSS_CLASSES.TITLE_SECONDARY}`}>Sales Trend & COGS (7 Days)</h3>
+          {salesTrendLoading && (
+            <div className="flex items-center gap-2">
+              <Loader size="sm" />
+              <span className="text-sm text-gray-500">Loading chart data...</span>
+            </div>
+          )}
+          {salesTrendError && (
+            <span className="text-sm text-red-500">Using offline data</span>
+          )}
+        </div>
         <div className="h-80">
-          <Bar
-            data={barChartData}
-            options={barChartOptions}
-          />
+          {salesTrendLoading ? (
+            <ChartLoader className="h-full" />
+          ) : (
+            <Bar
+              data={chartData}
+              options={chartOptions}
+            />
+          )}
         </div>
       </div>
 

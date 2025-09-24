@@ -69,7 +69,7 @@ export interface OverallRating {
   change: string;
 }
 
-// Data constants
+// Data constants - fallback values when API is not available
 export const metricsData: MetricsData = {
   ordersServed: {
     label: "ORDERS SERVED",
@@ -99,6 +99,58 @@ export const metricsData: MetricsData = {
       positive: true
     }
   }
+};
+
+// Sales metrics data structure (used when API is available)
+export interface SalesMetricsData {
+  totalSales: MetricData;
+  todaysSales: MetricData;
+  cogs: MetricData;
+  profitMargin: MetricData;
+}
+
+// Currency formatting utility
+export const formatCurrency = (amount: number, currency: string = "INR"): string => {
+  if (currency === "INR") {
+    return `₹${amount.toFixed(2)}`;
+  }
+  return `$${amount.toFixed(2)}`;
+};
+
+// Helper function to create sales metrics from API data
+export const createSalesMetricsData = (
+  salesMetrics: any,
+  isLoading: boolean,
+  hasError: boolean
+): SalesMetricsData => {
+  const loading = "...";  // Placeholder for loader component
+  const error = "Error";
+  
+  return {
+    totalSales: {
+      label: "TOTAL SALES (7 DAYS)",
+      value: isLoading ? loading : hasError ? error : formatCurrency(salesMetrics?.totalSales || 0),
+    },
+    todaysSales: {
+      label: "TODAY'S SALES",
+      value: isLoading ? loading : hasError ? error : formatCurrency(salesMetrics?.todaySales || 0),
+      trend: {
+        icon: "📈",
+        text: "Live tracking",
+        positive: true
+      }
+    },
+    cogs: {
+      label: "COST OF GOODS SOLD",
+      value: isLoading ? loading : hasError ? error : formatCurrency(salesMetrics?.cogs || 0),
+      description: "7-day period"
+    },
+    profitMargin: {
+      label: "GROSS PROFIT MARGIN",
+      value: isLoading ? loading : hasError ? error : `${salesMetrics?.profitMargin?.toFixed(1) || "0.0"}%`,
+      description: `Profit: ${formatCurrency(salesMetrics?.grossProfit || 0)}`
+    }
+  };
 };
 
 export const revenueByCategory: RevenueByCategory = {

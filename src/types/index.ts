@@ -236,4 +236,29 @@ export interface RestockFilter {
   search?: string;
 }
 
+// Sales API types
+export interface TotalSalesResponse {
+  data: Array<{
+    start_date: string;
+    end_date: string;
+    total_sales: number;
+  }>;
+}
+
+export interface DailySalesResponse {
+  data: Array<{
+    date: string;
+    total_sales: number;
+  }>;
+}
+
+export interface SalesMetrics {
+  totalSales: number;
+  todaySales: number;
+  salesGrowth?: number;
+  cogs?: number;
+  grossProfit?: number;
+  profitMargin?: number;
+}
+
 
