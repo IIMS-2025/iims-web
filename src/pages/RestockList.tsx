@@ -192,7 +192,7 @@ export default function RestockList() {
   });
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col p-4">
       {/* Category Tabs with Controls */}
       <div className="flex-shrink-0">
         <Tabs

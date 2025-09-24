@@ -110,7 +110,7 @@ export default function Sidebar({ className = "home-sidebar" }: SidebarProps) {
 
         <Link
           to="/inventory"
-          className={`nav-item ${isActive("/inventory") ? "active" : ""}`}
+          className={`nav-item user-guilde-inventory ${isActive("/inventory") ? "active" : ""}`}
         >
           <div className="nav-icon">
             <svg width="20" height="18" viewBox="0 0 20 18" fill="none">

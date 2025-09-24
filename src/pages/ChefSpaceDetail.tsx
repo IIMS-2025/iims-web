@@ -62,7 +62,7 @@ export default function ChefSpaceDetail() {
   ];
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full p-4">
       <div className="content-grid">
         {/* Left Column - Recipe Card */}
         <div>

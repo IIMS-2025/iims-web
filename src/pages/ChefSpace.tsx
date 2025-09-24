@@ -42,7 +42,7 @@ export default function ChefSpace() {
   };
 
   return (
-    <div className="h-screen flex flex-col overflow-y-hidden">
+    <div className="h-screen flex flex-col overflow-y-hidden p-4">
       {/* Static Filter Section */}
       <div className="flex-shrink-0 pb-[24px]">
         <div className="flex justify-between items-center">
