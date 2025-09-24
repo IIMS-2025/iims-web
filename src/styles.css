@@ -940,6 +940,107 @@
     margin: 0;
 }
 
+/* ========================================
+   NOTIFICATIONS PAGE STYLES
+   ======================================== */
+
+.notifications-page {
+    background-color: #F9FAFB;
+    height: 90vh;
+}
+
+.notifications-page h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.notifications-page p {
+    font-size: 1rem;
+    color: #6B7280;
+    margin-bottom: 1rem;
+}
+
+/* Filter button styles */
+.notifications-page button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.notifications-page button:focus {
+    outline: 2px solid #5F63F2;
+    outline-offset: 2px;
+}
+
+/* Notification item hover effects */
+.notifications-page .hover\:shadow-md:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Scrollbar styling for notification containers */
+.notifications-page .overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notifications-page .overflow-y-auto::-webkit-scrollbar-track {
+    background: #F3F4F6;
+    border-radius: 3px;
+}
+
+.notifications-page .overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #D1D5DB;
+    border-radius: 3px;
+}
+
+.notifications-page .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #9CA3AF;
+}
+
+/* Enhanced notification badge */
+.header-notification-btn {
+    position: relative;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.header-notification-btn:hover {
+    background-color: #F3F4F6;
+}
+
+.header-notification-btn span {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background-color: #EF4444;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 50%;
+    height: 20px;
+    width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
     .restock-table {
@@ -973,5 +1074,22 @@
         flex-direction: column;
         gap: 16px;
         align-items: center;
+    }
+
+    /* Notifications page responsive */
+    .notifications-page {
+        padding: 16px;
+    }
+
+    .notifications-page .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .notifications-page .lg\:col-span-2 {
+        grid-column: span 1;
+    }
+
+    .notifications-page .lg\:col-span-1 {
+        grid-column: span 1;
     }
 }

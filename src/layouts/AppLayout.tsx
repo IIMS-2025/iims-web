@@ -13,6 +13,7 @@ export default function AppLayout() {
     "/insights": "Insights",
     "/restock": "Restock List",
     "/chefspace": "Chef's Space",
+    "/notifications": "Notifications Center",
   };
   const currentPath = location.pathname.replace(/\/$/, "");
   const headerTitle = titleMap[currentPath] || appConfig.branding.brandName;
