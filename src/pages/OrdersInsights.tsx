@@ -29,742 +29,517 @@ ChartJS.register(
     Filler
 );
 
+// Types
+interface MetricData {
+    title: string;
+    value: string;
+    change: string;
+    changeType: 'positive' | 'negative' | 'neutral';
+    description: string;
+    iconBg: string;
+    iconColor: string;
+}
+
+interface ChartDataPoint {
+    label: string;
+    profit?: number;
+    cost?: number;
+    percentage?: number;
+    color?: string;
+}
+
+interface StockItem {
+    name: string;
+    status: string;
+    daysLeft: number;
+    weight: string;
+    percentage: string;
+    type: 'critical' | 'low' | 'good' | 'excellent';
+}
+
+interface ActivityItem {
+    type: string;
+    time: string;
+    description: string;
+    iconType: 'delivery' | 'waste' | 'alert';
+}
+
+// Constants
+const TABS = ['Revenue', 'Inventory'];
+
+const STOCK_ITEMS: StockItem[] = [
+    { name: 'Fresh Salmon', status: 'Critical', daysLeft: 2, weight: '8.2 kg', percentage: '15%', type: 'critical' },
+    { name: 'Organic Tomatoes', status: 'Low', daysLeft: 5, weight: '15.7 kg', percentage: '28%', type: 'low' },
+    { name: 'Chicken Breast', status: 'Good', daysLeft: 12, weight: '42.3 kg', percentage: '78%', type: 'good' },
+    { name: 'Prime Beef', status: 'Excellent', daysLeft: 18, weight: '28.9 kg', percentage: '92%', type: 'excellent' }
+];
+
+const ACTIVITY_ITEMS: ActivityItem[] = [
+    { type: 'New delivery received', time: 'Today at 8:30 AM', description: 'Fresh vegetables and dairy products', iconType: 'delivery' },
+    { type: 'Waste recorded', time: 'Today at 6:15 AM', description: '2.3kg vegetables, expired bread', iconType: 'waste' },
+    { type: 'Low stock alert triggered', time: 'Yesterday at 11:45 PM', description: 'Salmon below minimum threshold', iconType: 'alert' }
+];
+
+// Common Chart Options
+const getChartOptions = (config?: any) => ({
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: { display: false },
+        tooltip: {
+            backgroundColor: '#FFFFFF',
+            titleColor: '#111827',
+            bodyColor: '#6B7280',
+            borderColor: '#E5E7EB',
+            borderWidth: 1,
+            cornerRadius: 8,
+            displayColors: true,
+            ...config?.tooltip
+        }
+    },
+    scales: {
+        x: {
+            grid: { display: false },
+            ticks: { color: '#6B7280', font: { size: 11 } },
+            ...config?.x
+        },
+        y: {
+            ticks: { color: '#6B7280', font: { size: 11 } },
+            grid: { color: '#E5E7EB', lineWidth: 1 },
+            ...config?.y
+        }
+    }
+});
+
+// Reusable Components
+const SearchInput = ({ placeholder = "Search materials...", width = "w-48" }: { placeholder?: string, width?: string }) => (
+    <div className="relative">
+        <input
+            type="text"
+            placeholder={placeholder}
+            className={`px-4 py-2 pl-10 border border-gray-300 rounded-lg text-sm bg-white ${width}`}
+        />
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <path d="M13.0008 6.5004C13.0008 7.93486 12.5351 9.25994 11.7507 10.335L15.7072 14.2946C16.0979 14.6853 16.0979 15.3197 15.7072 15.7103C15.3166 16.101 14.6821 16.101 14.2915 15.7103L10.335 11.7507C9.25994 12.5383 7.93486 13.0008 6.5004 13.0008C2.90955 13.0008 0 10.0912 0 6.5004C0 2.90955 2.90955 0 6.5004 0C10.0912 0 13.0008 2.90955 13.0008 6.5004ZM6.5004 11.0007C7.09138 11.0007 7.67658 10.8843 8.22258 10.6581C8.76858 10.4319 9.26468 10.1005 9.68257 9.68257C10.1005 9.26468 10.4319 8.76858 10.6581 8.22258C10.8843 7.67658 11.0007 7.09138 11.0007 6.5004C11.0007 5.90941 10.8843 5.32421 10.6581 4.77822C10.4319 4.23222 10.1005 3.73611 9.68257 3.31822C9.26468 2.90033 8.76858 2.56885 8.22258 2.34269C7.67658 2.11653 7.09138 2.00012 6.5004 2.00012C5.90941 2.00012 5.32421 2.11653 4.77822 2.34269C4.23222 2.56885 3.73611 2.90033 3.31822 3.31822C2.90033 3.73611 2.56884 4.23222 2.34268 4.77822C2.11652 5.32421 2.00012 5.90941 2.00012 6.5004C2.00012 7.09138 2.11652 7.67658 2.34268 8.22258C2.56884 8.76858 2.90033 9.26468 3.31822 9.68257C3.73611 10.1005 4.23222 10.4319 4.77822 10.6581C5.32421 10.8843 5.90941 11.0007 6.5004 11.0007Z" fill="#9CA3AF" />
+        </svg>
+    </div>
+);
+
+const ChartContainer = ({ title, children, actions, height = "h-80" }: { title: string, children: React.ReactNode, actions?: React.ReactNode, height?: string }) => (
+    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+            {actions}
+        </div>
+        <div className={height}>
+            {children}
+        </div>
+    </div>
+);
+
+const StockItemCard = ({ item }: { item: StockItem }) => {
+    const bgColors = {
+        critical: 'bg-red-50 border-red-200',
+        low: 'bg-yellow-50 border-yellow-200',
+        good: 'bg-green-50 border-green-200',
+        excellent: 'bg-green-50 border-green-200'
+    };
+
+    const dotColors = {
+        critical: 'bg-red-500',
+        low: 'bg-yellow-500',
+        good: 'bg-green-500',
+        excellent: 'bg-green-500'
+    };
+
+    const textColors = {
+        critical: 'text-red-600',
+        low: 'text-yellow-600',
+        good: 'text-green-600',
+        excellent: 'text-green-600'
+    };
+
+    return (
+        <div className={`${bgColors[item.type]} border rounded-lg p-4`}>
+            <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 ${dotColors[item.type]} rounded-full`}></div>
+                    <div>
+                        <h4 className="text-base font-medium text-gray-900">{item.name}</h4>
+                        <p className="text-sm text-gray-600">{item.status} - {item.daysLeft} days left</p>
+                    </div>
+                </div>
+                <div className="text-right">
+                    <p className="text-base font-semibold text-gray-900">{item.weight}</p>
+                    <p className={`text-sm font-medium ${textColors[item.type]}`}>{item.percentage} remaining</p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const ActivityItemCard = ({ item }: { item: ActivityItem }) => {
+    const iconBg = {
+        delivery: 'bg-green-100',
+        waste: 'bg-red-100',
+        alert: 'bg-yellow-100'
+    };
+
+    const icons = {
+        delivery: <path d="M1 8L19 8M12 1L19 8L12 15" stroke="#16A34A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />,
+        waste: <><path d="M1 4H13L12 14H2L1 4Z" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M4.5 7.5V10.5M6.5 7.5V10.5M8.5 7.5V10.5" stroke="#DC2626" strokeWidth="1.5" strokeLinecap="round" /></>,
+        alert: <><path d="M8 1L15 15H1L8 1Z" stroke="#CA8A04" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M8 6V9M8 12H8.01" stroke="#CA8A04" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></>
+    };
+
+    return (
+        <div className="flex items-start gap-4">
+            <div className={`w-12 h-12 ${iconBg[item.iconType]} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                <svg width={item.iconType === 'delivery' ? "20" : item.iconType === 'waste' ? "14" : "16"} height="16" viewBox="0 0 16 16" fill="none">
+                    {icons[item.iconType]}
+                </svg>
+            </div>
+            <div>
+                <h4 className="text-base font-medium text-gray-900 mb-1">{item.type}</h4>
+                <p className="text-sm text-gray-500">{item.time} - {item.description}</p>
+            </div>
+        </div>
+    );
+};
+
 export default function OrdersInsights() {
     const [activeTab, setActiveTab] = useState('Revenue');
     const navigate = useNavigate();
 
-    // Data variables for backend integration
-    const metricsData = {
-        lastDaySales: {
-            title: "Last Day Sales",
-            value: "$8,247",
-            change: "+12.5%",
-            changeType: "positive" as const,
-            description: "vs $7,330 yesterday",
-            iconBg: "#DCFCE7",
-            iconColor: "#16A34A"
-        },
-        wasteOnSales: {
-            title: "Waste on Sales",
-            value: "$324",
-            change: "-2.1%",
-            changeType: "negative" as const,
-            description: "3.9% of total sales",
-            iconBg: "#FEE2E2",
-            iconColor: "#DC2626"
-        },
-        weeklyRevenue: {
-            title: "Weekly Revenue",
-            value: "$52,840",
-            change: "+8.2%",
-            changeType: "positive" as const,
-            description: "Target: $55,000",
-            iconBg: "rgba(124, 58, 237, 0.1)",
-            iconColor: "#7C3AED"
-        },
-        aiForecastAccuracy: {
-            title: "AI Forecast Accuracy",
-            value: "94.2%",
-            change: "+1.8%",
-            changeType: "positive" as const,
-            description: "Last 30 days average",
-            iconBg: "#DBEAFE",
-            iconColor: "#2563EB"
-        }
+    // Consolidated Data
+    const METRICS_DATA = {
+        revenue: [
+            { title: "Last Day Sales", value: "$8,247", change: "+12.5%", changeType: "positive" as const, description: "vs $7,330 yesterday", iconBg: "#DCFCE7", iconColor: "#16A34A" },
+            { title: "Waste on Sales", value: "$324", change: "-2.1%", changeType: "negative" as const, description: "3.9% of total sales", iconBg: "#FEE2E2", iconColor: "#DC2626" },
+            { title: "Weekly Revenue", value: "$52,840", change: "+8.2%", changeType: "positive" as const, description: "Target: $55,000", iconBg: "rgba(124, 58, 237, 0.1)", iconColor: "#7C3AED" },
+            { title: "AI Forecast Accuracy", value: "94.2%", change: "+1.8%", changeType: "positive" as const, description: "Last 30 days average", iconBg: "#DBEAFE", iconColor: "#2563EB" }
+        ],
+        inventory: [
+            { title: "Wastage Cost", value: "$1,247", change: "+5.2%", changeType: "negative" as const, description: "This week total", iconBg: "#FEE2E2", iconColor: "#DC2626" },
+            { title: "Inventory Value", value: "$18,642", change: "+2.8%", changeType: "positive" as const, description: "Current stock value", iconBg: "#DCFCE7", iconColor: "#16A34A" },
+            { title: "Stock Alerts", value: "5 Items", change: "Alerts", changeType: "neutral" as const, description: "Low Stock + Dead Stock", iconBg: "#FEF3C7", iconColor: "#CA8A04" }
+        ]
     };
 
-    const inventoryMetrics = {
-        lastPurchaseCost: {
-            title: "Last Raw Material Purchase Cost (7 weeks)",
-            value: "$12,450.80",
-            change: "+8.3%",
-            changeType: "negative" as const,
-            description: "higher than last period",
-            iconBg: "#FEE2E2",
-            iconColor: "#DC2626"
+    // Chart Data
+    const CHART_DATA = {
+        sales: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            actual: [1200, 1350, 1180, 1450, 1600, 1750, 1520],
+            forecast: [1100, 1250, 1300, 1400, 1500, 1650, 1600]
         },
-        topCostlyItem: {
-            title: "Top Costly Item",
-            value: "Premium Beef",
-            change: "0%",
-            changeType: "neutral" as const,
-            description: "$45.50 per kg",
-            iconBg: "#FEF3C7",
-            iconColor: "#CA8A04"
-        },
-        totalWastage: {
-            title: "Total Wastage",
-            value: "125.3 units",
-            change: "-12%",
-            changeType: "positive" as const,
-            description: "less than last week",
-            iconBg: "#DCFCE7",
-            iconColor: "#16A34A"
-        }
-    };
-
-    const salesVsForecastData = {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        actual: [1200, 1350, 1180, 1450, 1600, 1750, 1520],
-        forecast: [1100, 1250, 1300, 1400, 1500, 1650, 1600]
-    };
-
-    const categoryDistributionData = {
         categories: [
             { label: 'Pizza', percentage: 32, color: '#5F63F2' },
             { label: 'Pasta', percentage: 24, color: '#10B981' },
             { label: 'Salads', percentage: 18, color: '#F59E0B' },
             { label: 'Drinks', percentage: 15, color: '#EF4444' },
             { label: 'Desserts', percentage: 11, color: '#3B82F6' }
-        ]
-    };
-
-    const costProfitData = [
-        { label: 'Margherita', profit: 8, cost: 5 },
-        { label: 'Pepperoni', profit: 12, cost: 7 },
-        { label: 'Carbonara', profit: 10, cost: 6 },
-        { label: 'Caesar Salad', profit: 6, cost: 4 }
-    ];
-
-    const anomalyDetectionData = {
-        labels: ['1. Jan', '2. Jan', '3. Jan', '4. Jan', '5. Jan', '6. Jan', '7. Jan', '8. Jan', '9. Jan', '10. Jan', '11. Jan', '12. Jan', '13. Jan', '14. Jan'],
-        revenue: [8200, 8500, 7800, 9200, 8800, 8300, 9500, 7200, 8600, 8900, 8100, 10800, 8400, 7600],
-        anomalies: [null, null, null, null, null, null, null, 7200, null, null, null, 10800, null, null]
-    };
-
-    const stockConsumptionData = {
-        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7'],
-        actual: [850, 820, 780, 740, 695, 650, 600],
-        forecast: [580, 540, 500, 460, 420, 380, 340]
-    };
-
-    const wastageBreakdown = {
-        kg: { value: 45.2, unit: "KG", color: "#EF4444" },
-        liters: { value: 22.8, unit: "L", color: "#F59E0B" },
-        count: { value: 57, unit: "items", color: "#8B5CF6" }
-    };
-
-    const tabs = ['Revenue', 'Inventory', "Chef's Space", 'Prediction Engine'];
-
-    // Icon components
-    const TrendIcon = ({ type }: { type: 'positive' | 'negative' | 'neutral' }) => (
-        <svg width="10" height="14" viewBox="0 0 10 14" fill="none">
-            <path
-                d={type === 'positive' ? "M4.5 1L8 6H1L4.5 1Z" :
-                    type === 'negative' ? "M4.5 13L8 8H1L4.5 13Z" :
-                        "M1 7h6"}
-                fill={type === 'positive' ? '#16A34A' :
-                    type === 'negative' ? '#DC2626' : '#6B7280'}
-            />
-        </svg>
-    );
-
-    const SalesIcon = () => (
-        <svg width="12" height="20" viewBox="0 0 12 20" fill="none">
-            <path d="M0.56 0h11.31v20H0.56V0z" fill="#16A34A" />
-        </svg>
-    );
-
-    const WasteIcon = () => (
-        <svg width="17" height="20" viewBox="0 0 17 20" fill="none">
-            <path d="M0 0h17v20H0V0z" fill="#DC2626" />
-        </svg>
-    );
-
-    const RevenueIcon = () => (
-        <svg width="20" height="17" viewBox="0 0 20 17" fill="none">
-            <path d="M0 1.25h20v15H0v-15z" fill="#7C3AED" />
-        </svg>
-    );
-
-    const AIIcon = () => (
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M0 0h20v20H0V0z" fill="#2563EB" />
-        </svg>
-    );
-
-    // Helper functions
-    const getIcon = (iconType: 'sales' | 'waste' | 'revenue' | 'ai') => {
-        switch (iconType) {
-            case 'sales': return <SalesIcon />;
-            case 'waste': return <WasteIcon />;
-            case 'revenue': return <RevenueIcon />;
-            case 'ai': return <AIIcon />;
-            default: return <SalesIcon />;
+        ],
+        costProfit: [
+            { label: 'Margherita', profit: 8, cost: 5 },
+            { label: 'Pepperoni', profit: 12, cost: 7 },
+            { label: 'Carbonara', profit: 10, cost: 6 },
+            { label: 'Caesar Salad', profit: 6, cost: 4 }
+        ],
+        anomaly: {
+            labels: ['1. Jan', '2. Jan', '3. Jan', '4. Jan', '5. Jan', '6. Jan', '7. Jan', '8. Jan', '9. Jan', '10. Jan', '11. Jan', '12. Jan', '13. Jan', '14. Jan'],
+            revenue: [8200, 8500, 7800, 9200, 8800, 8300, 9500, 7200, 8600, 8900, 8100, 10800, 8400, 7600],
+            anomalies: [null, null, null, null, null, null, null, 7200, null, null, null, 10800, null, null]
+        },
+        stock: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            actual: [45, 38, 32, 28, 22, 18, 15],
+            forecast: [40, 35, 30, 25, 20, 16, 12],
+            anomalies: [null, 38, null, null, 22, null, null]
+        },
+        rawMaterial: {
+            labels: ['1. Jan', '2. Jan', '3. Jan', '4. Jan', '5. Jan', '6. Jan', '7. Jan'],
+            prices: [24.5, 25.2, 24.9, 26.1, 25.9, 27.4, 26.8],
+            averagePrice: 25.8
         }
     };
 
-    // Component definitions
-    const MetricCard = ({
-        title,
-        value,
-        change,
-        changeType,
-        description,
-        iconBg,
-        iconType
-    }: {
-        title: string;
-        value: string;
-        change: string;
-        changeType: 'positive' | 'negative' | 'neutral';
-        description: string;
-        iconBg: string;
-        iconType: 'sales' | 'waste' | 'revenue' | 'ai';
-    }) => {
-        const changeColor = changeType === 'positive' ? 'text-green-600' :
-            changeType === 'negative' ? 'text-red-600' : 'text-gray-500';
+    // Simplified Icons
+    const TrendIcon = ({ type }: { type: 'positive' | 'negative' | 'neutral' }) => {
+        const paths = {
+            positive: "M4.5 1L8 6H1L4.5 1Z",
+            negative: "M4.5 13L8 8H1L4.5 13Z",
+            neutral: "M1 7h6"
+        };
+        const colors = { positive: '#16A34A', negative: '#DC2626', neutral: '#6B7280' };
+
+        return (
+            <svg width="10" height="14" viewBox="0 0 10 14" fill="none">
+                <path d={paths[type]} fill={colors[type]} />
+            </svg>
+        );
+    };
+
+    const SimpleIcon = ({ color = "#16A34A" }: { color?: string }) => (
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect width="20" height="20" fill={color} />
+        </svg>
+    );
+
+    // Simplified MetricCard
+    const MetricCard = (metric: MetricData) => {
+        const changeColor = {
+            positive: 'text-green-600',
+            negative: 'text-red-600',
+            neutral: 'text-gray-500'
+        }[metric.changeType];
 
         return (
             <div className="bg-white rounded-xl p-5 pb-4 shadow-sm border border-gray-100 h-[180px] flex flex-col overflow-hidden transition-all duration-200 hover:shadow-md hover:-translate-y-1">
                 <div className="flex justify-between items-start mb-3.5 flex-shrink-0">
-                    <div
-                        className="w-9 h-9 rounded-lg flex items-center justify-center"
-                        style={{ background: iconBg }}
-                    >
-                        {getIcon(iconType)}
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: metric.iconBg }}>
+                        <SimpleIcon color={metric.iconColor} />
                     </div>
                     <div className="flex items-center gap-1">
-                        <TrendIcon type={changeType} />
-                        <span className={`text-sm font-medium ${changeColor}`}>
-                            {change}
-                        </span>
+                        <TrendIcon type={metric.changeType} />
+                        <span className={`text-sm font-medium ${changeColor}`}>{metric.change}</span>
                     </div>
                 </div>
-
                 <div className="flex-1 flex flex-col justify-start min-h-0 overflow-hidden">
-                    <div className="text-sm font-medium text-gray-600 mb-2 leading-tight line-clamp-2">
-                        {title}
-                    </div>
-                    <div className="text-2xl font-bold text-gray-900 mb-1.5 leading-tight flex-shrink-0">
-                        {value}
-                    </div>
-                    <div className="text-xs text-gray-500 leading-tight line-clamp-2 flex-1">
-                        {description}
-                    </div>
+                    <div className="text-sm font-medium text-gray-600 mb-2 leading-tight line-clamp-2">{metric.title}</div>
+                    <div className="text-2xl font-bold text-gray-900 mb-1.5 leading-tight flex-shrink-0">{metric.value}</div>
+                    <div className="text-xs text-gray-500 leading-tight line-clamp-2 flex-1">{metric.description}</div>
                 </div>
             </div>
         );
     };
 
-    const WastageCard = ({
-        type,
-        value,
-        unit,
-        color
-    }: {
-        type: string;
-        value: number;
-        unit: string;
-        color: string;
-    }) => (
-        <div
-            className="bg-white rounded-xl p-6 text-center h-[140px] flex flex-col justify-center items-center border-2"
-            style={{ borderColor: `${color}20` }}
-        >
-            <div
-                className="w-10 h-10 rounded-full flex items-center justify-center mb-4"
-                style={{ background: `${color}20` }}
-            >
-                <div
-                    className="w-5 h-5 rounded-full"
-                    style={{ background: color }}
-                />
-            </div>
-            <div className="text-2xl font-bold text-gray-900 mb-2 leading-none">
-                {value}
-            </div>
-            <div className="text-xs text-gray-500 uppercase font-semibold tracking-wider">
-                {unit}
-            </div>
-        </div>
-    );
+    // Simplified Chart Components
+    const createLineChart = (data: any, options: any) => {
+        const chartData = {
+            labels: data.labels,
+            datasets: data.datasets.map((dataset: any) => ({
+                ...dataset,
+                borderWidth: dataset.borderWidth || 2,
+                pointRadius: dataset.pointRadius || 4,
+                tension: dataset.tension || 0.3
+            }))
+        };
+        return <Line data={chartData} options={getChartOptions(options)} />;
+    };
 
-    const InsightCard = ({
-        title,
-        description,
-        bgColor,
-        borderColor,
-        titleColor,
-        textColor,
-        iconColor
-    }: {
-        title: string;
-        description: string;
-        bgColor: string;
-        borderColor: string;
-        titleColor: string;
-        textColor: string;
-        iconColor: string;
-    }) => (
-        <div
-            className="rounded-lg p-3.5 border"
-            style={{
-                background: bgColor,
-                borderColor: borderColor
-            }}
-        >
+    const InsightCard = ({ title, description, bgColor, borderColor, titleColor, textColor, iconColor }: any) => (
+        <div className="rounded-lg p-3.5 border" style={{ background: bgColor, borderColor }}>
             <div className="flex items-start gap-3">
-                <div
-                    className="w-4 h-4 rounded-full flex-shrink-0 mt-0.5"
-                    style={{ background: iconColor }}
-                />
+                <div className="w-4 h-4 rounded-full flex-shrink-0 mt-0.5" style={{ background: iconColor }} />
                 <div>
-                    <h4
-                        className="text-sm font-medium mb-1"
-                        style={{ color: titleColor }}
-                    >
-                        {title}
-                    </h4>
-                    <p
-                        className="text-xs leading-relaxed m-0"
-                        style={{ color: textColor }}
-                    >
-                        {description}
-                    </p>
+                    <h4 className="text-sm font-medium mb-1" style={{ color: titleColor }}>{title}</h4>
+                    <p className="text-xs leading-relaxed m-0" style={{ color: textColor }}>{description}</p>
                 </div>
             </div>
         </div>
     );
 
-    // Chart components
-    const SalesChart = () => {
-        const salesData = {
-            labels: salesVsForecastData.labels,
-            datasets: [
-                {
-                    label: 'Actual Sales',
-                    data: salesVsForecastData.actual,
-                    borderColor: '#5F63F2',
-                    backgroundColor: 'rgba(95, 99, 242, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0,
-                    pointBackgroundColor: '#5F63F2',
-                    pointBorderColor: '#FFFFFF',
-                    pointBorderWidth: 2,
-                    pointRadius: 4
-                },
-                {
-                    label: 'Forecast',
-                    data: salesVsForecastData.forecast,
-                    borderColor: '#E5E7EB',
-                    backgroundColor: 'transparent',
-                    borderWidth: 2,
-                    borderDash: [5, 5],
-                    fill: false,
-                    tension: 0.3,
-                    pointBackgroundColor: '#E5E7EB',
-                    pointBorderColor: '#FFFFFF',
-                    pointBorderWidth: 2,
-                    pointRadius: 4
-                }
-            ]
-        };
-
-        const options = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: '#FFFFFF',
-                    titleColor: '#111827',
-                    bodyColor: '#6B7280',
-                    borderColor: '#E5E7EB',
-                    borderWidth: 1,
-                    cornerRadius: 8,
-                    displayColors: true,
-                    callbacks: {
-                        label: function (context: any) {
-                            return `${context.dataset.label}: $${context.parsed.y}`;
-                        }
-                    }
-                }
+    // Streamlined Chart Components
+    const SalesChart = () => createLineChart({
+        labels: CHART_DATA.sales.labels,
+        datasets: [
+            {
+                label: 'Actual Sales',
+                data: CHART_DATA.sales.actual,
+                borderColor: '#5F63F2',
+                backgroundColor: 'rgba(95, 99, 242, 0.1)',
+                fill: true
             },
-            scales: {
-                x: {
-                    grid: { display: false },
-                    ticks: {
-                        color: '#6B7280',
-                        font: { family: 'Lexend', size: 11 }
-                    },
-                    border: { display: false }
-                },
-                y: {
-                    min: 1000,
-                    max: 2000,
-                    ticks: {
-                        stepSize: 250,
-                        color: '#6B7280',
-                        font: { family: 'Lexend', size: 11 },
-                        callback: function (value: any) {
-                            return '$' + value;
-                        }
-                    },
-                    grid: { color: '#E5E7EB', lineWidth: 1 },
-                    border: { display: false }
-                }
+            {
+                label: 'Forecast',
+                data: CHART_DATA.sales.forecast,
+                borderColor: '#E5E7EB',
+                borderDash: [5, 5],
+                fill: false
             }
-        };
-
-        return (
-            <div className="h-[364px] w-full relative">
-                <div className="absolute top-6 left-6 right-6 flex justify-between items-start z-10">
-                    <h3 className="text-lg font-bold text-gray-900">
-                        Sales vs Forecast
-                    </h3>
-                    <div className="flex items-center gap-6">
-                        <div className="flex flex-col gap-2">
-                            <div className="flex items-center gap-1.5">
-                                <div className="w-2 h-2 rounded-full bg-[#5F63F2]" />
-                                <span className="text-xs text-gray-600">Actual Sales</span>
-                            </div>
-                            <div className="flex items-center gap-1.5">
-                                <div className="w-2 h-2 rounded-full bg-gray-300" />
-                                <span className="text-xs text-gray-600">Forecast</span>
-                            </div>
-                        </div>
-                        <div className="flex bg-gray-100 rounded-lg p-1">
-                            <button className="bg-white border-none rounded-md px-3 py-1 text-sm font-semibold text-[#5F63F2] cursor-pointer shadow-sm">
-                                Weekly
-                            </button>
-                            <button className="bg-transparent border-none rounded-md px-3 py-1 text-sm text-gray-500 cursor-pointer">
-                                Monthly
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div className="absolute top-[100px] left-6 right-6 bottom-6">
-                    <Line data={salesData} options={options} />
-                </div>
-            </div>
-        );
-    };
-
-    const PieChart = () => {
-        const chartData = {
-            labels: categoryDistributionData.categories.map(cat => cat.label),
-            datasets: [
-                {
-                    data: categoryDistributionData.categories.map(cat => cat.percentage),
-                    backgroundColor: categoryDistributionData.categories.map(cat => cat.color),
-                    borderColor: '#FFFFFF',
-                    borderWidth: 2,
-                    cutout: '50%'
-                }
-            ]
-        };
-
-        const options = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: '#FFFFFF',
-                    titleColor: '#111827',
-                    bodyColor: '#6B7280',
-                    borderColor: '#E5E7EB',
-                    borderWidth: 1,
-                    cornerRadius: 8,
-                    displayColors: true,
-                    callbacks: {
-                        label: function (context: any) {
-                            return `${context.label}: ${context.parsed}%`;
-                        }
-                    }
-                }
+        ]
+    }, {
+        y: {
+            min: 1000,
+            max: 2000,
+            ticks: {
+                stepSize: 250,
+                callback: (value: any) => '$' + value
             }
-        };
-
-        return (
-            <div className="w-full h-64 flex items-center justify-center relative">
-                <div className="absolute left-0 top-0 w-[250px] h-64">
-                    <Doughnut data={chartData} options={options} />
-                </div>
-                <div className="absolute right-0 bottom-0 w-[78px] space-y-4">
-                    {categoryDistributionData.categories.map((item) => (
-                        <div key={item.label} className="flex items-center gap-2">
-                            <div
-                                className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                                style={{ background: item.color }}
-                            />
-                            <span className="text-xs text-gray-900 leading-[15px]">
-                                {item.label}
-                            </span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-    };
-
-    const BarChart = ({ data }: { data: Array<{ label: string; profit: number; cost: number }> }) => {
-        const chartData = {
-            labels: data.map(item => item.label),
-            datasets: [
-                {
-                    label: 'Profit',
-                    data: data.map(item => item.profit),
-                    backgroundColor: '#10B981',
-                    borderRadius: 2,
-                },
-                {
-                    label: 'Material Cost',
-                    data: data.map(item => item.cost),
-                    backgroundColor: '#F59E0B',
-                    borderRadius: 2,
-                }
-            ]
-        };
-
-        const options = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: '#FFFFFF',
-                    titleColor: '#111827',
-                    bodyColor: '#6B7280',
-                    borderColor: '#E5E7EB',
-                    borderWidth: 1,
-                    cornerRadius: 8,
-                    displayColors: true,
-                    callbacks: {
-                        label: function (context: any) {
-                            return `${context.dataset.label}: $${context.parsed.y}`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#6B7280', font: { size: 11 } },
-                    border: { display: false }
-                },
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        color: '#6B7280',
-                        font: { size: 11 },
-                        callback: function (value: any) {
-                            return '$' + value;
-                        }
-                    },
-                    grid: { color: '#E5E7EB', lineWidth: 1 },
-                    border: { display: false }
-                }
+        },
+        tooltip: {
+            callbacks: {
+                label: (context: any) => `${context.dataset.label}: $${context.parsed.y}`
             }
-        };
+        }
+    });
 
-        return (
-            <div className="h-80 py-5">
-                <div className="h-[220px] mb-5">
-                    <Bar data={chartData} options={options} />
-                </div>
-                <div className="flex justify-center gap-5 mt-4">
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-emerald-500 rounded-sm" />
-                        <span className="text-xs text-gray-900">Profit</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-amber-500 rounded-sm" />
-                        <span className="text-xs text-gray-900">Material Cost</span>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
-    const AnomalyChart = () => {
-        const chartData = {
-            labels: anomalyDetectionData.labels,
-            datasets: [
-                {
-                    label: 'Revenue',
-                    data: anomalyDetectionData.revenue,
-                    borderColor: '#7C3AED',
-                    backgroundColor: 'rgba(124, 58, 237, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.1,
-                    pointBackgroundColor: '#7C3AED',
-                    pointBorderColor: '#FFFFFF',
-                    pointBorderWidth: 2,
-                    pointRadius: 4
-                },
-                {
-                    label: 'Anomalies',
-                    data: anomalyDetectionData.anomalies,
-                    borderColor: '#EF4444',
-                    backgroundColor: '#EF4444',
-                    borderWidth: 0,
-                    fill: false,
-                    pointBackgroundColor: '#EF4444',
-                    pointBorderColor: '#FFFFFF',
-                    pointBorderWidth: 3,
-                    pointRadius: 6,
-                    showLine: false
-                }
-            ]
-        };
-
-        const options = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                    titleColor: '#1F2937',
-                    bodyColor: '#6B7280',
-                    borderColor: '#E5E7EB',
-                    borderWidth: 1,
-                    borderRadius: 8,
-                    padding: 12,
-                    displayColors: true,
-                    callbacks: {
-                        label: (context: any) => {
-                            if (context.datasetIndex === 1 && context.raw !== null) {
-                                return `Anomaly Detected: $${context.raw.toLocaleString()}`;
+    const PieChart = () => (
+        <div className="w-full h-64 flex items-center justify-center relative">
+            <div className="absolute left-0 top-0 w-[250px] h-64">
+                <Doughnut
+                    data={{
+                        labels: CHART_DATA.categories.map(cat => cat.label),
+                        datasets: [{
+                            data: CHART_DATA.categories.map(cat => cat.percentage),
+                            backgroundColor: CHART_DATA.categories.map(cat => cat.color),
+                            borderColor: '#FFFFFF',
+                            borderWidth: 2
+                        }]
+                    }}
+                    options={{
+                        ...getChartOptions(),
+                        cutout: '50%',
+                        plugins: {
+                            ...getChartOptions().plugins,
+                            tooltip: {
+                                ...getChartOptions().plugins.tooltip,
+                                callbacks: {
+                                    label: (context: any) => `${context.label}: ${context.parsed}%`
+                                }
                             }
-                            return `${context.dataset.label}: $${context.raw.toLocaleString()}`;
                         }
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    grid: { color: 'rgba(156, 163, 175, 0.2)', borderDash: [2, 4] },
-                    border: { display: false },
-                    ticks: { color: '#9CA3AF', font: { size: 11 } }
-                },
-                y: {
-                    beginAtZero: false,
-                    min: 6000,
-                    max: 13000,
-                    grid: { color: 'rgba(156, 163, 175, 0.2)', borderDash: [2, 4] },
-                    border: { display: false },
-                    ticks: {
-                        color: '#9CA3AF',
-                        font: { size: 11 },
-                        callback: function (value: any) {
-                            return '$' + (value / 1000) + 'k';
-                        }
-                    }
-                }
-            }
-        };
-
-        return <Line data={chartData} options={options} />;
-    };
-
-    const StockConsumptionChart = () => {
-        const chartData = {
-            labels: stockConsumptionData.labels,
-            datasets: [
-                {
-                    label: 'Actual Consumption',
-                    data: stockConsumptionData.actual,
-                    borderColor: '#EF4444',
-                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#EF4444',
-                    pointBorderColor: '#FFFFFF',
-                    pointBorderWidth: 2,
-                    pointRadius: 5
-                },
-                {
-                    label: 'Forecast Trend',
-                    data: stockConsumptionData.forecast,
-                    borderColor: '#F59E0B',
-                    backgroundColor: 'transparent',
-                    borderWidth: 2,
-                    borderDash: [5, 5],
-                    fill: false,
-                    tension: 0.4,
-                    pointBackgroundColor: '#F59E0B',
-                    pointBorderColor: '#FFFFFF',
-                    pointBorderWidth: 2,
-                    pointRadius: 4
-                }
-            ]
-        };
-
-        const options = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top' as const,
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        font: { size: 12 }
-                    }
-                },
-                tooltip: {
-                    backgroundColor: '#FFFFFF',
-                    titleColor: '#111827',
-                    bodyColor: '#6B7280',
-                    borderColor: '#E5E7EB',
-                    borderWidth: 1,
-                    cornerRadius: 8,
-                    displayColors: true
-                }
-            },
-            scales: {
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#6B7280', font: { size: 11 } }
-                },
-                y: {
-                    beginAtZero: false,
-                    min: 300,
-                    ticks: {
-                        color: '#6B7280',
-                        font: { size: 11 },
-                        callback: function (value: any) {
-                            return value + ' units';
-                        }
-                    },
-                    grid: { color: '#E5E7EB', lineWidth: 1 }
-                }
-            }
-        };
-
-        return <Line data={chartData} options={options} />;
-    };
-
-    const ChartCard = ({
-        title,
-        children,
-        actions,
-        className = ""
-    }: {
-        title: string;
-        children: React.ReactNode;
-        actions?: React.ReactNode;
-        className?: string;
-    }) => (
-        <div className={`bg-white rounded-2xl p-6 shadow-sm border border-gray-200 h-full ${className}`}>
-            {title && (
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-bold text-gray-900 m-0">
-                        {title}
-                    </h3>
-                    {actions}
-                </div>
-            )}
-            {children}
+                    }}
+                />
+            </div>
+            <div className="absolute right-0 bottom-0 w-[78px] space-y-4">
+                {CHART_DATA.categories.map((item) => (
+                    <div key={item.label} className="flex items-center gap-2">
+                        <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: item.color }} />
+                        <span className="text-xs text-gray-900 leading-[15px]">{item.label}</span>
+                    </div>
+                ))}
+            </div>
         </div>
     );
+
+    const BarChart = ({ data }: { data: ChartDataPoint[] }) => (
+        <div className="h-80 py-5">
+            <div className="h-[220px] mb-5">
+                <Bar
+                    data={{
+                        labels: data.map(item => item.label),
+                        datasets: [
+                            { label: 'Profit', data: data.map(item => item.profit || 0), backgroundColor: '#10B981' },
+                            { label: 'Material Cost', data: data.map(item => item.cost || 0), backgroundColor: '#F59E0B' }
+                        ]
+                    }}
+                    options={{
+                        ...getChartOptions({
+                            y: { beginAtZero: true, ticks: { callback: (value: any) => '$' + value } },
+                            tooltip: { callbacks: { label: (context: any) => `${context.dataset.label}: $${context.parsed.y}` } }
+                        })
+                    }}
+                />
+            </div>
+            <div className="flex justify-center gap-5 mt-4">
+                <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-emerald-500 rounded-sm" />
+                    <span className="text-xs text-gray-900">Profit</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-amber-500 rounded-sm" />
+                    <span className="text-xs text-gray-900">Material Cost</span>
+                </div>
+            </div>
+        </div>
+    );
+
+    const AnomalyChart = () => createLineChart({
+        labels: CHART_DATA.anomaly.labels,
+        datasets: [
+            {
+                label: 'Revenue',
+                data: CHART_DATA.anomaly.revenue,
+                borderColor: '#7C3AED',
+                backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                fill: true
+            },
+            {
+                label: 'Anomalies',
+                data: CHART_DATA.anomaly.anomalies,
+                borderColor: '#EF4444',
+                backgroundColor: '#EF4444',
+                pointRadius: 6,
+                showLine: false
+            }
+        ]
+    }, {
+        y: {
+            min: 6000,
+            max: 13000,
+            ticks: { callback: (value: any) => '$' + (value / 1000) + 'k' }
+        },
+        tooltip: {
+            callbacks: {
+                label: (context: any) => context.datasetIndex === 1 && context.raw !== null
+                    ? `Anomaly Detected: $${context.raw.toLocaleString()}`
+                    : `${context.dataset.label}: $${context.raw.toLocaleString()}`
+            }
+        }
+    });
+
+    const StockConsumptionChart = () => createLineChart({
+        labels: CHART_DATA.stock.labels,
+        datasets: [
+            {
+                label: 'Stock Level',
+                data: CHART_DATA.stock.actual,
+                borderColor: '#8B5CF6',
+                borderWidth: 3
+            },
+            {
+                label: 'Forecast Usage',
+                data: CHART_DATA.stock.forecast,
+                borderColor: '#9CA3AF',
+                borderDash: [8, 4],
+                pointStyle: 'rectRot'
+            },
+            {
+                label: 'Anomalies',
+                data: CHART_DATA.stock.anomalies,
+                borderColor: 'transparent',
+                backgroundColor: '#EF4444',
+                pointRadius: 6,
+                showLine: false
+            }
+        ]
+    }, {
+        y: {
+            min: 10,
+            max: 50,
+            ticks: { stepSize: 10 },
+            title: { display: true, text: 'Stock (kg)', color: '#6B7280', font: { size: 12 } }
+        }
+    });
+
+    const RawMaterialCostChart = () => createLineChart({
+        labels: CHART_DATA.rawMaterial.labels,
+        datasets: [
+            {
+                label: 'Current Price',
+                data: CHART_DATA.rawMaterial.prices,
+                borderColor: '#8B5CF6',
+                borderWidth: 3
+            },
+            {
+                label: 'Average Price',
+                data: new Array(CHART_DATA.rawMaterial.labels.length).fill(CHART_DATA.rawMaterial.averagePrice),
+                borderColor: '#9CA3AF',
+                borderDash: [8, 4],
+                pointRadius: 0
+            }
+        ]
+    }, {
+        y: {
+            min: 24,
+            max: 29,
+            ticks: { stepSize: 1 },
+            title: { display: true, text: 'Price per Unit ($)', color: '#6B7280', font: { size: 12 } }
+        },
+        tooltip: { callbacks: { label: (context: any) => `$${context.parsed.y}` } }
+    });
+
 
     return (
         <div className="orders-insights-page w-full h-full">
@@ -772,13 +547,11 @@ export default function OrdersInsights() {
                 <div className="px-6 py-8 pb-16 bg-gray-50 w-full min-h-fit">
                     {/* Navigation Tabs */}
                     <div className="flex gap-2 mb-8 border-b border-gray-200 pb-2">
-                        {tabs.map(tab => (
+                        {TABS.map(tab => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 border-none rounded-md text-sm font-semibold cursor-pointer transition-colors duration-200 ${activeTab === tab
-                                    ? 'text-white'
-                                    : 'bg-transparent text-gray-500 hover:text-gray-700'
+                                className={`px-4 py-2 border-none rounded-md text-sm font-semibold cursor-pointer transition-colors duration-200 ${activeTab === tab ? 'text-white' : 'bg-transparent text-gray-500 hover:text-gray-700'
                                     }`}
                                 style={{
                                     background: activeTab === tab ? colors.primary : 'transparent',
@@ -795,91 +568,33 @@ export default function OrdersInsights() {
                         <>
                             {/* Revenue Metrics Cards */}
                             <div className="grid grid-cols-4 gap-6 mb-10">
-                                <MetricCard
-                                    {...metricsData.lastDaySales}
-                                    iconType="sales"
-                                />
-                                <MetricCard
-                                    {...metricsData.wasteOnSales}
-                                    iconType="waste"
-                                />
-                                <MetricCard
-                                    {...metricsData.weeklyRevenue}
-                                    iconType="revenue"
-                                />
-                                <MetricCard
-                                    {...metricsData.aiForecastAccuracy}
-                                    iconType="ai"
-                                />
+                                {METRICS_DATA.revenue.map((metric, index) => (
+                                    <MetricCard key={index} {...metric} />
+                                ))}
                             </div>
 
                             {/* Main Charts Section */}
                             <div className="grid grid-cols-[2fr_1fr] gap-6 mb-10">
-                                <div className="bg-white rounded-xl border border-gray-100 shadow-sm h-[400px]">
+                                <ChartContainer title="Sales vs Forecast" height="h-[400px]">
                                     <SalesChart />
-                                </div>
+                                </ChartContainer>
 
-                                {/* AI Revenue Insights */}
-                                <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 h-[400px] flex flex-col">
-                                    <div className="flex justify-between items-center mb-5">
-                                        <h3 className="text-lg font-semibold text-gray-900">
-                                            AI Revenue Insights
-                                        </h3>
-                                        <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
-                                            <AIIcon />
-                                        </div>
-                                    </div>
+                                <ChartContainer title="AI Revenue Insights" height="h-[400px]">
                                     <div className="flex flex-col gap-5 flex-1 justify-between">
-                                        <InsightCard
-                                            title="Peak Hour Optimization"
-                                            description="Lunch rush (12-2 PM) shows 15% higher revenue potential. Consider increasing staff during these hours."
-                                            bgColor="#F0FDF4"
-                                            borderColor="#BBF7D0"
-                                            titleColor="#166534"
-                                            textColor="#15803D"
-                                            iconColor="#16A34A"
-                                        />
-                                        <InsightCard
-                                            title="Menu Item Alert"
-                                            description="Seafood pasta showing declining sales trend. Consider promotional pricing or recipe adjustment."
-                                            bgColor="#FEFCE8"
-                                            borderColor="#FEF08A"
-                                            titleColor="#854D0E"
-                                            textColor="#A16207"
-                                            iconColor="#CA8A04"
-                                        />
-                                        <InsightCard
-                                            title="Revenue Forecast"
-                                            description="Next week projected revenue: $58,200 (+10.1% vs this week). Weather forecast favorable."
-                                            bgColor="#EFF6FF"
-                                            borderColor="#BFDBFE"
-                                            titleColor="#1E40AF"
-                                            textColor="#1D4ED8"
-                                            iconColor="#2563EB"
-                                        />
+                                        <InsightCard title="Peak Hour Optimization" description="Lunch rush (12-2 PM) shows 15% higher revenue potential. Consider increasing staff during these hours." bgColor="#F0FDF4" borderColor="#BBF7D0" titleColor="#166534" textColor="#15803D" iconColor="#16A34A" />
+                                        <InsightCard title="Menu Item Alert" description="Seafood pasta showing declining sales trend. Consider promotional pricing or recipe adjustment." bgColor="#FEFCE8" borderColor="#FEF08A" titleColor="#854D0E" textColor="#A16207" iconColor="#CA8A04" />
+                                        <InsightCard title="Revenue Forecast" description="Next week projected revenue: $58,200 (+10.1% vs this week). Weather forecast favorable." bgColor="#EFF6FF" borderColor="#BFDBFE" titleColor="#1E40AF" textColor="#1D4ED8" iconColor="#2563EB" />
                                     </div>
-                                </div>
+                                </ChartContainer>
                             </div>
 
                             {/* Bottom Charts Section */}
                             <div className="grid grid-cols-[2fr_1fr] gap-6 mb-10">
-                                <ChartCard title="Cost vs Food Cost Analysis">
-                                    <div className="flex justify-center gap-6 mb-5">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-3 h-3 rounded-full bg-red-500" />
-                                            <span className="text-sm text-gray-600">Total Cost</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-3 h-3 rounded-full bg-orange-600" />
-                                            <span className="text-sm text-gray-600">Food Cost</span>
-                                        </div>
-                                    </div>
-                                    <div className="h-80">
-                                        <BarChart data={costProfitData} />
-                                    </div>
-                                </ChartCard>
+                                <ChartContainer title="Cost vs Food Cost Analysis">
+                                    <BarChart data={CHART_DATA.costProfit} />
+                                </ChartContainer>
 
-                                <ChartCard
+                                <ChartContainer
                                     title="Top Selling Categories"
                                     actions={
                                         <select className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white text-black">
@@ -889,122 +604,323 @@ export default function OrdersInsights() {
                                         </select>
                                     }
                                 >
-                                    <div className="h-80">
-                                        <PieChart />
-                                    </div>
-                                </ChartCard>
+                                    <PieChart />
+                                </ChartContainer>
                             </div>
 
                             {/* Revenue Anomaly Detection */}
-                            <div className="mb-10">
-                                <ChartCard title="">
-                                    <div className="flex justify-between items-center mb-6">
-                                        <div className="flex flex-col gap-2">
-                                            <h3 className="text-lg font-semibold text-gray-900 m-0">
-                                                Revenue Anomaly Detection
-                                            </h3>
-                                            <div className="bg-red-50 rounded-full px-3 py-1 inline-block text-xs font-medium text-red-800">
-                                                2 Anomalies Detected
-                                            </div>
-                                        </div>
-                                        <div className="flex gap-6 items-center">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-3 h-3 rounded-full bg-purple-600" />
-                                                <span className="text-sm text-gray-600">Revenue</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-3 h-3 rounded-full bg-red-500" />
-                                                <span className="text-sm text-gray-600">Anomalies</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="h-[400px]">
-                                        <AnomalyChart />
-                                    </div>
-                                </ChartCard>
-                            </div>
+                            <ChartContainer title="Revenue Anomaly Detection" height="h-[400px]">
+                                <div className="bg-red-50 rounded-full px-3 py-1 inline-block text-xs font-medium text-red-800 mb-6">
+                                    2 Anomalies Detected
+                                </div>
+                                <AnomalyChart />
+                            </ChartContainer>
                         </>
                     )}
 
                     {activeTab === 'Inventory' && (
-                        <>
-                            <div className="mb-10 py-6">
-                                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                                    Inventory Analytics
-                                </h1>
-                                <p className="text-base text-gray-600">
-                                    Track your inventory costs, wastage, and consumption patterns
-                                </p>
-                            </div>
+                        <div className="inventory-insights-container w-full">
 
-                            {/* Inventory Metrics Cards */}
-                            <div className="grid grid-cols-3 gap-6 mb-10">
-                                <MetricCard
-                                    {...inventoryMetrics.lastPurchaseCost}
-                                    iconType="waste"
-                                />
-                                <MetricCard
-                                    {...inventoryMetrics.topCostlyItem}
-                                    iconType="revenue"
-                                />
-                                <MetricCard
-                                    {...inventoryMetrics.totalWastage}
-                                    iconType="sales"
-                                />
-                            </div>
-
-                            {/* Wastage Breakdown */}
-                            <ChartCard title="Wastage Breakdown (All Types)" className="mb-10">
-                                <div className="grid grid-cols-3 gap-5">
-                                    <WastageCard
-                                        type="Weight"
-                                        value={wastageBreakdown.kg.value}
-                                        unit={wastageBreakdown.kg.unit}
-                                        color={wastageBreakdown.kg.color}
-                                    />
-                                    <WastageCard
-                                        type="Volume"
-                                        value={wastageBreakdown.liters.value}
-                                        unit={wastageBreakdown.liters.unit}
-                                        color={wastageBreakdown.liters.color}
-                                    />
-                                    <WastageCard
-                                        type="Count"
-                                        value={wastageBreakdown.count.value}
-                                        unit={wastageBreakdown.count.unit}
-                                        color={wastageBreakdown.count.color}
-                                    />
-                                </div>
-                            </ChartCard>
-
-                            {/* Main Charts Section */}
-                            <div className="grid grid-cols-[2fr_1fr] gap-6 mb-10">
-                                <ChartCard title="Stock Consumption Trend & Forecast">
-                                    <div className="h-80">
-                                        <StockConsumptionChart />
+                            {/* AI Inventory Intelligence Section */}
+                            <section className="mb-10">
+                                <div className="bg-[#39297B] rounded-xl p-6">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <div className="w-14 h-14 flex items-center justify-center">
+                                            <svg width="54" height="56" viewBox="0 0 54 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M46 0C50.4183 0 54 3.58172 54 8V48C54 52.4183 50.4183 56 46 56H8C3.58172 56 0 52.4183 0 48V8C0 3.58172 3.58172 0 8 0H46Z" fill="white" fillOpacity="0.2" />
+                                                <path d="M46 0C50.4183 0 54 3.58172 54 8V48C54 52.4183 50.4183 56 46 56H8C3.58172 56 0 52.4183 0 48V8C0 3.58172 3.58172 0 8 0H46Z" stroke="#E5E7EB" />
+                                                <path d="M42 42H12V13H42V42Z" stroke="#E5E7EB" />
+                                                <g clipPath="url(#clip0_147_695)">
+                                                    <path d="M27 15C27.8297 15 28.5 15.6703 28.5 16.5V19.5H34.125C35.9906 19.5 37.5 21.0094 37.5 22.875V35.625C37.5 37.4906 35.9906 39 34.125 39H19.875C18.0094 39 16.5 37.4906 16.5 35.625V22.875C16.5 21.0094 18.0094 19.5 19.875 19.5H25.5V16.5C25.5 15.6703 26.1703 15 27 15ZM21.75 33C21.3375 33 21 33.3375 21 33.75C21 34.1625 21.3375 34.5 21.75 34.5H23.25C23.6625 34.5 24 34.1625 24 33.75C24 33.3375 23.6625 33 23.25 33H21.75ZM26.25 33C25.8375 33 25.5 33.3375 25.5 33.75C25.5 34.1625 25.8375 34.5 26.25 34.5H27.75C28.1625 34.5 28.5 34.1625 28.5 33.75C28.5 33.3375 28.1625 33 27.75 33H26.25ZM30.75 33C30.3375 33 30 33.3375 30 33.75C30 34.1625 30.3375 34.5 30.75 34.5H32.25C32.6625 34.5 33 34.1625 33 33.75C33 33.3375 32.6625 33 32.25 33H30.75ZM24.375 27C24.375 26.5027 24.1775 26.0258 23.8258 25.6742C23.4742 25.3225 22.9973 25.125 22.5 25.125C22.0027 25.125 21.5258 25.3225 21.1742 25.6742C20.8225 26.0258 20.625 26.5027 20.625 27C20.625 27.4973 20.8225 27.9742 21.1742 28.3258C21.5258 28.6775 22.0027 28.875 22.5 28.875C22.9973 28.875 23.4742 28.6775 23.8258 28.3258C24.1775 27.9742 24.375 27.4973 24.375 27ZM31.5 28.875C31.9973 28.875 32.4742 28.6775 32.8258 28.3258C33.1775 27.9742 33.375 27.4973 33.375 27C33.375 26.5027 33.1775 26.0258 32.8258 25.6742C32.4742 25.3225 31.9973 25.125 31.5 25.125C31.0027 25.125 30.5258 25.3225 30.1742 25.6742C29.8225 26.0258 29.625 26.5027 29.625 27C29.625 27.4973 29.8225 27.9742 30.1742 28.3258C30.5258 28.6775 31.0027 28.875 31.5 28.875ZM14.25 25.5H15V34.5H14.25C13.0078 34.5 12 33.4922 12 32.25V27.75C12 26.5078 13.0078 25.5 14.25 25.5ZM39.75 25.5C40.9922 25.5 42 26.5078 42 27.75V32.25C42 33.4922 40.9922 34.5 39.75 34.5H39V25.5H39.75Z" fill="white" />
+                                                </g>
+                                                <defs>
+                                                    <clipPath id="clip0_147_695">
+                                                        <path d="M12 15H42V39H12V15Z" fill="white" />
+                                                    </clipPath>
+                                                </defs>
+                                            </svg>
+                                        </div>
+                                        <h2 className="text-xl font-bold text-white">AI Inventory Intelligence</h2>
                                     </div>
-                                </ChartCard>
 
-                                <ChartCard title="Stock Availability Status">
-                                    <div className="h-80">
-                                        <div className="flex items-center justify-center h-full text-gray-500">
-                                            Stock Availability Chart
+                                    <div className="grid grid-cols-3 gap-6">
+                                        {/* Stock Status */}
+                                        <div className="bg-[#4b3f83] bg-opacity-10 rounded-lg p-5">
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <div className="w-9 h-9 bg-teal-300 rounded-lg flex items-center justify-center">
+                                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                        <path d="M2 4H18V16H2V4Z" stroke="#0F766E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                        <path d="M6 8V12" stroke="#0F766E" strokeWidth="2" strokeLinecap="round" />
+                                                        <path d="M10 6V14" stroke="#0F766E" strokeWidth="2" strokeLinecap="round" />
+                                                        <path d="M14 10V12" stroke="#0F766E" strokeWidth="2" strokeLinecap="round" />
+                                                    </svg>
+                                                </div>
+                                                <h3 className="text-lg font-semibold text-white">Stock Status</h3>
+                                            </div>
+                                            <div className="space-y-3">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-sm text-white text-opacity-80">Well-stocked items</span>
+                                                    <span className="text-base font-bold text-green-400">23 items</span>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-sm text-white text-opacity-80">Critical low stock</span>
+                                                    <span className="text-base font-bold text-red-400">5 items</span>
+                                                </div>
+                                                <div className="bg-red-500 bg-opacity-20 rounded px-3 py-2 mt-3">
+                                                    <div className="flex items-center gap-2">
+                                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                                            <path d="M6 1L11 6L6 11L1 6L6 1Z" fill="white" />
+                                                        </svg>
+                                                        <span className="text-xs text-white">Salmon & tomatoes need restocking in 2 days</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Dead Stock Alert */}
+                                        <div className="bg-[#4b3f83] bg-opacity-10 rounded-lg p-5">
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <div className="w-9 h-9 bg-amber-600 rounded-lg flex items-center justify-center">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                        <circle cx="8" cy="8" r="6" stroke="white" strokeWidth="2" />
+                                                        <path d="M8 4V8" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                                                        <path d="M8 12H8.01" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                                                    </svg>
+                                                </div>
+                                                <h3 className="text-lg font-semibold text-white">Dead Stock Alert</h3>
+                                            </div>
+                                            <div className="space-y-3">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-sm text-white text-opacity-80">Value at risk</span>
+                                                    <span className="text-base font-bold text-yellow-400">$847</span>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-sm text-white text-opacity-80">Sitting unused</span>
+                                                    <span className="text-base font-bold text-yellow-400">30+ days</span>
+                                                </div>
+                                                <div className="bg-yellow-500 bg-opacity-20 rounded px-3 py-2 mt-3">
+                                                    <div className="flex items-center gap-2">
+                                                        <svg width="9" height="12" viewBox="0 0 9 12" fill="none">
+                                                            <path d="M0.375 0H8.625V12H0.375V0Z" fill="white" />
+                                                        </svg>
+                                                        <span className="text-xs text-white">Consider promotions for spices & oils</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Waste Insights */}
+                                        <div className="bg-[#4b3f83] bg-opacity-10 rounded-lg p-5">
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <div className="w-9 h-9 bg-blue-500 rounded-lg flex items-center justify-center">
+                                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                                        <path d="M16 7L9 2L2 7V15C2 15.5 2.4 16 3 16H15C15.6 16 16 15.5 16 15V7Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                        <path d="M7 16V9H11V16" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                    </svg>
+                                                </div>
+                                                <h3 className="text-lg font-semibold text-white">Waste Insights</h3>
+                                            </div>
+                                            <div className="space-y-3">
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-sm text-white text-opacity-80">Waste reduction</span>
+                                                    <span className="text-base font-bold text-green-400">-12%</span>
+                                                </div>
+                                                <div className="flex justify-between items-center">
+                                                    <span className="text-sm text-white text-opacity-80">Top waste category</span>
+                                                    <span className="text-base font-bold text-blue-400">Vegetables</span>
+                                                </div>
+                                                <div className="bg-blue-500 bg-opacity-20 rounded px-3 py-2 mt-3">
+                                                    <div className="flex items-center gap-2">
+                                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                                            <path d="M6 1L11 6L6 11L1 6L6 1Z" fill="white" />
+                                                        </svg>
+                                                        <span className="text-xs text-white">18kg vegetables - optimize storage</span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </ChartCard>
-                            </div>
-                        </>
-                    )}
+                                </div>
+                            </section>
 
-                    {activeTab === "Chef's Space" && (
-                        <div className="flex items-center justify-center h-64 text-gray-500">
-                            Chef's Space content coming soon...
-                        </div>
-                    )}
+                            {/* Inventory Metrics Cards */}
+                            <section className="mb-10">
+                                <div className="grid grid-cols-3 gap-6">
+                                    {METRICS_DATA.inventory.map((metric, index) => (
+                                        <MetricCard key={index} {...metric} />
+                                    ))}
+                                </div>
+                            </section>
 
-                    {activeTab === 'Prediction Engine' && (
-                        <div className="flex items-center justify-center h-64 text-gray-500">
-                            Prediction Engine content coming soon...
+                            {/* Anomaly Detection and Smart Notifications Section */}
+                            <section className="mb-10">
+                                <div className="grid grid-cols-2 gap-6">
+                                    {/* Stock Anomaly Detection */}
+                                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <h3 className="text-lg font-semibold text-gray-900">Stock Anomaly Detection</h3>
+                                            <div className="bg-red-100 px-3 py-1 rounded-full">
+                                                <span className="text-xs font-medium text-red-800">3 Anomalies</span>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-4">
+                                            {/* Unusual Consumption Spike */}
+                                            <div className="border-l-4 border-red-500 bg-red-50 pl-4 pr-4 py-4 rounded-r-lg">
+                                                <div className="flex items-start gap-3">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="mt-1 flex-shrink-0">
+                                                        <path d="M8 1L15 8L8 15L1 8L8 1Z" fill="#DC2626" />
+                                                    </svg>
+                                                    <div>
+                                                        <h4 className="text-base font-medium text-red-900 mb-1">Unusual Consumption Spike</h4>
+                                                        <p className="text-sm text-red-700 mb-2">Salmon usage increased 340% yesterday vs normal consumption. Check for preparation errors or theft.</p>
+                                                        <p className="text-xs text-red-600">Detected 2 hours ago</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Irregular Stock Pattern */}
+                                            <div className="border-l-4 border-yellow-500 bg-yellow-50 pl-4 pr-4 py-4 rounded-r-lg">
+                                                <div className="flex items-start gap-3">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="mt-1 flex-shrink-0">
+                                                        <path d="M2 8L8 2L14 8L8 14L2 8Z" fill="#CA8A04" />
+                                                    </svg>
+                                                    <div>
+                                                        <h4 className="text-base font-medium text-yellow-900 mb-1">Irregular Stock Pattern</h4>
+                                                        <p className="text-sm text-yellow-700 mb-2">Tomato inventory dropping faster than forecasted. Possible supplier quality issues.</p>
+                                                        <p className="text-xs text-yellow-600">Detected 5 hours ago</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Expiry Date Anomaly */}
+                                            <div className="border-l-4 border-orange-500 bg-orange-50 pl-4 pr-4 py-4 rounded-r-lg">
+                                                <div className="flex items-start gap-3">
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="mt-1 flex-shrink-0">
+                                                        <circle cx="8" cy="8" r="6" fill="#EA580C" />
+                                                        <path d="M8 4V8L11 11" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                    </svg>
+                                                    <div>
+                                                        <h4 className="text-base font-medium text-orange-900 mb-1">Expiry Date Anomaly</h4>
+                                                        <p className="text-sm text-orange-700 mb-2">Multiple dairy products expiring sooner than expected. Review storage conditions.</p>
+                                                        <p className="text-xs text-orange-600">Detected 1 day ago</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Smart Notifications */}
+                                    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-6">Smart Notifications</h3>
+                                        <div className="space-y-4">
+                                            {/* Reorder Suggestion */}
+                                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                                <div className="flex items-start gap-3">
+                                                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                                            <path d="M7 1V13M1 7H13" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-base font-medium text-blue-900 mb-1">Reorder Suggestion</h4>
+                                                        <p className="text-sm text-blue-700">Order 25kg salmon by tomorrow to avoid stockout</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Cost Optimization */}
+                                            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                                                <div className="flex items-start gap-3">
+                                                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                                            <path d="M7 1L13 7L7 13L1 7L7 1Z" fill="white" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-base font-medium text-green-900 mb-1">Cost Optimization</h4>
+                                                        <p className="text-sm text-green-700">Beef prices 12% lower this week - good time to stock up</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Menu Optimization */}
+                                            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                                <div className="flex items-start gap-3">
+                                                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                                            <path d="M1 7H13M7 1V13" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-base font-medium text-purple-900 mb-1">Menu Optimization</h4>
+                                                        <p className="text-sm text-purple-700">Feature pasta dishes this week - high stock, low waste</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Expiry Alert */}
+                                            <div className="bg-yellow-50 border border-yellow-400 rounded-lg p-4">
+                                                <div className="flex items-start gap-3">
+                                                    <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                                            <rect x="2" y="3" width="10" height="8" rx="1" stroke="white" strokeWidth="2" />
+                                                            <path d="M5 1V5M9 1V5" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="text-base font-medium text-yellow-900 mb-1">Expiry Alert</h4>
+                                                        <p className="text-sm text-yellow-700">8 items expire within 3 days - plan special menu</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            {/* Charts Section */}
+                            <section className="mb-10">
+                                <div className="grid grid-cols-2 gap-6">
+                                    <ChartContainer
+                                        title="Stock vs Forecast Usage"
+                                        actions={<SearchInput width="w-64" />}
+                                    >
+                                        <StockConsumptionChart />
+                                    </ChartContainer>
+
+                                    <ChartContainer
+                                        title="Raw Material Cost Fluctuation"
+                                        actions={<SearchInput />}
+                                    >
+                                        <RawMaterialCostChart />
+                                    </ChartContainer>
+                                </div>
+                            </section>
+
+                            {/* Bottom Grid */}
+                            <section>
+                                <div className="grid grid-cols-2 gap-6">
+                                    <ChartContainer
+                                        title="Stock Availability"
+                                        actions={<SearchInput />}
+                                        height="auto"
+                                    >
+                                        <div className="space-y-4">
+                                            {STOCK_ITEMS.map((item, index) => (
+                                                <StockItemCard key={index} item={item} />
+                                            ))}
+                                        </div>
+                                    </ChartContainer>
+
+                                    <ChartContainer title="Recent Inventory Activity" height="auto">
+                                        <div className="space-y-6">
+                                            {ACTIVITY_ITEMS.map((item, index) => (
+                                                <ActivityItemCard key={index} item={item} />
+                                            ))}
+                                        </div>
+                                    </ChartContainer>
+                                </div>
+                            </section>
                         </div>
                     )}
                 </div>
@@ -1012,3 +928,4 @@ export default function OrdersInsights() {
         </div>
     );
 }
+
