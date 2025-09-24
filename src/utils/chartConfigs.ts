@@ -54,39 +54,31 @@ export const createDoughnutChartOptions = (revenueByCategory: RevenueByCategory)
   elements: { arc: { borderWidth: 2 } }
 });
 
-export const createLineChartData = (revenueTrend: RevenueTrend) => ({
+export const createBarChartData = (revenueTrend: RevenueTrend) => ({
   labels: revenueTrend.labels,
   datasets: [
     {
       label: 'Revenue',
       data: revenueTrend.data,
+      backgroundColor: '#3B82F6',
       borderColor: '#3B82F6',
-      backgroundColor: 'rgba(59, 130, 246, 0.1)',
-      borderWidth: 3,
-      fill: true,
-      tension: 0.3,
-      pointBackgroundColor: '#FFFFFF',
-      pointBorderColor: '#3B82F6',
-      pointBorderWidth: 2,
-      pointRadius: 4,
+      borderWidth: 1,
+      borderRadius: 4,
+      borderSkipped: false,
     },
     {
       label: 'COGS',
       data: [1200, 1400, 1100, 1600, 1800, 2100, 1900],
+      backgroundColor: '#F59E0B',
       borderColor: '#F59E0B',
-      backgroundColor: 'rgba(245, 158, 11, 0.1)',
-      borderWidth: 3,
-      fill: true,
-      tension: 0.3,
-      pointBackgroundColor: '#FFFFFF',
-      pointBorderColor: '#F59E0B',
-      pointBorderWidth: 2,
-      pointRadius: 4,
+      borderWidth: 1,
+      borderRadius: 4,
+      borderSkipped: false,
     }
   ]
 });
 
-export const createLineChartOptions = () => ({
+export const createBarChartOptions = () => ({
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
@@ -95,7 +87,8 @@ export const createLineChartOptions = () => ({
       position: 'top' as const,
       labels: {
         usePointStyle: true,
-        pointStyle: 'circle' as const,
+        pointStyle: 'rect' as const,
+        padding: 20,
       }
     },
     tooltip: {
@@ -105,6 +98,11 @@ export const createLineChartOptions = () => ({
       borderColor: '#E5E7EB',
       borderWidth: 1,
       cornerRadius: 8,
+      callbacks: {
+        label: function (context: any) {
+          return `${context.dataset.label}: ₹${context.parsed.y.toLocaleString()}`;
+        }
+      }
     }
   },
   scales: {
@@ -112,24 +110,41 @@ export const createLineChartOptions = () => ({
       grid: { display: false },
       ticks: {
         color: '#6B7280',
-        font: { family: 'Inter', size: 12, weight: 500 }
+        font: { family: 'Lexend', size: 12, weight: 500 }
       }
     },
     y: {
-      min: 0,
+      beginAtZero: true,
       max: 4500,
       ticks: {
         stepSize: 500,
         color: '#6B7280',
-        font: { family: 'Inter', size: 12, weight: 500 },
+        font: { family: 'Lexend', size: 12, weight: 500 },
         callback: function (value: any) {
           return '₹' + (value / 1000).toFixed(1) + 'k';
         }
       },
-      grid: { color: '#F3F4F6', lineWidth: 1 }
+      grid: { 
+        color: '#F3F4F6', 
+        lineWidth: 1,
+        drawBorder: false
+      }
+    }
+  },
+  interaction: {
+    mode: 'index' as const,
+    intersect: false,
+  },
+  elements: {
+    bar: {
+      borderWidth: 1,
     }
   }
 });
+
+// Legacy line chart functions (kept for compatibility)
+export const createLineChartData = createBarChartData;
+export const createLineChartOptions = createBarChartOptions;
 
 // Helper function to format currency
 export const formatCurrency = (amount: number): string => {

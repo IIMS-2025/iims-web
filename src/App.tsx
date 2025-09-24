@@ -12,6 +12,7 @@ import KitchenAgent from "./pages/KitchenAgent";
 import AppLayout from "./layouts/AppLayout";
 import appConfig from "./config/appConfig";
 import InventoryPage from "./pages/Inventory";
+import OrdersPage from "./pages/Orders";
 
 export default function App() {
   // App routing configuration (can be loaded from backend)
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="/chefspace" element={<ChefSpace />} />
             <Route path="/chefspace/:id" element={<ChefSpaceDetail />} />
             <Route path="/inventory" element={<InventoryPage />} />
+            <Route path="/orders" element={<OrdersPage />} />
             <Route path="/restock" element={<RestockList />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/kitchen-agent" element={<KitchenAgent />} />
