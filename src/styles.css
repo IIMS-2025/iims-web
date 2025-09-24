@@ -95,8 +95,6 @@
 
 .content-grid {
     display: grid;
-    grid-template-columns: 352px 1fr;
-    gap: 32px;
     width: 100%;
 }
 

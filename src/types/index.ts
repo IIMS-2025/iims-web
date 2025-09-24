@@ -133,7 +133,7 @@ export interface Ingredient {
   id: string;
   name?: string;
   available_qty: string | number;
-  required_qty?: string | number;
+  required_quantity?: string | number;
   stock_status: string | number;
   unit?: string;
   statusColor?: string;

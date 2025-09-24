@@ -144,15 +144,15 @@ export default function ChefSpaceDetail() {
               <table>
                 <thead>
                   <tr>
-                    <th>Ingredient</th>
-                    <th>Quantity</th>
-                    <th>Stock Status</th>
+                    <th className="min-w-[250px]">Ingredient</th>
+                    <th className="min-w-[150px]">Quantity</th>
+                    <th className="min-w-[150px]">Stock Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {cookbookItem?.ingredients?.map((ingredient, index) => (
                     <tr key={index}>
-                      <td>
+                      <td className="min-w-[250px]">
                         <div className="flex items-center gap-3">
                           <div
                             className="ingredient-dot"
@@ -165,10 +165,10 @@ export default function ChefSpaceDetail() {
                           </span>
                         </div>
                       </td>
-                      <td className="text-center text-black font-medium">
-                        {ingredient.required_qty}
+                      <td className="text-black font-medium min-w-[150px]">
+                        {`${ingredient.required_quantity} ${ingredient.unit}`}
                       </td>
-                      <td>{getStockStatus(ingredient.stock_status)}</td>
+                      <td className="min-w-[150px]">{getStockStatus(ingredient.stock_status)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -178,10 +178,10 @@ export default function ChefSpaceDetail() {
 
           {/* Cooking Instructions */}
           <div className="bg-white rounded-2xl shadow-sm p-6 pb-0 mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-2 text-[18px]">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4 text-[18px]">
               Cooking Instructions
             </h3>
-            <div className="mb-8 flex flex-col px-[14px]">
+            <div className="mb-8 flex flex-col px-[2px]">
               {cookbookItem?.instructions?.map((instruction, index) => (
                 <div key={index} className="flex flex-row gap-2 items-center mb-2">
                     <div className="text-white text-[18px] font-normal bg-blue-400 rounded-full w-[28px] h-[28px] flex items-center justify-center">{index + 1}</div>

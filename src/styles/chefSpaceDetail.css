@@ -3,7 +3,7 @@
 /* Content Grid - Complex grid layout */
 .content-grid {
   display: grid;
-  grid-template-columns: 352px 1fr;
+  grid-template-columns: 400px 1fr;
   gap: 32px;
   width: 100%;
 }
