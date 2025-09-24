@@ -1,0 +1,56 @@
+/* ChefSpaceDetail specific styles that can't be easily converted to Tailwind */
+
+/* Content Grid - Complex grid layout */
+.content-grid {
+  display: grid;
+  grid-template-columns: 352px 1fr;
+  gap: 32px;
+  width: 100%;
+}
+
+/* Ingredients Table - Complex table styling */
+.ingredients-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ingredients-table th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.21;
+  color: #111827;
+  padding: 14px 16px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.ingredients-table th:first-child {
+  padding-left: 0;
+}
+
+.ingredients-table td {
+  padding: 16px;
+  border-top: 1px solid #E5E7EB;
+}
+
+.ingredients-table td:first-child {
+  padding-left: 0;
+}
+
+/* Ingredient dot with dynamic background color */
+.ingredient-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Status badge with dynamic colors */
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.21;
+  text-align: center;
+}

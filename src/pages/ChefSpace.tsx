@@ -152,7 +152,7 @@ export default function ChefSpace() {
               })}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12">
+            <div className="flex flex-col items-center justify-center py-12 min-h-[80vh]">
               <div className="text-gray-400 mb-4">
                 <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
                   <path

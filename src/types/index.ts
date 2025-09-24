@@ -133,6 +133,7 @@ export interface Ingredient {
   id: string;
   name?: string;
   available_qty: string | number;
+  required_qty?: string | number;
   stock_status: string | number;
   unit?: string;
   statusColor?: string;
@@ -144,15 +145,15 @@ export interface CookbookItem {
   id: string;
   name: string;
   price: string;
-  instructions?: string;
+  instructions?: string[];
   created_by?: string;
   image_path?: string;
   image_url?: string;
   ingredient_ids?: string[];
   ingredients?: Ingredient[];
   chefTips?: string[];
-  prepTime?: string;
-  cookTime?: string;
+  prep_time?: string;
+  cook_time?: string;
   servings?: string;
   rating?: string;
   reviews?: string;

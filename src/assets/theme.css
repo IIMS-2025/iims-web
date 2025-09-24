@@ -2525,7 +2525,7 @@ body {
   text-align: center;
   color: #6B7280;
   padding: 64px 32px;
-  min-height: 60%;
+  min-height: 55vh;
   justify-content: center;
   align-items: center;
 }
