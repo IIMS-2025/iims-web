@@ -260,8 +260,12 @@ export default function RestockList() {
                   <th className="text-left text-xs font-bold text-gray-500 uppercase tracking-wide px-6 py-4 border-b border-gray-200">Current Stock</th>
                   <th className="text-left text-xs font-bold text-gray-500 uppercase tracking-wide px-6 py-4 border-b border-gray-200">
                     <div className="flex flex-col gap-0.5">
-                      <span>Forecasted</span>
-                      <span>Requirement</span>
+                      <span>Min Stock</span>
+                    </div>
+                  </th>
+                  <th className="text-left text-xs font-bold text-gray-500 uppercase tracking-wide px-6 py-4 border-b border-gray-200">
+                    <div className="flex flex-col gap-0.5">
+                      <span>Quantity</span>
                     </div>
                   </th>
                   <th className="text-left text-xs font-bold text-gray-500 uppercase tracking-wide px-6 py-4 border-b border-gray-200">
@@ -311,12 +315,21 @@ export default function RestockList() {
 
                     <td className="px-6 py-4 align-middle">
                       <div className="flex flex-col gap-1">
+                        <span className="font-medium text-sm leading-5 text-black">
+                          {item.reorder_point} {item.unit}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 align-middle">
+                      <div className="flex flex-row items-center gap-2">
                         <span className="font-semibold text-sm leading-5 text-gray-800">
                           {Math.max(0, parseFloat(item.reorder_point) - parseFloat(item.available_qty))} {item.unit}
                         </span>
-                        <span className="font-normal text-xs leading-4 text-gray-500">
-                          To reach reorder point
-                        </span>
+                        {/* button for incemet quantity */}
+                        <button className="bg-emerald-600 text-white px-2 py-[2px] rounded-md text-sm">
+                          +
+                        </button>
                       </div>
                     </td>
 
