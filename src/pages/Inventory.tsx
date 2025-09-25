@@ -157,7 +157,7 @@ const handleStockUpdateError = (error: any) => {
               <TotalItemsIcon />
             </div>
             <div className="stat-content">
-              <div className="stat-number">{summary?.total || 0}</div>
+              <div className="stat-number">{summary?.total || filteredItems?.length}</div>
               <div className="stat-label">Total Items</div>
             </div>
           </div>
