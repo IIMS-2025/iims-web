@@ -21,7 +21,6 @@ export const inventoryApi = createApi({
     >({
       query: () => "/api/v1/inventory",
       transformResponse: (response: { ingredient_items?: any[]; summary?: Record<string, number> }) => {
-        console.log('response', response);
         return {
           inventoryList: response?.ingredient_items ?? [],
           summary: response?.summary ?? {},
@@ -33,7 +32,6 @@ export const inventoryApi = createApi({
     getInventoryItem: builder.query<Inventory | null, string>({
       query: (productId) => `/api/v1/inventory/${productId}`,
       transformResponse: (response: { data: any[] }) => {
-        console.log('response', response);
         return (response?.data?.[0] ?? null) as Inventory | null
       },
       providesTags: (result, error, id) => [{ type: "Inventory", id }],

@@ -25,7 +25,6 @@ export const ordersApi = createApi({
         params: { start_date, end_date },
       }),
       transformResponse: (response: OrdersResponse) => {
-        console.log('Orders response:', response);
         return response;
       },
       providesTags: ["Orders"],
@@ -38,7 +37,6 @@ export const ordersApi = createApi({
         method: "POST",
       }),
       transformResponse: (response: OrderSyncResponse) => {
-        console.log('Orders sync response:', response);
         return response;
       },
       invalidatesTags: ["Orders"],

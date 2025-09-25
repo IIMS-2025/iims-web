@@ -53,7 +53,6 @@ export default function RestockList() {
   }, [dispatch, inventoryList]);
 
   const filteredItems = inventoryItems.filter((item) => {
-    console.log('item', item.name, item.stock_status);
     return (item.stock_status === "low_stock");
   });
 
