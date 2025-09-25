@@ -93,7 +93,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
           <tbody className="divide-y divide-gray-200">
             {orders.map((order, index) => (
               <tr 
-                key={order.id}
+                key={order.orderNumber}
                 className={`hover:bg-gray-50 transition-colors ${index === 0 ? `user-guide-oders-list-first-row` : ''} ${getUrgencyClass(order)}`}
               >
                 {/* Order ID */}

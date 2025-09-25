@@ -322,7 +322,7 @@ const ActivityItemCard = ({ item }: { item: ActivityItem }) => {
 };
 
 const StockAnomalyDetection = () => {
-    const [expanded, setExpanded] = useState(false);
+    const [expanded, setExpanded] = useState(true);
     return (
         <div
             onClick={() => setExpanded(!expanded)}
@@ -431,7 +431,7 @@ const StockAnomalyDetection = () => {
 };
 
 const SmartNotifications = () => {
-    const [expanded, setExpanded] = useState(false);
+    const [expanded, setExpanded] = useState(true);
     return (
         <div
             onClick={() => setExpanded(!expanded)}
