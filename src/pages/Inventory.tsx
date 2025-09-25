@@ -66,11 +66,18 @@ export default function InventoryPage() {
       // Clear all filters
       setQuickFilter(null);
       setFilterStatus("all");
+      setFilteredItems(inventoryItems);
     } else if (quickFilter === filterType) {
       // If same filter is clicked, clear it
       setQuickFilter(null);
       setFilterStatus("all");
+      setFilteredItems(
+        inventoryItems?.filter((item) => item.stock_status === filterType)
+      );
     } else {
+      setFilteredItems(
+        inventoryItems?.filter((item) => item.stock_status === filterType)
+      );
       // Set new filter
       setQuickFilter(filterType);
       if (filterType === "low") {
@@ -150,7 +157,7 @@ const handleStockUpdateError = (error: any) => {
               <TotalItemsIcon />
             </div>
             <div className="stat-content">
-              <div className="stat-number">{summary?.total_in_stock || 0}</div>
+              <div className="stat-number">{summary?.total || filteredItems?.length}</div>
               <div className="stat-label">Total Items</div>
             </div>
           </div>
@@ -159,7 +166,7 @@ const handleStockUpdateError = (error: any) => {
             className={`stat-card clickable ${
               quickFilter === "expiring" ? "active" : ""
             }`}
-            onClick={() => handleQuickFilterClick("expiring")}
+            onClick={() => handleQuickFilterClick("expiring_soon")}
           >
             <div className="stat-icon expiring">
               <ExpiringSoonIcon />
@@ -174,7 +181,7 @@ const handleStockUpdateError = (error: any) => {
             className={`stat-card clickable ${
               quickFilter === "low" ? "active" : ""
             }`}
-            onClick={() => handleQuickFilterClick("low")}
+            onClick={() => handleQuickFilterClick("low_stock")}
           >
             <div className="stat-icon low">
               <LowStockIcon />
@@ -189,7 +196,7 @@ const handleStockUpdateError = (error: any) => {
             className={`stat-card clickable ${
               quickFilter === "dead" ? "active" : ""
             }`}
-            onClick={() => handleQuickFilterClick("dead")}
+            onClick={() => handleQuickFilterClick("dead_stock")}
           >
             <div className="stat-icon dead">
               <DeadStockIcon />

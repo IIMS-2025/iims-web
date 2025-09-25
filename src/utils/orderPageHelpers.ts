@@ -50,7 +50,6 @@ export const filterAndSearchOrders = (
 export const simulateOrderSync = (): Promise<void> => {
   return new Promise<void>((resolve) => {
     setTimeout(() => {
-      console.log('Orders synced successfully');
       resolve();
     }, 2000); // 2 second delay to simulate API call
   });
