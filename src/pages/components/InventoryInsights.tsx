@@ -12,6 +12,7 @@ interface MetricData {
   description?: string;
   iconBg: string;
   iconColor: string;
+  icon: React.ReactNode;
 }
 
 interface StockItem {
@@ -128,12 +129,6 @@ const TrendIcon = ({ type }: { type: "positive" | "negative" | "neutral" }) => {
   );
 };
 
-const SimpleIcon = ({ color = "#16A34A" }: { color?: string }) => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-    <rect width="20" height="20" fill={color} />
-  </svg>
-);
-
 const MetricCard = (metric: MetricData) => {
   const changeColor = {
     positive: "text-green-600",
@@ -159,7 +154,9 @@ const MetricCard = (metric: MetricData) => {
       <div className="flex flex-col justify-between items-start mb-3.5 mr-[-10px]">
         {metric.change && metric.changeType && (
           <div className="flex flex-row items-center w-full gap-1">
-            <div className={`text-sm font-medium ${changeColor} text-right w-full`}>
+            <div
+              className={`text-sm font-medium ${changeColor} text-right w-full`}
+            >
               {metric.change}
             </div>
             <div className="w-4 h-4 justify-center items-center">
@@ -168,10 +165,10 @@ const MetricCard = (metric: MetricData) => {
           </div>
         )}
         <div
-          className="ml-[30px] p-2 mr-[10px]"
+          className="ml-[30px] flex w-10 h-10 justify-center items-center  mr-[10px] rounded-sm"
           style={{ background: metric.iconBg }}
         >
-          <SimpleIcon color={metric.iconColor} />
+          {metric.icon}
         </div>
       </div>
     </div>
@@ -566,6 +563,68 @@ export default function InventoryInsights() {
     return topReason[0].charAt(0).toUpperCase() + topReason[0].slice(1);
   }, [wastageData]);
 
+  const wasteIcon = (
+    <svg
+      width="20"
+      height="24"
+      viewBox="0 0 20 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M20 24H0V0H20V24Z" stroke="#E5E7EB" />
+      <g clip-path="url(#clip0_147_991)">
+        <path
+          d="M18.3867 1.86719C18.5039 1.98828 18.5938 2.125 18.6562 2.26953C18.7188 2.41406 18.75 2.57422 18.75 2.74609V2.75V6.5C18.75 7.19141 18.1914 7.75 17.5 7.75C16.8086 7.75 16.25 7.19141 16.25 6.5V5.76953L12.1328 9.88281C11.6719 10.3438 10.9297 10.375 10.4336 9.94922L6.875 6.89453L3.3125 9.94922C2.78906 10.3984 2 10.3359 1.55078 9.8125C1.10156 9.28906 1.16406 8.5 1.6875 8.05078L6.0625 4.30078C6.53125 3.89844 7.22266 3.89844 7.69141 4.30078L11.1875 7.29688L14.4805 4H13.75C13.0586 4 12.5 3.44141 12.5 2.75C12.5 2.05859 13.0586 1.5 13.75 1.5H17.5C17.8438 1.5 18.1562 1.64063 18.3828 1.86328L18.3867 1.86719ZM0 13.375C0 12.3398 0.839844 11.5 1.875 11.5H18.125C19.1602 11.5 20 12.3398 20 13.375V19.625C20 20.6602 19.1602 21.5 18.125 21.5H1.875C0.839844 21.5 0 20.6602 0 19.625V13.375ZM1.875 17.75V19.625H3.75C3.75 18.5898 2.91016 17.75 1.875 17.75ZM3.75 13.375H1.875V15.25C2.91016 15.25 3.75 14.4102 3.75 13.375ZM18.125 17.75C17.0898 17.75 16.25 18.5898 16.25 19.625H18.125V17.75ZM16.25 13.375C16.25 14.4102 17.0898 15.25 18.125 15.25V13.375H16.25ZM12.5 16.5C12.5 15.837 12.2366 15.2011 11.7678 14.7322C11.2989 14.2634 10.663 14 10 14C9.33696 14 8.70107 14.2634 8.23223 14.7322C7.76339 15.2011 7.5 15.837 7.5 16.5C7.5 17.163 7.76339 17.7989 8.23223 18.2678C8.70107 18.7366 9.33696 19 10 19C10.663 19 11.2989 18.7366 11.7678 18.2678C12.2366 17.7989 12.5 17.163 12.5 16.5Z"
+          fill="#DC2626"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_147_991">
+          <path d="M0 1.5H20V21.5H0V1.5Z" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+
+  const stockAlertsIcon = (
+    <svg
+      width="25"
+      height="24"
+      viewBox="0 0 25 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M25 24H0V0H25V24Z" stroke="#E5E7EB" />
+      <g clip-path="url(#clip0_147_995)">
+        <path
+          d="M0 20.5625V8.19141C0 7.16797 0.621094 6.25 1.57031 5.87109L12.0352 1.6875C12.332 1.56641 12.6641 1.56641 12.9648 1.6875L23.4297 5.87109C24.3789 6.25 25 7.17188 25 8.19141V20.5625C25 21.082 24.582 21.5 24.0625 21.5H22.1875C21.668 21.5 21.25 21.082 21.25 20.5625V10.25C21.25 9.55859 20.6914 9 20 9H5C4.30859 9 3.75 9.55859 3.75 10.25V20.5625C3.75 21.082 3.33203 21.5 2.8125 21.5H0.9375C0.417969 21.5 0 21.082 0 20.5625ZM19.0625 21.5H5.9375C5.41797 21.5 5 21.082 5 20.5625V18.375H20V20.5625C20 21.082 19.582 21.5 19.0625 21.5ZM5 17.125V14.625H20V17.125H5ZM5 13.375V10.25H20V13.375H5Z"
+          fill="#16A34A"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_147_995">
+          <path d="M0 1.5H25V21.5H0V1.5Z" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+
+  const inventoryValueIcon = (
+    <svg
+      width="20"
+      height="21"
+      viewBox="0 0 20 21"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M20 20.5H0V0.5H20V20.5Z" stroke="#E5E7EB" />
+      <path
+        d="M9.99953 1.75C10.5542 1.75 11.0659 2.04297 11.3472 2.52344L19.7847 16.8984C20.0698 17.3828 20.0698 17.9805 19.7925 18.4648C19.5152 18.9492 18.9956 19.25 18.437 19.25H1.56203C1.00344 19.25 0.48391 18.9492 0.206566 18.4648C-0.0707777 17.9805 -0.0668715 17.3789 0.214379 16.8984L8.65188 2.52344C8.93313 2.04297 9.44485 1.75 9.99953 1.75ZM9.99953 6.75C9.48 6.75 9.06203 7.16797 9.06203 7.6875V12.0625C9.06203 12.582 9.48 13 9.99953 13C10.5191 13 10.937 12.582 10.937 12.0625V7.6875C10.937 7.16797 10.5191 6.75 9.99953 6.75ZM11.2495 15.5C11.2495 15.1685 11.1178 14.8505 10.8834 14.6161C10.649 14.3817 10.3311 14.25 9.99953 14.25C9.66801 14.25 9.35007 14.3817 9.11565 14.6161C8.88123 14.8505 8.74953 15.1685 8.74953 15.5C8.74953 15.8315 8.88123 16.1495 9.11565 16.3839C9.35007 16.6183 9.66801 16.75 9.99953 16.75C10.3311 16.75 10.649 16.6183 10.8834 16.3839C11.1178 16.1495 11.2495 15.8315 11.2495 15.5Z"
+        fill="#CA8A04"
+      />
+    </svg>
+  );
+
   const METRICS_DATA = [
     {
       title: "Wastage Cost",
@@ -575,6 +634,7 @@ export default function InventoryInsights() {
       description: "This week total",
       iconBg: "#FEE2E2",
       iconColor: "#DC2626",
+      icon: wasteIcon,
     },
     {
       title: "Inventory Value",
@@ -584,6 +644,7 @@ export default function InventoryInsights() {
       description: "Current stock value",
       iconBg: "#DCFCE7",
       iconColor: "#16A34A",
+      icon: stockAlertsIcon,
     },
     {
       title: "Stock Alerts",
@@ -593,6 +654,7 @@ export default function InventoryInsights() {
       description: "Low Stock + Dead Stock",
       iconBg: "#FEF3C7",
       iconColor: "#CA8A04",
+      icon: inventoryValueIcon,
     },
   ];
 
