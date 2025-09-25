@@ -575,6 +575,46 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Message Actions */
+.message-actions {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.restock-button {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.restock-button:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.restock-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.restock-icon {
+  font-size: 16px;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .kitchen-agent-header {
@@ -636,6 +676,15 @@
   .send-button {
     width: 32px;
     height: 32px;
+  }
+
+  .restock-button {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .restock-icon {
+    font-size: 14px;
   }
 
   /* Mobile chart styles */

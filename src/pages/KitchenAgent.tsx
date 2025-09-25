@@ -254,7 +254,15 @@ const KitchenAgent: React.FC = () => {
                     <SalesCogsChart data={message.chartData} />
                   )}
                   {message.hasTable && message.tableData && (
-                    <CriticalStockTable items={message.tableData} />
+                    <>
+                      <CriticalStockTable items={message.tableData} />
+                      <div className="message-actions">
+                        <button className="restock-button">
+                          <span className="restock-icon">📦</span>
+                          Add to Restock List
+                        </button>
+                      </div>
+                    </>
                   )}
                   <div className="message-time">
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
