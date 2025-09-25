@@ -71,7 +71,7 @@ export default function HomePage() {
                 <ChartBarsIcon className="text-white w-6 h-6" />
               </div>
               <div>
-                <h1 className={CSS_CLASSES.TITLE_PRIMARY}>Today's Performance Overview</h1>
+                <h1 className={CSS_CLASSES.TITLE_PRIMARY}>Performance Overview</h1>
                 <p className={CSS_CLASSES.SUBTITLE}>AI-powered insights for smarter decisions</p>
               </div>
             </div>
@@ -89,7 +89,7 @@ export default function HomePage() {
               </div>
 
         {/* Metrics Cards */}
-        <div className={`${CSS_CLASSES.GRID_4_COLS} ${CSS_CLASSES.SECTION_SPACING}`}>
+        <div className={`user-guide-home-overview ${CSS_CLASSES.GRID_4_COLS} ${CSS_CLASSES.SECTION_SPACING}`}>
           <MetricCard
             type="revenue"
             label={dynamicMetricsData.totalSales.label}
@@ -125,10 +125,14 @@ export default function HomePage() {
                   </div>
 
         {/* Smart Recommendations */}
+        <div className="user-guide-home-ai-recommendations">
         <SmartRecommendations />
+        </div>
 
         {/* Notifications & AI Forecast */}
+        <div className="user-guide-home-ai-summary">
         <NotificationsSection />
+        </div>
 
         {/* Charts & Stock Alerts */}
         <ChartsSection />

@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState } from '../store';
+import { setActiveTab, selectActiveTab } from '../store/slices/insightsSlice';
+import type { InsightsTab } from '../store/slices/insightsSlice';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -34,8 +38,8 @@ ChartJS.register(
 const TABS = ['Inventory', 'Revenue',];
 
 export default function OrdersInsights() {
-    const [activeTab, setActiveTab] = useState('Inventory');
-    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const activeTab = useSelector((state: RootState) => selectActiveTab(state));
 
     const { isLoading } = useGetSalesDataQuery({});
 
@@ -59,7 +63,7 @@ export default function OrdersInsights() {
                         {TABS.map(tab => (
                             <button
                                 key={tab}
-                                onClick={() => setActiveTab(tab)}
+                                onClick={() => dispatch(setActiveTab(tab as InsightsTab))}
                                 className={`${tab === 'Revenue' ? 'user-guide-revenue-insights-tab' : 'user-guide-inventory-insights-tab'} px-4 py-2 border-none rounded-md text-sm font-semibold cursor-pointer transition-colors duration-200 ${activeTab === tab ? 'text-white' : 'bg-transparent text-gray-500 hover:text-gray-700'
                                     }`}
                                 style={{

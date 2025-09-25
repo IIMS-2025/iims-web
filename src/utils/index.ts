@@ -9,3 +9,7 @@ export const getUserGuideToggle = (): boolean => {
 export const setUserGuideToggle = (enabled: boolean): void => {
   localStorage.setItem('userGuideEnabled', JSON.stringify(enabled));
 };
+
+// Insights utilities - for external components to interact with insights state
+export { setActiveTab as setInsightsActiveTab } from '../store/slices/insightsSlice';
+export type { InsightsTab } from '../store/slices/insightsSlice';

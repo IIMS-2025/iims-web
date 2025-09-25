@@ -8,6 +8,8 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import UserGuide from "../components/UserGuide";
 import { getUserGuideToggle, setUserGuideToggle } from "../utils";
+import { setActiveTab } from "../store/slices/insightsSlice";
+import { useDispatch } from "react-redux";
 
 const dashboardSteps: Step[] = [
   {
@@ -149,6 +151,7 @@ const dashboardSteps: Step[] = [
 export default function AppLayout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [userGuideEnabled, setUserGuideEnabledState] = useState<boolean>(false);
 
   const titleMap: Record<string, string> = {
@@ -195,7 +198,15 @@ export default function AppLayout() {
       case 12:
         navigate("/insights");
         break;
-      case 17: 
+      case 16: 
+        dispatch(setActiveTab('Revenue'));
+        break;
+      case 20: 
+      setTimeout(() => {
+        navigate("/home");
+      }, 1000);
+        break;
+      case 24: 
         navigate("/kitchen-agent");
         break;
     }

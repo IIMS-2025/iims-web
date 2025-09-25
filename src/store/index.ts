@@ -3,6 +3,7 @@ import inventoryReducer from "./slices/inventorySlice";
 import ordersReducer from "./slices/ordersSlice";
 import forecastsReducer from "./slices/forecastsSlice";
 import restockReducer from "./slices/restockSlice";
+import insightsReducer from "./slices/insightsSlice";
 import { cookbookApi } from "../services/cookbookApi";
 import { inventoryApi } from "../services/inventoryApi";
 import { inventoryInsightsApi } from "../services/inventoryInsightsApi";
@@ -16,6 +17,7 @@ export const store = configureStore({
     orders: ordersReducer,
     forecasts: forecastsReducer,
     restock: restockReducer,
+    insights: insightsReducer,
     [cookbookApi.reducerPath]: cookbookApi.reducer,
     [inventoryApi.reducerPath]: inventoryApi.reducer,
     [inventoryInsightsApi.reducerPath]: inventoryInsightsApi.reducer,
