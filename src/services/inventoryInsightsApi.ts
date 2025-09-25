@@ -241,7 +241,7 @@ const transformSalesCostResponse = (response: SalesCostApiResponse): SalesCostDa
         data: historicalData.map(item => ({
             date: item.date,
             sales: parseFloat(item.total_sales),
-            cost: parseFloat(item.total_cost)
+            cost: parseFloat(item.total_cost || '0') // Handle missing cost data
         }))
     };
 };
@@ -299,10 +299,37 @@ export const inventoryInsightsApi = createApi({
             providesTags: ['Sales'],
         }),
 
+        getSalesCostForecast: builder.query<SalesCostDataGraph, { startDate?: string, endDate?: string }>({
+            query: ({ startDate, endDate }) => {
+                const today = new Date();
+
+                // Calculate default start date (today - 7 days)
+                const defaultStartDate = new Date(today);
+                defaultStartDate.setDate(today.getDate() - 7);
+                const calculatedStartDate = startDate || formatDateForAPI(defaultStartDate);
+
+                // Calculate default end date (today + 2 days)
+                const defaultEndDate = new Date(today);
+                defaultEndDate.setDate(today.getDate() + 2);
+                const calculatedEndDate = endDate || formatDateForAPI(defaultEndDate);
+
+                return `/api/v1/forecast?start_date=${calculatedStartDate}&end_date=${calculatedEndDate}`;
+            },
+            transformResponse: transformSalesCostResponse,
+            providesTags: ['Sales'],
+        }),
+
         // GET /api/v1/analytics/graphs/sales-cost with extended date range for anomaly detection
         getSalesCostDataAnomalyGraph: builder.query<SalesCostDataGraph, { startDate?: string, endDate?: string }>({
             query: (params) => buildDateRangeQuery('/api/v1/analytics/graphs/sales-cost', params, 10),
             transformResponse: transformSalesCostResponse,
+            providesTags: ['Sales'],
+        }),
+
+        // GET /api/v1/ai-revenue-insights
+        getAIRevenueInsights: builder.query<SalesCostDataGraph, { startDate?: string, endDate?: string }>({
+            query: () => `/api/v1/ai/revenue-insights`,
+            transformResponse: (response: SalesCostDataGraph) => response,
             providesTags: ['Sales'],
         }),
 
@@ -316,4 +343,5 @@ export const {
     useGetSalesCostDataGraphQuery,
     useGetSalesByCategoryQuery,
     useGetSalesCostDataAnomalyGraphQuery,
+    useGetSalesCostForecastQuery,
 } = inventoryInsightsApi;

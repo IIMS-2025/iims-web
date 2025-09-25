@@ -50,11 +50,13 @@ export default function AppLayout() {
   const titleMap: Record<string, string> = {
     "/": "Welcome Back!",
     "/home": "Welcome Back!",
-    "/inventory": "Inventory Management",
     "/insights": "Insights",
+    "/orders": "Orders",
+    "/inventory": "Inventory Management",
     "/restock": "Restock List",
     "/chefspace": "Chef's Space",
     "/notifications": "Notifications Center",
+    "/kitchen-agent": "Kitchen Agent",
   };
   const currentPath = location.pathname.replace(/\/$/, "");
   const headerTitle = titleMap[currentPath] || appConfig.branding.brandName;
