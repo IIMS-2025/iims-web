@@ -62,7 +62,7 @@ const CHART_COLORS = {
 const CATEGORIES_DATA = [
   { label: "Pizza", percentage: 32, color: CHART_COLORS.primary },
   { label: "Pasta", percentage: 24, color: CHART_COLORS.success },
-  { label: "Salads", percentage: 18, color: CHART_COLORS.warning },
+  { label: "Burgers", percentage: 18, color: CHART_COLORS.warning },
   { label: "Drinks", percentage: 15, color: CHART_COLORS.danger },
   { label: "Desserts", percentage: 11, color: CHART_COLORS.blue },
 ] as const;

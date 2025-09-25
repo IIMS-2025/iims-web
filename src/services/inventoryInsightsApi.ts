@@ -321,7 +321,7 @@ export const inventoryInsightsApi = createApi({
 
         // GET /api/v1/analytics/graphs/sales-cost with extended date range for anomaly detection
         getSalesCostDataAnomalyGraph: builder.query<SalesCostDataGraph, { startDate?: string, endDate?: string }>({
-            query: (params) => buildDateRangeQuery('/api/v1/analytics/graphs/sales-cost', params, 10),
+            query: (params) => buildDateRangeQuery('/api/v1/analytics/graphs/sales-cost', params, 7),
             transformResponse: transformSalesCostResponse,
             providesTags: ['Sales'],
         }),

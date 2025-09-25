@@ -162,7 +162,7 @@ export default function AppLayout() {
     "/restock": "Restock List",
     "/chefspace": "Chef's Space",
     "/notifications": "Notifications Center",
-    "/kitchen-agent": "Kitchen Agent",
+    "/kitchen-agent": "RockStar Manager",
   };
   const currentPath = location.pathname.replace(/\/$/, "");
   const headerTitle = titleMap[currentPath] || null;
@@ -184,7 +184,7 @@ export default function AppLayout() {
         navigate("/orders");
         break;
       case 4:
-          navigate("/inventory");
+        navigate("/inventory");
         break;
       case 6:
         navigate("/restock");
@@ -192,21 +192,21 @@ export default function AppLayout() {
       case 8:
         navigate("/chefspace");
         break;
-      case 10: 
+      case 10:
         navigate("/chefspace/b2c3d4e5-f6a7-4b9c-0d1e-f2a3b4c5d6e7"); // ID of peporony piza
         break;
       case 12:
         navigate("/insights");
         break;
-      case 16: 
+      case 16:
         dispatch(setActiveTab('Revenue'));
         break;
-      case 20: 
-      setTimeout(() => {
-        navigate("/home");
-      }, 1000);
+      case 20:
+        setTimeout(() => {
+          navigate("/home");
+        }, 1000);
         break;
-      case 24: 
+      case 24:
         navigate("/kitchen-agent");
         break;
     }

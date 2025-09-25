@@ -1,14 +1,37 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../styles/kitchenAgent.css';
+import SalesCogsChart from '../components/SalesCogsChart';
+import CriticalStockTable from '../components/CriticalStockTable';
 
 interface Message {
   id: string;
   type: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  hasChart?: boolean;
+  chartData?: {
+    day: string;
+    sales: number;
+    cogs: number;
+  }[];
+  hasTable?: boolean;
+  tableData?: {
+    name: string;
+    stockQty: number;
+    unit: string;
+    status: 'critical' | 'low';
+  }[];
 }
 
 interface QuickAction {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  color: string;
+}
+
+interface QuickResponse {
   id: string;
   title: string;
   description: string;
@@ -21,7 +44,7 @@ const KitchenAgent: React.FC = () => {
     {
       id: '1',
       type: 'assistant',
-      content: "Hi! I'm your Kitchen AI Assistant. I can help you with inventory, menu, and cost analysis. What would you like to know?",
+      content: "Hi! I'm your RockStar Manager. I can help you with inventory, menu, and cost analysis. What would you like to know?",
       timestamp: new Date()
     }
   ]);
@@ -30,42 +53,37 @@ const KitchenAgent: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const quickActions: QuickAction[] = [
-    {
-      id: 'stock-analysis',
-      title: 'Stock Analysis',
-      description: 'Check inventory levels',
-      icon: '📊',
-      color: '#3B82F6'
-    },
-    {
-      id: 'menu-insights',
-      title: 'Menu Insights',
-      description: 'Optimize menu items',
-      icon: '🍽️',
-      color: '#3B82F6'
-    },
-    {
-      id: 'low-stock-alert',
-      title: 'Low Stock Alert',
-      description: 'View critical items',
-      icon: '⚠️',
-      color: '#EF4444'
-    },
-    {
-      id: 'ai-forecast',
-      title: 'AI Forecast',
-      description: 'Predict demand',
-      icon: '⭐',
-      color: '#10B981'
-    }
   ];
 
-  const quickResponses = [
-    'Revenue today',
-    'Wastage report',
-    'Menu optimization',
-    'Stock levels',
-    'Cost analysis'
+  const quickResponses: QuickResponse[] = [
+    {
+      id: 'yesterday-insights',
+      title: 'Yesterday\'s Performance',
+      description: 'What was yesterday like?',
+      icon: '📈',
+      color: 'green'
+    },
+    {
+      id: 'tomorrow-forecast',
+      title: 'Tomorrow\'s Forecast',
+      description: 'How will be my tomorrow?',
+      icon: '🔮',
+      color: 'purple'
+    },
+    {
+      id: 'inventory-status',
+      title: 'Inventory Check',
+      description: 'Show critical stock levels',
+      icon: '📦',
+      color: 'orange'
+    },
+    {
+      id: 'cost-analysis',
+      title: 'Cost Analysis',
+      description: 'Analyze today\'s costs',
+      icon: '💰',
+      color: 'blue'
+    }
   ];
 
   const scrollToBottom = () => {
@@ -92,37 +110,60 @@ const KitchenAgent: React.FC = () => {
 
     // Simulate AI response
     setTimeout(() => {
+      const response = getAIResponse(inputText);
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: getAIResponse(inputText),
-        timestamp: new Date()
+        content: response.content,
+        timestamp: new Date(),
+        hasChart: response.hasChart,
+        chartData: response.chartData,
+        hasTable: response.hasTable,
+        tableData: response.tableData
       };
       setMessages(prev => [...prev, aiResponse]);
       setIsTyping(false);
     }, 1500);
   };
 
-  const getAIResponse = (input: string): string => {
+  const getAIResponse = (input: string): { content: string; hasChart?: boolean; chartData?: any[]; hasTable?: boolean; tableData?: any[] } => {
     const lowerInput = input.toLowerCase();
-    
-    if (lowerInput.includes('stock') || lowerInput.includes('inventory')) {
-      return "I can help you with stock analysis! Here's what I found:\n\n• Total items: 247\n• Low stock items: 12\n• Critical items: 3\n• Items expiring soon: 8\n\nWould you like me to show you the critical items that need immediate attention?";
+
+    if (lowerInput.includes('yesterday') || lowerInput.includes('performance')) {
+      return {
+        content: "Yesterday's performance:\n\n💰 Revenue: ₹4,457\n📈 vs Day Before: +12%\n🥗 Top seller: Classic Chicken Burger\n⏰ Peak time: 12:30-1:30 PM\n\nHere's your sales trend vs COGS:",
+        hasChart: true,
+        chartData: [
+          { day: 'Yesterday', sales: 4457, cogs: 2150 }
+        ]
+      };
     }
-    
-    if (lowerInput.includes('revenue') || lowerInput.includes('sales')) {
-      return "Today's revenue analysis:\n\n💰 Revenue: $2,847\n📈 vs Yesterday: +12%\n🥗 Top seller: Caesar Salad\n⏰ Peak time: 12:30-1:30 PM\n\nWould you like a detailed breakdown by menu category?";
+    if (lowerInput.includes('tomorrow') || lowerInput.includes('forecast')) {
+      return {
+        content: "Tomorrow's forecast:\n\n💰 Projected Revenue: ₹5,950\n📈 Expected Growth: +15%\n🥗 Burger will be the top seller since it's weekend\n⏰ Expected Peak time: 6:00-8:00 PM"
+      };
     }
-    
-    if (lowerInput.includes('menu') || lowerInput.includes('optimize')) {
-      return "Menu optimization insights:\n\n🔥 High performers: Margherita Pizza, Grilled Salmon\n⚠️ Underperforming: Buffalo Wings\n💡 Suggestion: Consider seasonal specials\n📊 Profit margin leader: Classic Tiramisu\n\nShould I create a detailed menu performance report?";
+    if (lowerInput.includes('stock') || lowerInput.includes('status') || lowerInput.includes('inventory') || lowerInput.includes('critical')) {
+      return {
+        content: "Inventory status:\n\n📦 Total items: 247\n⚠️ Low stock items: 12\n🔴 Critical items: 3\n📅 Items expiring soon: 8\n\nHere are the critical stock items that need immediate attention:",
+        hasTable: true,
+        tableData: [
+          { name: 'Fresh Lettuce', stockQty: 2, unit: 'kg', status: 'critical' },
+          { name: 'Chicken Breast', stockQty: 1, unit: 'kg', status: 'critical' },
+          { name: 'Tomatoes', stockQty: 3, unit: 'kg', status: 'critical' },
+          { name: 'Cheese Slices', stockQty: 15, unit: 'pcs', status: 'low' },
+          { name: 'Burger Buns', stockQty: 8, unit: 'pcs', status: 'low' }
+        ]
+      };
     }
-    
-    if (lowerInput.includes('waste') || lowerInput.includes('wastage')) {
-      return "Wastage report for today:\n\n🗑️ Total waste: 8.2 kg\n💸 Cost impact: $127\n📉 vs Yesterday: -15%\n🥬 Most wasted: Lettuce (2.1 kg)\n\nTip: Consider smaller portion prep for lettuce-based items.";
+    if (lowerInput.includes('cost') || lowerInput.includes('analysis')) {
+      return {
+        content: "Cost analysis:\n\n💸 Total COGS: ₹650\n📊 Cost Margin: 27%\n📈 vs Yesterday: -8%\n🥬 Highest cost item: Premium Meat"
+      };
     }
-    
-    return "I understand you're asking about: \"" + input + "\"\n\nI can help you with:\n• Inventory management\n• Menu analysis\n• Cost optimization\n• Revenue insights\n• Waste reduction\n\nCould you be more specific about what you'd like to know?";
+    return {
+      content: "I understand you're asking about: \"" + input + "\"\n\nI can help you with:\n• Inventory management\n• Menu analysis\n• Cost optimization\n• Revenue insights\n• Waste reduction\n\nCould you be more specific about what you'd like to know?"
+    };
   };
 
   const handleQuickAction = (action: QuickAction) => {
@@ -137,19 +178,48 @@ const KitchenAgent: React.FC = () => {
     setIsTyping(true);
 
     setTimeout(() => {
+      const aiResponse = getAIResponse(action.title);
       const response: Message = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: getAIResponse(action.title),
-        timestamp: new Date()
+        content: aiResponse.content,
+        timestamp: new Date(),
+        hasChart: aiResponse.hasChart,
+        chartData: aiResponse.chartData,
+        hasTable: aiResponse.hasTable,
+        tableData: aiResponse.tableData
       };
       setMessages(prev => [...prev, response]);
       setIsTyping(false);
     }, 1000);
   };
 
-  const handleQuickResponse = (response: string) => {
-    setInputText(response);
+  const handleQuickResponse = (response: QuickResponse) => {
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      type: 'user',
+      content: response.description,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setIsTyping(true);
+
+    setTimeout(() => {
+      const aiResponseData = getAIResponse(response.description);
+      const aiResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'assistant',
+        content: aiResponseData.content,
+        timestamp: new Date(),
+        hasChart: aiResponseData.hasChart,
+        chartData: aiResponseData.chartData,
+        hasTable: aiResponseData.hasTable,
+        tableData: aiResponseData.tableData
+      };
+      setMessages(prev => [...prev, aiResponse]);
+      setIsTyping(false);
+    }, 1000);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -171,7 +241,7 @@ const KitchenAgent: React.FC = () => {
                     🤖
                   </div>
                 )}
-                <div className="message-bubble">
+                <div className={`message-bubble ${message.hasChart ? 'with-chart' : ''} ${message.hasTable ? 'with-table' : ''}`}>
                   <div className="message-text">
                     {message.content.split('\n').map((line, index) => (
                       <React.Fragment key={index}>
@@ -180,6 +250,12 @@ const KitchenAgent: React.FC = () => {
                       </React.Fragment>
                     ))}
                   </div>
+                  {message.hasChart && message.chartData && (
+                    <SalesCogsChart data={message.chartData} />
+                  )}
+                  {message.hasTable && message.tableData && (
+                    <CriticalStockTable items={message.tableData} />
+                  )}
                   <div className="message-time">
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </div>
@@ -215,10 +291,10 @@ const KitchenAgent: React.FC = () => {
               {quickActions.map((action, index) => (
                 <button
                   key={action.id}
-                  className={`user-guide-kitchen-agent-quick-actions${index + 1} quick-action-card`}
+                  className={`user-guide-kitchen-agent-quick-actions${index + 1} quick-action-card quick-action-${action.color}`}
                   onClick={() => handleQuickAction(action)}
                 >
-                  <div className="action-icon" style={{ color: action.color }}>
+                  <div className="action-icon">
                     {action.icon}
                   </div>
                   <div className="action-content">
@@ -233,14 +309,20 @@ const KitchenAgent: React.FC = () => {
 
         {/* Quick Responses */}
         <div className="quick-responses">
-          <div className="quick-responses-scroll">
+          <div className="quick-responses-grid">
             {quickResponses.map((response, index) => (
               <button
-                key={index}
-                className="quick-response-chip"
+                key={response.id}
+                className={`quick-response-card quick-response-${response.color}`}
                 onClick={() => handleQuickResponse(response)}
               >
-                {response}
+                <div className="response-icon">
+                  {response.icon}
+                </div>
+                <div className="response-content">
+                  <div className="response-title">{response.title}</div>
+                  <div className="response-description">{response.description}</div>
+                </div>
               </button>
             ))}
           </div>
