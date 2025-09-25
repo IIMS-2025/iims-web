@@ -57,7 +57,7 @@ const UserGuide: React.FC<UserGuideProps> = ({
           borderRadius: '10px',
         },
         overlay: {
-          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          backgroundColor: 'rgba(0, 0, 0, 0.3)',
         },
       }}
       locale={{
