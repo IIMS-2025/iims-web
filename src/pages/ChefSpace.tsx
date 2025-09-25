@@ -119,7 +119,7 @@ export default function ChefSpace() {
                         <div className="flex items-center gap-3">
                           <span className="font-normal text-lg text-gray-900">
                             {typeof item.price === "string"
-                              ? `$${item.price}`
+                              ? `₹${item.price}`
                               : item.price}
                           </span>
                           <div className="flex items-center gap-1">

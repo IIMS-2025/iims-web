@@ -169,7 +169,7 @@ export default function StockUpdateModal({
                         <div className="text-xs text-gray-500">{item.category || 'General'}</div>
                       </td>
                       <td className="px-3 py-2 text-gray-700">
-                        {`$${Number(item.price_per_unit ?? 2.5).toFixed(2)}`} <span className="text-gray-400">/ {item.unit || ''}</span>
+                        {`₹${Number(item.price_per_unit ?? 2.5).toFixed(2)}`} <span className="text-gray-400">/ {item.unit || ''}</span>
                       </td>
                       <td className="px-3 py-2 text-gray-700">{item.available_qty} {item.unit || ''}</td>
                       <td className="px-3 py-2">

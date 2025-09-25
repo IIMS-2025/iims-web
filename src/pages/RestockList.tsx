@@ -52,7 +52,10 @@ export default function RestockList() {
     }
   }, [dispatch, inventoryList]);
 
-  const filteredItems = inventoryItems.filter((item) => (item.stock_status !== "in_stock" && item.stock_status !== "dead_stock"));
+  const filteredItems = inventoryItems.filter((item) => {
+    console.log('item', item.name, item.stock_status);
+    return (item.stock_status === "low_stock");
+  });
 
 
   useEffect(() => {
@@ -321,10 +324,10 @@ export default function RestockList() {
                     <td className="px-6 py-4 align-middle">
                       <div className="flex flex-col gap-1">
                         <span className="font-semibold text-sm leading-5 text-gray-800">
-                          ${(Math.max(0, parseFloat(item.reorder_point) - parseFloat(item.available_qty)) * parseFloat(item.price)).toFixed(2)}
+                        ₹{(Math.max(0, parseFloat(item.reorder_point) - parseFloat(item.available_qty)) * parseFloat(item.price)).toFixed(2)}
                         </span>
                         <span className="font-normal text-xs leading-4 text-gray-500">
-                          @${parseFloat(item.price).toFixed(2)}/{item.unit}
+                          ₹{parseFloat(item.price).toFixed(2)}/{item.unit}
                         </span>
                       </div>
                     </td>

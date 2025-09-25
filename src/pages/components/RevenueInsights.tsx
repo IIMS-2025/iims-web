@@ -7,18 +7,35 @@ import {
   useGetSalesCostDataGraphQuery,
   useGetSalesByCategoryQuery,
   useGetSalesCostDataAnomalyGraphQuery,
+  useGetSalesCostForecastQuery,
 } from "../../services/inventoryInsightsApi";
 import appConfig from "../../config/appConfig";
+import {
+  getMetricCardClasses,
+  getIconContainerClasses,
+  getTrendTextClasses,
+  getLabelTextClasses,
+  CSS_CLASSES,
+} from "../../utils/dashboardHelpers";
+import {
+  DollarIcon,
+  ChartIcon,
+  ClockIcon,
+  AIIcon,
+} from "../../assets/icons/index";
 
 // ===== TYPES =====
 interface MetricData {
-  title: string;
+  type: "revenue" | "orders" | "hours" | "categories";
+  label: string;
   value: string;
-  change?: string;
-  changeType?: "positive" | "negative" | "neutral";
   description?: string;
-  iconBg: string;
-  iconColor: string;
+  trend?: {
+    text: string;
+    positive: boolean;
+  };
+  icon: React.ReactNode;
+  isLoading?: boolean;
 }
 
 interface ChartDataPoint {
@@ -96,17 +113,24 @@ const formatCurrency = (value: number): string => {
 };
 
 const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
+  // Handle both ISO format (2025-09-18T00:00:00) and simple format (2025-09-18)
+  // Extract just the date part to avoid timezone issues
+  const datePart = dateString.includes("T")
+    ? dateString.split("T")[0]
+    : dateString;
+  const date = new Date(datePart + "T00:00:00"); // Force local timezone
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 };
 
 const generateFutureDates = (lastDate: Date, count: number): string[] => {
   return Array.from({ length: count }, (_, i) => {
     const futureDate = new Date(lastDate);
     futureDate.setDate(lastDate.getDate() + i + 1);
-    return formatDate(futureDate.toISOString());
+    // Convert to YYYY-MM-DD format to match backend
+    const year = futureDate.getFullYear();
+    const month = String(futureDate.getMonth() + 1).padStart(2, "0");
+    const day = String(futureDate.getDate()).padStart(2, "0");
+    return formatDate(`${year}-${month}-${day}`);
   });
 };
 
@@ -249,52 +273,55 @@ const SimpleIcon = ({ color = CHART_COLORS.success }: { color?: string }) => (
   </svg>
 );
 
-const MetricCard = ({
-  title,
+const MetricCard: React.FC<MetricData> = ({
+  type,
+  label,
   value,
-  change,
-  changeType,
   description,
-  iconBg,
-  iconColor,
-}: MetricData) => {
-  const changeColor = {
-    positive: "text-green-600",
-    negative: "text-red-600",
-    neutral: "text-gray-500",
-  }[changeType || "neutral"];
-
+  trend,
+  icon,
+  isLoading = false,
+}) => {
   return (
-    <div className="bg-white rounded-xl p-5 pb-4 shadow-sm border border-gray-100 h-[180px] flex flex-col overflow-hidden transition-all duration-200 hover:shadow-md hover:-translate-y-1">
-      <div className="flex justify-between items-start mb-3.5 flex-shrink-0">
-        <div
-          className="w-9 h-9 rounded-lg flex items-center justify-center"
-          style={{ background: iconBg }}
+    <div className={getMetricCardClasses(type)}>
+      <div className="flex items-start justify-between mb-4">
+        <div>
+          <p className={getLabelTextClasses(type)}>{label}</p>
+          <h3
+            className={
+              type === "hours" || type === "categories"
+                ? CSS_CLASSES.METRIC_VALUE_SMALL
+                : CSS_CLASSES.METRIC_VALUE
+            }
+          >
+            {isLoading && value === "..." ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+                <span className="text-gray-400">Loading...</span>
+              </div>
+            ) : (
+              value
+            )}
+          </h3>
+        </div>
+        <div className={getIconContainerClasses(type)}>{icon}</div>
+      </div>
+      {trend && !isLoading && (
+        <div className={getTrendTextClasses(type)}>
+          <TrendIcon type={trend.positive ? "positive" : "negative"} />
+          <span>{trend.text}</span>
+        </div>
+      )}
+      {description && !isLoading && (
+        <p
+          className={getTrendTextClasses(type).replace(
+            "flex items-center gap-1",
+            ""
+          )}
         >
-          <SimpleIcon color={iconColor} />
-        </div>
-        {change && changeType && (
-          <div className="flex items-center gap-1">
-            <TrendIcon type={changeType} />
-            <span className={`text-sm font-medium ${changeColor}`}>
-              {change}
-            </span>
-          </div>
-        )}
-      </div>
-      <div className="flex-1 flex flex-col justify-start min-h-0 overflow-hidden">
-        <div className="text-sm font-medium text-gray-600 mb-2 leading-tight line-clamp-2">
-          {title}
-        </div>
-        <div className="text-2xl font-bold text-gray-900 mb-1.5 leading-tight flex-shrink-0">
-          {value}
-        </div>
-        {description && (
-          <div className="text-xs text-gray-500 leading-tight line-clamp-2 flex-1">
-            {description}
-          </div>
-        )}
-      </div>
+          {description}
+        </p>
+      )}
     </div>
   );
 };
@@ -415,7 +442,7 @@ const useProcessedSalesCostData = (
 /**
  * Process sales data for charts
  */
-const processSalesData = (data: any[]) => {
+const processSalesData = (data: any[], forecastData?: any[]) => {
   // Process historical data
   const historicalLabels = data.map((item: any) => formatDate(item.date));
   const actualSales = data.map((item: any) => item.sales);
@@ -428,13 +455,66 @@ const processSalesData = (data: any[]) => {
   const allLabels = [...historicalLabels, ...futureLabels];
   const actual = [...actualSales, ...Array(2).fill(null)];
 
-  // Generate forecast
-  const historicalForecast = actualSales.map((val: number) => val * 1.05);
-  const avgSales =
-    actualSales.reduce((sum: number, val: number) => sum + val, 0) /
-    actualSales.length;
-  const futureForecast = [avgSales * 1.1, avgSales * 1.15];
-  const forecast = [...historicalForecast, ...futureForecast];
+  let forecast: number[];
+
+  if (forecastData && forecastData.length > 0) {
+    // Use real forecast data from API - create date-based mapping for accurate alignment
+    const forecastMap = new Map();
+    forecastData.forEach((item: any) => {
+      // Normalize date to avoid timezone issues
+      const datePart = item.date.includes("T")
+        ? item.date.split("T")[0]
+        : item.date;
+      const normalizedDate = new Date(datePart + "T00:00:00");
+      const dateKey = normalizedDate.toDateString();
+      forecastMap.set(dateKey, parseFloat(item.sales));
+    });
+
+    // Map historical forecast data to match exact dates
+    const historicalForecast = data.map((item: any) => {
+      const datePart = item.date.includes("T")
+        ? item.date.split("T")[0]
+        : item.date;
+      const normalizedDate = new Date(datePart + "T00:00:00");
+      const dateKey = normalizedDate.toDateString();
+      return forecastMap.get(dateKey) || item.sales * 1.05; // Fallback to calculated forecast
+    });
+
+    // Generate future forecast for next 2 days
+    const lastDataDate = data[data.length - 1].date;
+    const lastDatePart = lastDataDate.includes("T")
+      ? lastDataDate.split("T")[0]
+      : lastDataDate;
+    const lastDate = new Date(lastDatePart + "T00:00:00");
+
+    const futureForecast = [];
+    for (let i = 1; i <= 2; i++) {
+      const futureDate = new Date(lastDate);
+      futureDate.setDate(lastDate.getDate() + i);
+      const dateKey = futureDate.toDateString();
+      const forecastValue = forecastMap.get(dateKey);
+
+      if (forecastValue) {
+        futureForecast.push(forecastValue);
+      } else {
+        // Fallback calculation for missing future data
+        const avgSales =
+          actualSales.reduce((sum: number, val: number) => sum + val, 0) /
+          actualSales.length;
+        futureForecast.push(avgSales * (1.1 + i * 0.05));
+      }
+    }
+
+    forecast = [...historicalForecast, ...futureForecast];
+  } else {
+    // Fallback to dummy forecast generation
+    const historicalForecast = actualSales.map((val: number) => val * 1.05);
+    const avgSales =
+      actualSales.reduce((sum: number, val: number) => sum + val, 0) /
+      actualSales.length;
+    const futureForecast = [avgSales * 1.1, avgSales * 1.15];
+    forecast = [...historicalForecast, ...futureForecast];
+  }
 
   return { labels: allLabels, actual, forecast };
 };
@@ -451,12 +531,17 @@ const processCostData = (data: any[]) => {
 };
 
 // ===== CUSTOM HOOKS =====
-const useProcessedSalesData = (salesCostData: any) => {
-  return useProcessedSalesCostData(salesCostData, processSalesData, {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    actual: [],
-    forecast: [],
-  });
+const useProcessedSalesData = (salesCostData: any, forecastData?: any) => {
+  return useMemo(() => {
+    if (!salesCostData?.data?.length) {
+      return {
+        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        actual: [],
+        forecast: [],
+      };
+    }
+    return processSalesData(salesCostData.data, forecastData?.data);
+  }, [salesCostData, forecastData]);
 };
 
 const useProcessedCostData = (salesCostData: any) => {
@@ -567,15 +652,16 @@ const useProcessedAnomalyData = (anomalyData: any) => {
 const useMetricsData = (
   salesData: any,
   wastageData: any,
-  salesByRangeData: any
-) => {
+  salesByRangeData: any,
+  isLoading: boolean = false
+): MetricData[] => {
   const todaysSales = useMemo(() => {
     if (!salesData?.length) return "₹0";
     return formatCurrency(salesData[0].total_sales);
   }, [salesData]);
 
   const wastageCost = useMemo(() => {
-    if (!wastageData) return "₹34";
+    if (!wastageData) return "₹0";
     return formatCurrency(wastageData.total_cost_loss);
   }, [wastageData]);
 
@@ -586,29 +672,36 @@ const useMetricsData = (
 
   return [
     {
-      title: "Today's Sales",
+      type: "orders",
+      label: "Today's Sales",
       value: todaysSales,
-      iconBg: "#DCFCE7",
-      iconColor: CHART_COLORS.success,
+      trend: { text: "Live tracking", positive: true },
+      icon: <ChartIcon className="text-green-600 w-5 h-5" />,
+      isLoading,
     },
     {
-      title: "Waste on Sales",
+      type: "revenue",
+      label: "Waste on Sales",
       value: wastageCost,
-      iconBg: "#FEE2E2",
-      iconColor: CHART_COLORS.danger,
+      description: "Today's Estimate",
+      icon: <DollarIcon className="text-amber-600 w-5 h-5" />,
+      isLoading,
     },
     {
-      title: "Weekly Revenue",
+      type: "categories",
+      label: "Weekly Revenue",
       value: weeklyRevenue,
-      iconBg: "rgba(124, 58, 237, 0.1)",
-      iconColor: CHART_COLORS.purple,
+      description: "Last 7 days",
+      icon: <ClockIcon className="text-purple-600 w-5 h-5" />,
+      isLoading,
     },
     {
-      title: "AI Forecast Accuracy",
+      type: "hours",
+      label: "AI Forecast Accuracy",
       value: "94.2%",
       description: "Last 30 days average",
-      iconBg: "#DBEAFE",
-      iconColor: "#2563EB",
+      icon: <AIIcon className="text-blue-600 w-5 h-5" />,
+      isLoading,
     },
   ];
 };
@@ -628,6 +721,10 @@ const SalesChart = ({ data }: { data: any }) => {
     yMax = maxValue + range * 0.1;
   }
 
+  // Create separate datasets for actual and forecasted periods
+  const actualData = [...data.actual.slice(0, -2), ...Array(2).fill(null)]; // Keep blue area same as original (last 2 points null)
+  const forecastData = data.forecast; // Show complete forecast line for all data points
+
   const chartOptions = createChartOptions({
     scales: {
       y: {
@@ -644,8 +741,92 @@ const SalesChart = ({ data }: { data: any }) => {
     },
     tooltip: {
       callbacks: {
-        label: (context: any) =>
-          `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`,
+        label: (context: any) => {
+          const label = context.dataset.label;
+          const value = formatCurrency(context.parsed.y);
+          if (label === "Forecast Region") return null; // Hide tooltip for shading
+          if (label === "Forecast") return `Forecasted Sales: ${value}`;
+          return `${label}: ${value}`;
+        },
+      },
+    },
+    plugins: {
+      ...CHART_BASE_CONFIG.plugins,
+      legend: {
+        display: true,
+        position: "top" as const,
+        align: "end" as const,
+        labels: {
+          usePointStyle: true,
+          boxHeight: 6,
+        },
+      },
+      // Custom plugin to add vertical dotted lines and "Forecasted Sales" text
+      afterDraw: (chart: any) => {
+        const ctx = chart.ctx;
+        const chartArea = chart.chartArea;
+
+        // Find the forecasted region boundaries (third last and last data points)
+        const forecastStartIndex = data.labels.length - 3;
+        const forecastEndIndex = data.labels.length - 1;
+
+        if (forecastStartIndex < 0) return;
+
+        // Get x positions for the forecast region boundaries
+        const xScale = chart.scales.x;
+
+        const startX = xScale.getPixelForValue(forecastStartIndex);
+        const endX = xScale.getPixelForValue(forecastEndIndex);
+        const centerX = (startX + endX) / 2;
+
+        ctx.save();
+
+        // Draw two vertical dotted lines
+        ctx.strokeStyle = "#DC2626"; // Red color
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]); // Dotted line pattern
+        ctx.lineCap = "round";
+
+        // First vertical line (start of forecast region)
+        ctx.beginPath();
+        ctx.moveTo(startX, chartArea.top + 10);
+        ctx.lineTo(startX, chartArea.bottom - 10);
+        ctx.stroke();
+
+        // Second vertical line (end of forecast region)
+        ctx.beginPath();
+        ctx.moveTo(endX, chartArea.top + 10);
+        ctx.lineTo(endX, chartArea.bottom - 10);
+        ctx.stroke();
+
+        // Reset line dash for text
+        ctx.setLineDash([]);
+
+        // Get y position for text (middle of the chart area)
+        const centerY =
+          chartArea.top + (chartArea.bottom - chartArea.top) * 0.3;
+
+        // Draw the "Forecasted Sales" text between the two lines
+        ctx.fillStyle = "#DC2626"; // Red color
+        ctx.font = "bold 12px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        // Add semi-transparent background for better readability
+        const textWidth = ctx.measureText("Forecasted Sales").width;
+        ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+        ctx.fillRect(
+          centerX - textWidth / 2 - 4,
+          centerY - 8,
+          textWidth + 8,
+          16
+        );
+
+        // Draw the text
+        ctx.fillStyle = "#DC2626";
+        ctx.fillText("Forecasted Sales", centerX, centerY);
+
+        ctx.restore();
       },
     },
   });
@@ -657,7 +838,7 @@ const SalesChart = ({ data }: { data: any }) => {
         datasets: [
           {
             label: "Actual Sales",
-            data: data.actual,
+            data: actualData,
             borderColor: CHART_COLORS.primary,
             backgroundColor: CHART_COLORS.primaryBg,
             fill: true,
@@ -668,14 +849,16 @@ const SalesChart = ({ data }: { data: any }) => {
           },
           {
             label: "Forecast",
-            data: data.forecast,
-            borderColor: CHART_COLORS.secondary,
+            data: forecastData,
+            borderColor: CHART_COLORS.danger, // Red color for forecast line
             borderDash: [5, 5],
             fill: false,
             spanGaps: true,
             borderWidth: 2,
             pointRadius: 4,
             tension: 0.3,
+            pointBackgroundColor: CHART_COLORS.danger,
+            pointBorderColor: CHART_COLORS.danger,
           },
         ],
       }}
@@ -729,7 +912,7 @@ const BarChart = ({ data }: { data: ChartDataPoint[] }) => {
                 backgroundColor: CHART_COLORS.success,
               },
               {
-                label: "Total Cost",
+                label: "Cogs",
                 data: data.map((item) => item.cost || 0),
                 backgroundColor: CHART_COLORS.warning,
               },
@@ -741,7 +924,7 @@ const BarChart = ({ data }: { data: ChartDataPoint[] }) => {
       <Legend
         items={[
           { color: CHART_COLORS.success, label: "Total Sales" },
-          { color: CHART_COLORS.warning, label: "Total Cost" },
+          { color: CHART_COLORS.warning, label: "Cogs" },
         ]}
       />
     </div>
@@ -890,6 +1073,8 @@ function RevenueInsights() {
       useGetsalesByRangeQuery({});
     const { data: salesCostData, error: costError } =
       useGetSalesCostDataGraphQuery({});
+    const { data: forecastData, error: forecastError } =
+      useGetSalesCostForecastQuery({});
     const { data: anomalyData, error: anomalyError } =
       useGetSalesCostDataAnomalyGraphQuery({});
     const {
@@ -900,19 +1085,23 @@ function RevenueInsights() {
 
     // Handle errors silently - they're logged by RTK Query automatically
 
+    // Determine loading states
+    const isLoading = salesLoading || categoryLoading;
+
     // Processed data
     const metricsData = useMetricsData(
       salesData,
       wastageData,
-      salesByRangeData
+      salesByRangeData,
+      isLoading
     );
-    const processedSalesData = useProcessedSalesData(salesCostData);
+    const processedSalesData = useProcessedSalesData(
+      salesCostData,
+      forecastData
+    );
     const processedCostData = useProcessedCostData(salesCostData);
     const processedCategoryData = useProcessedCategoryData(categoryData);
     const processedAnomalyData = useProcessedAnomalyData(anomalyData);
-
-    // Determine loading states
-    const isLoading = salesLoading || categoryLoading;
     const hasMinimalData = salesData || categoryData;
 
     // Show skeleton loading for initial load
@@ -973,43 +1162,43 @@ function RevenueInsights() {
         {/* Main Charts Section */}
         <div className="grid grid-cols-[2fr_1fr] gap-6 mb-10">
           <div className="user-guide-revenue-insights-forecast-graph">
-            <ChartContainer title="Revenue vs Forecast" height="h-[400px]">
-              <SalesChart data={processedSalesData} />
-            </ChartContainer>
+            <ChartContainer title="Sales vs Forecast" height="h-[400px]">
+            <SalesChart data={processedSalesData} />
+          </ChartContainer>
           </div>
 
           <div className="user-guide-revenue-insights-ai">
-            <ChartContainer title="AI Revenue Insights" height="h-[400px]">
-              <div className="flex flex-col gap-5 flex-1 justify-between">
-                <InsightCard
-                  title="Peak Hour Optimization"
-                  description="Lunch rush (12-2 PM) shows 15% higher revenue potential. Consider increasing staff during these hours."
-                  bgColor="#F0FDF4"
-                  borderColor="#BBF7D0"
-                  titleColor="#166534"
-                  textColor="#15803D"
-                  iconColor={CHART_COLORS.success}
-                />
-                <InsightCard
-                  title="Menu Item Alert"
-                  description="Seafood pasta showing declining sales trend. Consider promotional pricing or recipe adjustment."
-                  bgColor="#FEFCE8"
-                  borderColor="#FEF08A"
-                  titleColor="#854D0E"
-                  textColor="#A16207"
-                  iconColor="#CA8A04"
-                />
-                <InsightCard
-                  title="Revenue Forecast"
-                  description="Next week projected revenue: ₹58,200 (+10.1% vs this week). Weather forecast favorable."
-                  bgColor="#EFF6FF"
-                  borderColor="#BFDBFE"
-                  titleColor="#1E40AF"
-                  textColor="#1D4ED8"
-                  iconColor="#2563EB"
-                />
-              </div>
-            </ChartContainer>
+          <ChartContainer title="AI Revenue Insights" height="h-[400px]">
+            <div className="flex flex-col gap-5 flex-1 justify-between">
+              <InsightCard
+                title="Peak Hour Optimization"
+                description="Lunch rush (12-2 PM) shows 15% higher revenue potential. Consider increasing production during these hours."
+                bgColor="#F0FDF4"
+                borderColor="#BBF7D0"
+                titleColor="#166534"
+                textColor="#15803D"
+                iconColor={CHART_COLORS.success}
+              />
+              <InsightCard
+                title="Menu Item Alert"
+                description="Mojitos shows declining sales trend. Consider promotional pricing or recipe adjustment."
+                bgColor="#FEFCE8"
+                borderColor="#FEF08A"
+                titleColor="#854D0E"
+                textColor="#A16207"
+                iconColor="#CA8A04"
+              />
+              <InsightCard
+                title="Revenue Forecast"
+                description="The difference in Cogs vs Sales Price for Classic Chicken Burger can be slighly increased to improve the profit margin."
+                bgColor="#EFF6FF"
+                borderColor="#BFDBFE"
+                titleColor="#1E40AF"
+                textColor="#1D4ED8"
+                iconColor="#2563EB"
+              />
+            </div>
+          </ChartContainer>
           </div>
         </div>
 

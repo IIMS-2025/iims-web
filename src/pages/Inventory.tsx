@@ -284,7 +284,7 @@ const handleStockUpdateError = (error: any) => {
                       <td className="price-cell">
                         <div className="price-info">
                           <span className="price">
-                            ${item.price_per_unit || "2.50"}
+                          ₹{item.price || "2.50"}
                           </span>
                           <span className="unit">/ {item.unit || "kg"}</span>
                         </div>
@@ -421,7 +421,7 @@ const handleStockUpdateError = (error: any) => {
                     </div>
                     <div className="stock-info">
                       <span className="label">Unit Price:</span>
-                      <span className="value">$2.50</span>
+                      <span className="value">2.50</span>
                     </div>
                   </div>
                 </div>
@@ -446,7 +446,7 @@ const handleStockUpdateError = (error: any) => {
                   <div className="estimated-cost">
                     <span className="label">Estimated Cost:</span>
                     <span className="cost-value">
-                      ${(2.5 * parseFloat(restockQuantity)).toFixed(2)}
+                      {(2.5 * parseFloat(restockQuantity)).toFixed(2)}
                     </span>
                   </div>
                 )}

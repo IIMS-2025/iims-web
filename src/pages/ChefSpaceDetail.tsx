@@ -106,7 +106,7 @@ export default function ChefSpaceDetail() {
 
               <div className="flex justify-between items-center">
                 <div className="text-2xl font-bold text-indigo-600">
-                  ${cookbookItem?.price}
+                ₹{cookbookItem?.price}
                 </div>
                 {cookbookItem?.created_by && (
                   <div>By {cookbookItem?.created_by}</div>

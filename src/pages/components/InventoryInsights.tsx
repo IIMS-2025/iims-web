@@ -338,6 +338,127 @@ export default function InventoryInsights() {
 
     return (
         <div className="inventory-insights-container w-full">
+            {/* AI Inventory Intelligence Section */}
+            <section className="mb-10">
+                <div className="bg-[#39297B] rounded-xl p-6">
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="w-14 h-14 flex items-center justify-center">
+                            <svg width="54" height="56" viewBox="0 0 54 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M46 0C50.4183 0 54 3.58172 54 8V48C54 52.4183 50.4183 56 46 56H8C3.58172 56 0 52.4183 0 48V8C0 3.58172 3.58172 0 8 0H46Z" fill="white" fillOpacity="0.2" />
+                                <path d="M46 0C50.4183 0 54 3.58172 54 8V48C54 52.4183 50.4183 56 46 56H8C3.58172 56 0 52.4183 0 48V8C0 3.58172 3.58172 0 8 0H46Z" stroke="#E5E7EB" />
+                                <path d="M42 42H12V13H42V42Z" stroke="#E5E7EB" />
+                                <g clipPath="url(#clip0_147_695)">
+                                    <path d="M27 15C27.8297 15 28.5 15.6703 28.5 16.5V19.5H34.125C35.9906 19.5 37.5 21.0094 37.5 22.875V35.625C37.5 37.4906 35.9906 39 34.125 39H19.875C18.0094 39 16.5 37.4906 16.5 35.625V22.875C16.5 21.0094 18.0094 19.5 19.875 19.5H25.5V16.5C25.5 15.6703 26.1703 15 27 15ZM21.75 33C21.3375 33 21 33.3375 21 33.75C21 34.1625 21.3375 34.5 21.75 34.5H23.25C23.6625 34.5 24 34.1625 24 33.75C24 33.3375 23.6625 33 23.25 33H21.75ZM26.25 33C25.8375 33 25.5 33.3375 25.5 33.75C25.5 34.1625 25.8375 34.5 26.25 34.5H27.75C28.1625 34.5 28.5 34.1625 28.5 33.75C28.5 33.3375 28.1625 33 27.75 33H26.25ZM30.75 33C30.3375 33 30 33.3375 30 33.75C30 34.1625 30.3375 34.5 30.75 34.5H32.25C32.6625 34.5 33 34.1625 33 33.75C33 33.3375 32.6625 33 32.25 33H30.75ZM24.375 27C24.375 26.5027 24.1775 26.0258 23.8258 25.6742C23.4742 25.3225 22.9973 25.125 22.5 25.125C22.0027 25.125 21.5258 25.3225 21.1742 25.6742C20.8225 26.0258 20.625 26.5027 20.625 27C20.625 27.4973 20.8225 27.9742 21.1742 28.3258C21.5258 28.6775 22.0027 28.875 22.5 28.875C22.9973 28.875 23.4742 28.6775 23.8258 28.3258C24.1775 27.9742 24.375 27.4973 24.375 27ZM31.5 28.875C31.9973 28.875 32.4742 28.6775 32.8258 28.3258C33.1775 27.9742 33.375 27.4973 33.375 27C33.375 26.5027 33.1775 26.0258 32.8258 25.6742C32.4742 25.3225 31.9973 25.125 31.5 25.125C31.0027 25.125 30.5258 25.3225 30.1742 25.6742C29.8225 26.0258 29.625 26.5027 29.625 27C29.625 27.4973 29.8225 27.9742 30.1742 28.3258C30.5258 28.6775 31.0027 28.875 31.5 28.875ZM14.25 25.5H15V34.5H14.25C13.0078 34.5 12 33.4922 12 32.25V27.75C12 26.5078 13.0078 25.5 14.25 25.5ZM39.75 25.5C40.9922 25.5 42 26.5078 42 27.75V32.25C42 33.4922 40.9922 34.5 39.75 34.5H39V25.5H39.75Z" fill="white" />
+                                </g>
+                                <defs>
+                                    <clipPath id="clip0_147_695">
+                                        <path d="M12 15H42V39H12V15Z" fill="white" />
+                                    </clipPath>
+                                </defs>
+                            </svg>
+                        </div>
+                        <h2 className="text-xl font-bold text-white">AI Inventory Intelligence</h2>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-6">
+                        {/* Stock Status */}
+                        <div className="bg-[#4b3f83] bg-opacity-10 rounded-lg p-5">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-9 h-9 bg-teal-300 rounded-lg flex items-center justify-center">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M2 4H18V16H2V4Z" stroke="#0F766E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M6 8V12" stroke="#0F766E" strokeWidth="2" strokeLinecap="round" />
+                                        <path d="M10 6V14" stroke="#0F766E" strokeWidth="2" strokeLinecap="round" />
+                                        <path d="M14 10V12" stroke="#0F766E" strokeWidth="2" strokeLinecap="round" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-lg font-semibold text-white">Stock Status</h3>
+                            </div>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-white text-opacity-80">Well-stocked items</span>
+                                    <span className="text-base font-bold text-green-400">23 items</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-white text-opacity-80">Critical low stock</span>
+                                    <span className="text-base font-bold text-red-400">5 items</span>
+                                </div>
+                                <div className="bg-red-500 bg-opacity-20 rounded px-3 py-2 mt-3">
+                                    <div className="flex items-center gap-2">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                            <path d="M6 1L11 6L6 11L1 6L6 1Z" fill="white" />
+                                        </svg>
+                                        <span className="text-xs text-white">Salmon & tomatoes need restocking in 2 days</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Dead Stock Alert */}
+                        <div className="bg-[#4b3f83] bg-opacity-10 rounded-lg p-5">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-9 h-9 bg-amber-600 rounded-lg flex items-center justify-center">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <circle cx="8" cy="8" r="6" stroke="white" strokeWidth="2" />
+                                        <path d="M8 4V8" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                                        <path d="M8 12H8.01" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-lg font-semibold text-white">Dead Stock Alert</h3>
+                            </div>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-white text-opacity-80">Value at risk</span>
+                                    <span className="text-base font-bold text-yellow-400">{wastageCost}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-white text-opacity-80">Sitting unused</span>
+                                    <span className="text-base font-bold text-yellow-400">30+ days</span>
+                                </div>
+                                <div className="bg-yellow-500 bg-opacity-20 rounded px-3 py-2 mt-3">
+                                    <div className="flex items-center gap-2">
+                                        <svg width="9" height="12" viewBox="0 0 9 12" fill="none">
+                                            <path d="M0.375 0H8.625V12H0.375V0Z" fill="white" />
+                                        </svg>
+                                        <span className="text-xs text-white">Consider promotions for spices & oils</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Waste Insights */}
+                        <div className="bg-[#4b3f83] bg-opacity-10 rounded-lg p-5">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-9 h-9 bg-blue-500 rounded-lg flex items-center justify-center">
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                        <path d="M16 7L9 2L2 7V15C2 15.5 2.4 16 3 16H15C15.6 16 16 15.5 16 15V7Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                        <path d="M7 16V9H11V16" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-lg font-semibold text-white">Waste Insights</h3>
+                            </div>
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-white text-opacity-80">Waste reduction</span>
+                                    <span className="text-base font-bold text-green-400">-12%</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-white text-opacity-80">Top waste category</span>
+                                    <span className="text-base font-bold text-blue-400">{topWasteCategory}</span>
+                                </div>
+                                <div className="bg-blue-500 bg-opacity-20 rounded px-3 py-2 mt-3">
+                                    <div className="flex items-center gap-2">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                            <path d="M6 1L11 6L6 11L1 6L6 1Z" fill="white" />
+                                        </svg>
+                                        <span className="text-xs text-white">18kg vegetables - optimize storage</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* Inventory Metrics Cards */}
             <section className="mb-10 user-guide-inventory-insights-overview">

@@ -3265,7 +3265,7 @@ body {
 
 .home-content {
   width: 100%;
-  height: calc(100vh - 85px);
+  height: calc(100vh - 90px);
   padding: 24px;
   display: flex;
   flex-direction: column;
