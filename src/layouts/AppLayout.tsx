@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import type { Step } from "react-joyride";
 
 import "../assets/theme.css";
-import appConfig from "../config/appConfig";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import UserGuide from "../components/UserGuide";
@@ -64,17 +63,17 @@ const dashboardSteps: Step[] = [
   {
     target: ".user-guide-cook-book-list-first-item",
     content: "Click here to view deatials of this menu item",
-    placement: "right",
+    placement: "bottom",
   },
   {
     target: ".user-guide-menu-details",
     content: "View details of this menu item",
-    placement: "bottom",
+    placement: "left",
   },
   {
     target: ".user-guide-ingredients-list",
     content: "Click here to view ingredients of this menu item",
-    placement: "left",
+    placement: "bottom",
   },
   {
     target: ".user-guide-insights-tab",
@@ -89,12 +88,12 @@ const dashboardSteps: Step[] = [
   {
     target: ".user-guide-inventory-insights-smart-notifications",
     content: "View anomalies of your inventory insights",
-    placement: "right",
+    placement: "top",
   },
   {
     target: ".user-guide-inventory-insights-forecast-graph",
     content: "View anomalies of your inventory insights in graph",
-    placement: "right",
+    placement: "top",
   },
   {
     target: ".user-guide-revenue-insights-tab",
@@ -109,12 +108,12 @@ const dashboardSteps: Step[] = [
   {
     target: ".user-guide-revenue-insights-forecast-graph",
     content: "View anomalies of your revenue insights in graph",
-    placement: "right",
+    placement: "top",
   },
   {
     target: ".user-guide-revenue-insights-ai",
     content: "View anomalies of your revenue insights in ai",
-    placement: "left",
+    placement: "top",
   },
   {
     target: ".user-guide-home-tab",
@@ -129,12 +128,12 @@ const dashboardSteps: Step[] = [
   {
     target: ".user-guide-home-ai-recommendations",
     content: "View home ai recommendations",
-    placement: "right",
+    placement: "top",
   },
   {
     target: ".user-guide-home-ai-summary",
     content: "View home ai summary",
-    placement: "left",
+    placement: "top",
   },
   {
     target: ".user-guide-kitchen-agent-tab",
@@ -194,7 +193,7 @@ export default function AppLayout() {
         navigate("/chefspace");
         break;
       case 10: 
-        navigate("/chefspace/20000001-0000-0000-0000-000000000000");
+        navigate("/chefspace/b2c3d4e5-f6a7-4b9c-0d1e-f2a3b4c5d6e7"); // ID of peporony piza
         break;
       case 12:
         navigate("/insights");

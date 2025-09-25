@@ -10,36 +10,36 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler
-} from 'chart.js';
+  Filler,
+} from "chart.js";
 
 // Shared components
-import { 
-  MetricCard, 
-  SmartRecommendations, 
-  NotificationsSection, 
-  ChartsSection 
-} from '../components/dashboard';
+import {
+  MetricCard,
+  SmartRecommendations,
+  NotificationsSection,
+  ChartsSection,
+} from "../components/dashboard";
 
 // Local utilities and data
-import { metricsData, createSalesMetricsData } from '../utils/homeData';
-import { CSS_CLASSES } from '../utils/dashboardHelpers';
-import { 
+import { metricsData, createSalesMetricsData } from "../utils/homeData";
+import { CSS_CLASSES } from "../utils/dashboardHelpers";
+import {
   ChartBarsIcon,
   DollarIcon,
   ChartIcon,
   ClockIcon,
-  PizzaIcon
-} from '../assets/icons/index';
+  PizzaIcon,
+} from "../assets/icons/index";
 
 // API hooks
-import { useGetSalesMetricsQuery } from '../services/salesApi';
+import { useGetSalesMetricsQuery } from "../services/salesApi";
 
 // Components
-import { Loader } from '../components/Loader';
+import { Loader } from "../components/Loader";
 
 // Styles
-import '../styles/home.css';
+import "../styles/home.css";
 
 ChartJS.register(
   CategoryScale,
@@ -55,15 +55,23 @@ ChartJS.register(
 );
 
 export default function HomePage() {
-  const { data: salesMetrics, error: salesError, isLoading: salesLoading } = useGetSalesMetricsQuery();
+  const {
+    data: salesMetrics,
+    error: salesError,
+    isLoading: salesLoading,
+  } = useGetSalesMetricsQuery();
 
   // Create dynamic metrics data based on API response
-  const dynamicMetricsData = createSalesMetricsData(salesMetrics, salesLoading, !!salesError);
+  const dynamicMetricsData = createSalesMetricsData(
+    salesMetrics,
+    salesLoading,
+    !!salesError
+  );
 
-  return (
+  return (  
     <div className={CSS_CLASSES.DASHBOARD_CONTAINER}>
       <div className={CSS_CLASSES.MAIN_CONTENT}>
-              {/* Header Section */}
+        {/* Header Section */}
         <div className={CSS_CLASSES.SECTION_SPACING}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -71,8 +79,12 @@ export default function HomePage() {
                 <ChartBarsIcon className="text-white w-6 h-6" />
               </div>
               <div>
-                <h1 className={CSS_CLASSES.TITLE_PRIMARY}>Performance Overview</h1>
-                <p className={CSS_CLASSES.SUBTITLE}>AI-powered insights for smarter decisions</p>
+                <h1 className={CSS_CLASSES.TITLE_PRIMARY}>
+                  Performance Overview
+                </h1>
+                <p className={CSS_CLASSES.SUBTITLE}>
+                  AI-powered insights for smarter decisions
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-indigo-50 rounded-xl border border-indigo-100">
@@ -84,12 +96,14 @@ export default function HomePage() {
               <span className="text-sm font-medium text-indigo-700">
                 {salesLoading ? "Loading..." : "Live AI Analysis"}
               </span>
-                  </div>
-                </div>
-              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Metrics Cards */}
-        <div className={`user-guide-home-overview ${CSS_CLASSES.GRID_4_COLS} ${CSS_CLASSES.SECTION_SPACING}`}>
+        <div
+          className={`user-guide-home-overview ${CSS_CLASSES.GRID_4_COLS} ${CSS_CLASSES.SECTION_SPACING}`}
+        >
           <MetricCard
             type="revenue"
             label={dynamicMetricsData.totalSales.label}
@@ -121,24 +135,22 @@ export default function HomePage() {
             description={dynamicMetricsData.profitMargin.description}
             icon={<PizzaIcon className="text-purple-600 w-5 h-5" />}
             isLoading={salesLoading}
-                    />
-                  </div>
+          />
+        </div>
 
         {/* Smart Recommendations */}
         <div className="user-guide-home-ai-recommendations">
-        <SmartRecommendations />
+          <SmartRecommendations />
         </div>
 
         {/* Notifications & AI Forecast */}
         <div className="user-guide-home-ai-summary">
-        <NotificationsSection />
+          <NotificationsSection />
         </div>
 
         {/* Charts & Stock Alerts */}
         <ChartsSection />
-              </div>
-            </div>
+      </div>
+    </div>
   );
 }
-
-

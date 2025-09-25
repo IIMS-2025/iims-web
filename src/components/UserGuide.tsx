@@ -50,7 +50,7 @@ const UserGuide: React.FC<UserGuideProps> = ({
       styles={{
         options: {
           primaryColor: '#2563eb',
-          zIndex: 10000,
+          zIndex: 100000,
         },
         spotlight: {
           backgroundColor: 'rgba(255, 255, 255, 0.4)',

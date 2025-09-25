@@ -139,7 +139,7 @@ export const getNotificationClasses = (priority: 'high' | 'medium' | 'low'): {
  */
 export const CSS_CLASSES = {
   // Layout
-  DASHBOARD_CONTAINER: 'min-h-screen bg-gray-50 p-4',
+  DASHBOARD_CONTAINER: 'min-h-[calc(100vh-464px)] bg-gray-50 p-4',
   MAIN_CONTENT: 'w-full',
   SECTION_SPACING: 'mb-8',
   GRID_4_COLS: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6',
