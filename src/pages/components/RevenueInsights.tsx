@@ -1142,10 +1142,10 @@ function RevenueInsights() {
           </div>
 
           {/* Skeleton Revenue Anomaly Detection */}
-          <SkeletonChartContainer
-            title="Revenue Anomaly Detection"
-            height="h-[400px]"
-          />
+            <SkeletonChartContainer
+              title="Revenue Anomaly Detection"
+              height="h-[400px]"
+            />
         </>
       );
     }
@@ -1163,42 +1163,42 @@ function RevenueInsights() {
         <div className="grid grid-cols-[2fr_1fr] gap-6 mb-8">
           <div className="user-guide-revenue-insights-forecast-graph">
             <ChartContainer title="Sales vs Forecast" height="h-[400px]">
-            <SalesChart data={processedSalesData} />
-          </ChartContainer>
+              <SalesChart data={processedSalesData} />
+            </ChartContainer>
           </div>
 
           <div className="user-guide-revenue-insights-ai">
-          <ChartContainer title="AI Revenue Insights" height="h-[400px]">
-            <div className="flex flex-col gap-5 flex-1 justify-between">
-              <InsightCard
-                title="Peak Hour Optimization"
-                description="Lunch rush (12-2 PM) shows 15% higher revenue potential. Consider increasing production during these hours."
-                bgColor="#F0FDF4"
-                borderColor="#BBF7D0"
-                titleColor="#166534"
-                textColor="#15803D"
-                iconColor={CHART_COLORS.success}
-              />
-              <InsightCard
-                title="Menu Item Alert"
-                description="Mojitos shows declining sales trend. Consider promotional pricing or recipe adjustment."
-                bgColor="#FEFCE8"
-                borderColor="#FEF08A"
-                titleColor="#854D0E"
-                textColor="#A16207"
-                iconColor="#CA8A04"
-              />
-              <InsightCard
-                title="Revenue Forecast"
-                description="The difference in Cogs vs Sales Price for Classic Chicken Burger can be slighly increased to improve the profit margin."
-                bgColor="#EFF6FF"
-                borderColor="#BFDBFE"
-                titleColor="#1E40AF"
-                textColor="#1D4ED8"
-                iconColor="#2563EB"
-              />
-            </div>
-          </ChartContainer>
+            <ChartContainer title="AI Revenue Insights" height="h-[400px]">
+              <div className="flex flex-col gap-5 flex-1 justify-between">
+                <InsightCard
+                  title="Peak Hour Optimization"
+                  description="Lunch rush (12-2 PM) shows 15% higher revenue potential. Consider increasing production during these hours."
+                  bgColor="#F0FDF4"
+                  borderColor="#BBF7D0"
+                  titleColor="#166534"
+                  textColor="#15803D"
+                  iconColor={CHART_COLORS.success}
+                />
+                <InsightCard
+                  title="Menu Item Alert"
+                  description="Mojitos shows declining sales trend. Consider promotional pricing or recipe adjustment."
+                  bgColor="#FEFCE8"
+                  borderColor="#FEF08A"
+                  titleColor="#854D0E"
+                  textColor="#A16207"
+                  iconColor="#CA8A04"
+                />
+                <InsightCard
+                  title="Revenue Forecast"
+                  description="The difference in Cogs vs Sales Price for Classic Chicken Burger can be slighly increased to improve the profit margin."
+                  bgColor="#EFF6FF"
+                  borderColor="#BFDBFE"
+                  titleColor="#1E40AF"
+                  textColor="#1D4ED8"
+                  iconColor="#2563EB"
+                />
+              </div>
+            </ChartContainer>
           </div>
         </div>
 
@@ -1223,6 +1223,7 @@ function RevenueInsights() {
         </div>
 
         {/* Revenue Anomaly Detection */}
+        <div className="user-guide-revenue-insights-anomalies-graph">
         <ChartContainer title="Revenue Anomaly Detection" height="h-[400px]">
           <div className="bg-red-50 rounded-full px-3 py-1 inline-block text-xs font-medium text-red-800 mb-6">
             {
@@ -1233,6 +1234,7 @@ function RevenueInsights() {
           </div>
           <AnomalyChart data={processedAnomalyData} />
         </ChartContainer>
+        </div>
       </>
     );
   } catch (error) {

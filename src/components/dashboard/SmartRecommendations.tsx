@@ -22,18 +22,18 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
   icon,
   onButtonClick,
 }) => {
-  const getButtonClasses = () => {
-    switch (type) {
-      case "alert":
-        return "mt-3 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-200 transition-colors";
-      case "opportunity":
-        return "mt-3 px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-lg hover:bg-green-200 transition-colors";
-      case "prevention":
-        return "mt-3 px-3 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-lg hover:bg-orange-200 transition-colors";
-      default:
-        return "mt-3 px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors";
-    }
-  };
+  // const getButtonClasses = () => {
+  //   switch (type) {
+  //     case "alert":
+  //       return "mt-3 px-3 py-1 bg-blue-700 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors border border-blue-500 align-right";
+  //     case "opportunity":
+  //       return "mt-3 px-3 py-1 bg-green-700 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition-colors border border-green-500 align-right";
+  //     case "prevention":
+  //       return "mt-3 px-3 py-1 bg-orange-700 text-white text-xs font-medium rounded-lg hover:bg-orange-700 transition-colors border border-orange-500 align-right";
+  //     default:
+  //       return "mt-3 px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors border border-gray-500 align-right";
+  //   }
+  // };
 
   const getIconContainerClasses = () => {
     switch (type) {
@@ -50,14 +50,16 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
 
   return (
     <div className={getRecommendationCardClasses(type)}>
-      <div className="flex items-start gap-3 mb-3">
+      <div className="flex items-start gap-3">
         <div className={getIconContainerClasses()}>{icon}</div>
         <div>
           <h4 className="font-semibold text-gray-900 mb-2">{title}</h4>
           <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
+          {/* <div className="flex justify-end">
           <button className={getButtonClasses()} onClick={onButtonClick}>
             {buttonText}
           </button>
+          </div> */}
         </div>
       </div>
     </div>
@@ -80,23 +82,23 @@ export const SmartRecommendations: React.FC = () => {
         <div className="user-guilde-recommendation-card">
           <RecommendationCard
             type="alert"
-            title="Inventory Alert"
-            description="Increase pasta inventory by 30% for tomorrow's lunch rush based on current demand trends."
-            buttonText="Make order for past"
+            title="Order 18 kg Chicken Breast today"
+            description="To maintain ~10-day cover; forecast shows stockout risk by Thu"
+            buttonText="Make order"
             icon={<AlertIcon className="text-blue-600 w-4 h-4" />}
           />
         </div>
         <RecommendationCard
           type="opportunity"
-          title="Revenue Opportunity"
-          description="Pizza sales peak at 7PM. Consider promoting premium toppings during this window."
-          buttonText="Create Promo for more opportunity"
+          title="Run beverage offers to accelerate milk usage"
+          description="12 L milk expires in 3 days (FEFO)"
+          buttonText="Create Promo"
           icon={<DollarIcon className="text-green-600 w-4 h-4" />}
         />
         <RecommendationCard
           type="prevention"
-          title="Waste Prevention"
-          description="Lettuce usage down 15%. Promote salads today to reduce potential waste by Thursday."
+          title="Increase Tomatoes safety stock"
+          description="Increase stock from 6 kg → 9 kg for the next two weekends. Expected festival demand uplift ~18%"
           buttonText="Push Salads"
           icon={<SparkleIcon className="text-orange-600 w-4 h-4" />}
         />

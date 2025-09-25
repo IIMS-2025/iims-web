@@ -84,7 +84,7 @@ export const getLabelTextClasses = (type: 'revenue' | 'orders' | 'hours' | 'cate
  * Get CSS classes for recommendation cards based on severity
  */
 export const getRecommendationCardClasses = (severity: 'alert' | 'opportunity' | 'prevention'): string => {
-  const baseClasses = 'rounded-xl p-5 border';
+  const baseClasses = 'rounded-xl p-5 border min-h-[140px]';
   
   switch (severity) {
     case 'alert':

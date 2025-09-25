@@ -116,6 +116,11 @@ const dashboardSteps: Step[] = [
     placement: "top",
   },
   {
+    target: ".user-guide-revenue-insights-anomalies-graph",
+    content: "View anomalies of your revenue insights in graph",
+    placement: "top",
+  },
+  {
     target: ".user-guide-home-tab",
     content: "View home tab",
     placement: "right",
@@ -141,10 +146,15 @@ const dashboardSteps: Step[] = [
     placement: "right",
   },
   {
-    target: ".user-guide-kitchen-agent-quick-actions1",
+    target: ".user-guide-kitchen-agent-quick-responses1",
     content: "View kitchen agent quick actions",
     placement: "top",
-  }
+  },
+  {
+    target: ".user-guide-kitchen-agent-send-button",
+    content: "Send message to kitchen agent",
+    placement: "top",
+  },
 ];
 
 export default function AppLayout() {
@@ -201,12 +211,12 @@ export default function AppLayout() {
       case 16:
         dispatch(setActiveTab('Revenue'));
         break;
-      case 20:
+      case 21:
         setTimeout(() => {
           navigate("/home");
         }, 1000);
         break;
-      case 24:
+      case 25:
         navigate("/kitchen-agent");
         break;
     }

@@ -313,7 +313,7 @@ const KitchenAgent: React.FC = () => {
             {quickResponses.map((response, index) => (
               <button
                 key={response.id}
-                className={`quick-response-card quick-response-${response.color}`}
+                className={`quick-response-card quick-response-${response.color} user-guide-kitchen-agent-quick-responses${index + 1}`}
                 onClick={() => handleQuickResponse(response)}
               >
                 <div className="response-icon">
@@ -342,7 +342,7 @@ const KitchenAgent: React.FC = () => {
             <button
               onClick={handleSendMessage}
               disabled={!inputText.trim()}
-              className="send-button"
+              className="send-button user-guide-kitchen-agent-send-button"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path
