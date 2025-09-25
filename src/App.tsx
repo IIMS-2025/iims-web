@@ -5,7 +5,7 @@ import Login from "./pages/Login";
 import HomePage from "./pages/Home";
 import ChefSpace from "./pages/ChefSpace";
 import ChefSpaceDetail from "./pages/ChefSpaceDetail";
-import OrdersInsights from "./pages/OrdersInsights";
+import OrdersInsights from "./pages/Insights";
 import RestockList from "./pages/RestockList";
 import Notifications from "./pages/Notifications";
 import KitchenAgent from "./pages/KitchenAgent";
