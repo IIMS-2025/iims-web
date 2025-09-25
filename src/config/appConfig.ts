@@ -27,6 +27,8 @@ export const appConfig = {
         timeout: 10000,
         retryAttempts: 3,
         tenantHeader: 'X-Tenant-ID',
+        locationHeader: 'X-Location-ID',
+        locationId: '22222222-2222-2222-2222-222222222222',
         tenantId: '11111111-1111-1111-1111-111111111111',
         assetPrefix: import.meta.env.ASSET_PREFIX || 'http://localhost:4566/iims-media/'
     },
