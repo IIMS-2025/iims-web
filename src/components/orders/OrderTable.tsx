@@ -10,7 +10,7 @@ import {
 
 interface OrderTableProps {
   orders: Order[];
-  onOrderClick: (order: Order) => void;
+  onOrderClick?: (order: Order) => void;
   onMoreClick: (order: Order) => void;
   searchTerm: string;
   onSearchChange: (term: string) => void;
@@ -80,7 +80,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                 Items
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Delivery Time
+                Order Time
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                 Price
@@ -94,8 +94,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
             {orders.map((order) => (
               <tr 
                 key={order.id}
-                className={`hover:bg-gray-50 cursor-pointer transition-colors ${getUrgencyClass(order)}`}
-                onClick={() => onOrderClick(order)}
+                className={`hover:bg-gray-50 transition-colors ${getUrgencyClass(order)}`}
               >
                 {/* Order ID */}
                 <td className="px-4 py-3 whitespace-nowrap">
@@ -127,7 +126,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
                   </div>
                 </td>
 
-                {/* Delivery Time */}
+                {/* Order Time */}
                 <td className="px-4 py-3 whitespace-nowrap">
                   <div className="text-sm text-gray-900">
                     {formatOrderTime(order.orderTime)}
@@ -159,11 +158,11 @@ export const OrderTable: React.FC<OrderTableProps> = ({
         </table>
       </div>
 
-      {/* Delivery Address & Notes (Expandable Row Details) */}
-      {orders.some(order => order.orderType === 'delivery' && order.customer.address) && (
+      {/* Help Text */}
+      {orders.length > 0 && (
         <div className="border-t border-gray-200 bg-gray-50 px-6 py-3">
           <div className="text-xs text-gray-500">
-            Click on a delivery order to view address details
+            Click "View Details" to see complete order information
           </div>
         </div>
       )}
