@@ -37,7 +37,7 @@ export default function OrdersInsights() {
     const [activeTab, setActiveTab] = useState('Inventory');
     const navigate = useNavigate();
 
-    const { data: salesData, isLoading } = useGetSalesDataQuery({});
+    const { isLoading } = useGetSalesDataQuery({});
 
     if (isLoading) {
         return (
@@ -60,7 +60,7 @@ export default function OrdersInsights() {
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 border-none rounded-md text-sm font-semibold cursor-pointer transition-colors duration-200 ${activeTab === tab ? 'text-white' : 'bg-transparent text-gray-500 hover:text-gray-700'
+                                className={`${tab === 'Revenue' ? 'user-guide-revenue-insights-tab' : 'user-guide-inventory-insights-tab'} px-4 py-2 border-none rounded-md text-sm font-semibold cursor-pointer transition-colors duration-200 ${activeTab === tab ? 'text-white' : 'bg-transparent text-gray-500 hover:text-gray-700'
                                     }`}
                                 style={{
                                     background: activeTab === tab ? colors.primary : 'transparent',

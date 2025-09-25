@@ -17,29 +17,133 @@ const dashboardSteps: Step[] = [
     placement: "bottom",
   },
   {
-    target: ".user-guilde-stock-alerts",
+    target: ".user-guide-order-tab",
     content:
-      "Click here to access your settings and preferences. You can customize your dashboard experience here.",
-    placement: "bottom",
+      "Click here to access your orders and manage your orders here.",
+    placement: "right",
   },
   {
-    target: ".user-profile",
+    target: ".user-guide-sync-orders",
     content:
-      "This is your profile section. Manage your account information and view your profile details here.",
+      "Click here to sync your orders and manage your orders here.",
     placement: "left",
   },
   {
-    target: ".user-guilde-inventory",
-    content:
-      "These cards show your key performance indicators and important metrics at a glance.",
-    placement: "top",
+    target: ".user-guide-oders-list-first-row",
+    content: "Click here to view your latest order and manage your orders here.",
+    placement: "bottom",
   },
   {
-    target: ".user-guilde-stock-update",
-    content:
-      "Stay updated with your recent activities and system notifications in this section.",
-    placement: "top",
+    target: ".user-guide-inventory-tab",
+    content: "Click here to access your inventory and manage your inventory here.",
+    placement: "bottom",
   },
+  {
+    target: ".user-guide-inventory-list-first-row",
+    content: "Low stock items are highlighted.",
+    placement: "bottom",
+  },
+  {
+    target: ".user-guilde-restock-list-tab",
+    content:
+      "Click here to access your restock list and manage your restock list here.",
+    placement: "right",
+  },
+  {
+    target: ".user-guide-restock-export-btn",
+    content: "Click here to export your restock list and manage your restock list here.",
+    placement: "bottom",
+  },
+  {
+    target: ".user-guide-cook-book-tab",
+    content: "Click here to access your cook book and manage your cook book here.",
+    placement: "right",
+  },
+  {
+    target: ".user-guide-cook-book-list-first-item",
+    content: "Click here to view deatials of this menu item",
+    placement: "right",
+  },
+  {
+    target: ".user-guide-menu-details",
+    content: "View details of this menu item",
+    placement: "bottom",
+  },
+  {
+    target: ".user-guide-ingredients-list",
+    content: "Click here to view ingredients of this menu item",
+    placement: "left",
+  },
+  {
+    target: ".user-guide-insights-tab",
+    content: "Click here to access your insights and manage your insights here.",
+    placement: "right",
+  },
+  {
+    target: ".user-guide-inventory-insights-overview",
+    content: "View overview of your inventory insights",
+    placement: "bottom",
+  },
+  {
+    target: ".user-guide-inventory-insights-smart-notifications",
+    content: "View anomalies of your inventory insights",
+    placement: "right",
+  },
+  {
+    target: ".user-guide-inventory-insights-forecast-graph",
+    content: "View anomalies of your inventory insights in graph",
+    placement: "right",
+  },
+  {
+    target: ".user-guide-revenue-insights-tab",
+    content: "View anomalies of your inventory insights in graph",
+    placement: "right",
+  },
+  {
+    target: ".user-guide-revenue-insights-overview",
+    content: "View overview of your revenue insights",
+    placement: "bottom",
+  },
+  {
+    target: ".user-guide-revenue-insights-forecast-graph",
+    content: "View anomalies of your revenue insights in graph",
+    placement: "right",
+  },
+  {
+    target: ".user-guide-revenue-insights-ai",
+    content: "View anomalies of your revenue insights in ai",
+    placement: "left",
+  },
+  {
+    target: ".user-guide-home-tab",
+    content: "View home tab",
+    placement: "right",
+  },
+  {
+    target: ".user-guide-home-overview",
+    content: "View home overview",
+    placement: "bottom",
+  },
+  {
+    target: ".user-guide-home-ai-recommendations",
+    content: "View home ai recommendations",
+    placement: "right",
+  },
+  {
+    target: ".user-guide-home-ai-summary",
+    content: "View home ai summary",
+    placement: "left",
+  },
+  {
+    target: ".user-guide-kitchen-agent-tab",
+    content: "View kitchen agent tab",
+    placement: "right",
+  },
+  {
+    target: ".user-guide-kitchen-agent-quick-actions1",
+    content: "View kitchen agent quick actions",
+    placement: "top",
+  }
 ];
 
 export default function AppLayout() {
@@ -55,9 +159,10 @@ export default function AppLayout() {
     "/restock": "Restock List",
     "/chefspace": "Chef's Space",
     "/notifications": "Notifications Center",
+    "/kitchen-agent": "Kitchen Agent",
   };
   const currentPath = location.pathname.replace(/\/$/, "");
-  const headerTitle = titleMap[currentPath] || appConfig.branding.brandName;
+  const headerTitle = titleMap[currentPath] || null;
 
   // Initialize user guide toggle state from localStorage
   useEffect(() => {
@@ -69,8 +174,30 @@ export default function AppLayout() {
   };
 
   const handleStepChange = (index: number) => {
-    if (index === 3) {
-      navigate("/inventory");
+
+    switch (index) {
+      case 1:
+        // step home to orders
+        navigate("/orders");
+        break;
+      case 4:
+          navigate("/inventory");
+        break;
+      case 6:
+        navigate("/restock");
+        break;
+      case 8:
+        navigate("/chefspace");
+        break;
+      case 10: 
+        navigate("/chefspace/20000001-0000-0000-0000-000000000000");
+        break;
+      case 12:
+        navigate("/insights");
+        break;
+      case 17: 
+        navigate("/kitchen-agent");
+        break;
     }
   };
 

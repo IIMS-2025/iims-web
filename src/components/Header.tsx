@@ -9,7 +9,7 @@ interface ActionButton {
 }
 
 interface HeaderTitleSection {
-  title: string;
+  title: string | null;
   badge?: {
     text: string;
     color?: string;
@@ -40,9 +40,9 @@ export default function Header({
 
   return (
     <header className={className}>
-      <div className="header-left-section">
+      <div className="header-left-section user-guide-menu-details">
         {/* Title Section with Badge - Rendered if provided */}
-        {titleSection && (
+        {titleSection?.title ? (
           <div className="header-title-section">
             <h1 className="header-main-title user-guilde-header-title">{titleSection.title}</h1>
             {titleSection.badge && (
@@ -51,7 +51,12 @@ export default function Header({
               </div>
             )}
           </div>
-        )}
+        ): (
+          <div className="header-title-section">
+            <h1 className="header-main-title">Menu Details</h1>
+          </div>
+        )
+        }
 
         {/* Page-specific content */}
         {children}

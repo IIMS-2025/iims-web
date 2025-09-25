@@ -80,7 +80,7 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
         <button
           onClick={handleSync}
           disabled={syncInProgress}
-          className={`px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 ${
+          className={`user-guide-sync-orders px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 ${
             syncInProgress
               ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
               : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95'

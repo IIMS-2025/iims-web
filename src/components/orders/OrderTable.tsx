@@ -34,7 +34,7 @@ export const OrderTable: React.FC<OrderTableProps> = ({
 
   if (orders.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
+      <div className="user-guide-oders-list-first-row bg-white rounded-2xl border border-gray-100 p-12 text-center">
         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
           📋
         </div>
@@ -91,10 +91,10 @@ export const OrderTable: React.FC<OrderTableProps> = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {orders.map((order) => (
+            {orders.map((order, index) => (
               <tr 
                 key={order.id}
-                className={`hover:bg-gray-50 transition-colors ${getUrgencyClass(order)}`}
+                className={`hover:bg-gray-50 transition-colors ${index === 0 ? `user-guide-oders-list-first-row` : ''} ${getUrgencyClass(order)}`}
               >
                 {/* Order ID */}
                 <td className="px-4 py-3 whitespace-nowrap">

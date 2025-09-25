@@ -48,10 +48,6 @@ export default function OrdersPage() {
   const {
     startDate,
     endDate,
-    orderStats,
-    filteredOrders,
-    peakHours,
-    ordersToUse
   } = useOrdersPageLogic(null, null, filters, searchTerm);
 
   // API hooks

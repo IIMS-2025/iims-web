@@ -58,7 +58,7 @@ export default function Sidebar({
       <nav className="sidebar-nav">
         <Link
           to="/home"
-          className={`nav-item ${isActive("/home") ? "active" : ""}`}
+          className={`nav-item user-guide-home-tab ${isActive("/home") ? "active" : ""}`}
         >
           <div className="nav-icon">
             <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
@@ -76,7 +76,7 @@ export default function Sidebar({
 
         <Link
           to="/insights"
-          className={`nav-item ${isActive("/insights") ? "active" : ""}`}
+          className={`nav-item user-guide-insights-tab ${isActive("/insights") ? "active" : ""}`}
         >
           <div className="nav-icon">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -93,7 +93,7 @@ export default function Sidebar({
 
         <Link
           to="/orders"
-          className={`nav-item ${isActive("/orders") ? "active" : ""}`}
+          className={`nav-item user-guide-order-tab ${isActive("/orders") ? "active" : ""}`}
         >
           <div className="nav-icon">
             <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
@@ -118,7 +118,7 @@ export default function Sidebar({
 
         <Link
           to="/inventory"
-          className={`nav-item user-guilde-inventory ${
+          className={`user-guide-inventory-tab nav-item user-guilde-inventory ${
             isActive("/inventory") ? "active" : ""
           }`}
         >
@@ -138,7 +138,7 @@ export default function Sidebar({
 
         <Link
           to="/restock"
-          className={`nav-item ${isActive("/restock") ? "active" : ""}`}
+          className={`nav-item user-guilde-restock-list-tab ${isActive("/restock") ? "active" : ""}`}
         >
           <div className="nav-icon">
             <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
@@ -156,7 +156,7 @@ export default function Sidebar({
 
         <Link
           to="/chefspace"
-          className={`nav-item ${isActive("/chefspace") ? "active" : ""}`}
+          className={`nav-item user-guide-cook-book-tab ${isActive("/chefspace") ? "active" : ""}`}
         >
           <div className="nav-icon">
             <svg width="20" height="18" viewBox="0 0 20 18" fill="none">
@@ -174,7 +174,7 @@ export default function Sidebar({
 
         <Link
           to="/kitchen-agent"
-          className={`nav-item ${isActive("/kitchen-agent") ? "active" : ""}`}
+          className={`nav-item user-guide-kitchen-agent-tab ${isActive("/kitchen-agent") ? "active" : ""}`}
         >
           <div className="nav-icon">
             <svg width="20" height="18" viewBox="0 0 20 18" fill="none">

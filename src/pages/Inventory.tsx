@@ -267,7 +267,7 @@ const handleStockUpdateError = (error: any) => {
                 </tr>
               </thead>
               <tbody>
-                {filteredItems.map((item: any) => {
+                {filteredItems.map((item: any, index: number) => {
                   const stockPercentage = Math.min(
                     (item.available_qty / (item.reorder_point * 2)) * 100,
                     100
@@ -276,7 +276,7 @@ const handleStockUpdateError = (error: any) => {
                   const isCritical = item.available_qty <= item.critical_point;
 
                   return (
-                    <tr key={item.id} className="table-row">
+                    <tr key={item.id} className={`table-row ${index === 0 ? `user-guide-inventory-list-first-row` : ''}`}>
                       <td className="name-cell">
                         <div className="item-name">{item.name}</div>
                       </td>
