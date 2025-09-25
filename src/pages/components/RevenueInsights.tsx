@@ -1109,14 +1109,14 @@ function RevenueInsights() {
       return (
         <>
           {/* Skeleton Revenue Metrics Cards */}
-          <div className="user-guide-revenue-insights-overview grid grid-cols-4 gap-6 mb-10">
+          <div className="user-guide-revenue-insights-overview grid grid-cols-4 gap-6 mb-8">
             {Array.from({ length: 4 }, (_, i) => (
               <SkeletonMetricCard key={i} />
             ))}
           </div>
 
           {/* Skeleton Main Charts Section */}
-          <div className="grid grid-cols-[2fr_1fr] gap-6 mb-10">
+          <div className="grid grid-cols-[2fr_1fr] gap-6 mb-8">
             <SkeletonChartContainer
               title="Revenue   vs Forecast"
               height="h-[400px]"
@@ -1136,7 +1136,7 @@ function RevenueInsights() {
           </div>
 
           {/* Skeleton Bottom Charts Section */}
-          <div className="grid grid-cols-[2fr_1fr] gap-6 mb-10">
+          <div className="grid grid-cols-[2fr_1fr] gap-6 mb-8">
             <SkeletonChartContainer title="Revenue vs Cost Analysis" />
             <SkeletonChartContainer title="Top Selling Categories" />
           </div>
@@ -1153,14 +1153,14 @@ function RevenueInsights() {
     return (
       <>
         {/* Revenue Metrics Cards */}
-        <div className="grid grid-cols-3 gap-6 mb-10 user-guide-revenue-insights-overview">
+        <div className="grid grid-cols-3 gap-6 mb-8 user-guide-revenue-insights-overview">
           {metricsData.map((metric, index) => (
             <MetricCard key={index} {...metric} />
           ))}
         </div>
 
         {/* Main Charts Section */}
-        <div className="grid grid-cols-[2fr_1fr] gap-6 mb-10">
+        <div className="grid grid-cols-[2fr_1fr] gap-6 mb-8">
           <div className="user-guide-revenue-insights-forecast-graph">
             <ChartContainer title="Sales vs Forecast" height="h-[400px]">
             <SalesChart data={processedSalesData} />
@@ -1203,7 +1203,7 @@ function RevenueInsights() {
         </div>
 
         {/* Bottom Charts Section */}
-        <div className="grid grid-cols-[2fr_1fr] gap-6 mb-10">
+        <div className="grid grid-cols-[2fr_1fr] gap-6 mb-8">
           <ChartContainer title="Sales vs Cogs Analysis">
             <BarChart data={processedCostData} />
           </ChartContainer>
