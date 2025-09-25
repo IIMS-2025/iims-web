@@ -3008,6 +3008,9 @@ body {
 .brand-icon {
   width: 40px;
   height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: #5F63F2;
   border-radius: 8px;
 }

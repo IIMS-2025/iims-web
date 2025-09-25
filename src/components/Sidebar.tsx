@@ -42,14 +42,7 @@ export default function Sidebar({
       {/* Brand Section */}
       <div className="sidebar-brand">
         <div className="brand-icon">
-          <svg width="16" height="18" viewBox="0 0 16 18" fill="none">
-            <path
-              d="M8 0L8 18M0 9L16 9M2 4L14 4M2 14L14 14"
-              stroke="#FFFFFF"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
+         <span style={{ color: '#FFF', fontSize: '24px', fontWeight: 'bold' }}>R</span>
         </div>
         <div className="brand-text">{config.branding.brandName}</div>
       </div>
