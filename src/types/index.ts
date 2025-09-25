@@ -261,4 +261,34 @@ export interface SalesMetrics {
   profitMargin?: number;
 }
 
+// Orders sync response type
+export interface OrderSyncData {
+  id: string;
+  pos_order_id: string;
+  timestamp: string;
+  total_amount: number;
+}
+
+export interface OrderSyncResponse {
+  data: OrderSyncData[];
+}
+
+// Orders API types
+export interface MenuItem {
+  menu_item_id: string;
+  qty: string;
+  menu_item_name: string;
+}
+
+export interface OrderItem {
+  pos_order_id: string;
+  total_amount: string;
+  menu_items: MenuItem[];
+  timestamp?: string;
+}
+
+export interface OrdersResponse {
+  data: OrderItem[];
+}
+
 

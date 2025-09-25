@@ -4,22 +4,31 @@ import SyncIcon from '../../assets/icons/sync.svg?react';
 interface SyncButtonProps {
   onSync: () => Promise<void>;
   lastSyncTime?: Date;
+  isLoading?: boolean;
 }
 
 export const SyncButton: React.FC<SyncButtonProps> = ({ 
   onSync, 
-  lastSyncTime 
+  lastSyncTime,
+  isLoading = false
 }) => {
   const [isSyncing, setIsSyncing] = useState(false);
+  
+  // Use external loading state if provided, otherwise use internal state
+  const syncInProgress = isLoading || isSyncing;
 
   const handleSync = async () => {
-    setIsSyncing(true);
+    if (!isLoading) {
+      setIsSyncing(true);
+    }
     try {
       await onSync();
     } catch (error) {
       console.error('Sync failed:', error);
     } finally {
-      setIsSyncing(false);
+      if (!isLoading) {
+        setIsSyncing(false);
+      }
     }
   };
 
@@ -56,7 +65,7 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${
-              isSyncing ? 'bg-blue-500 animate-pulse' : 
+              syncInProgress ? 'bg-blue-500 animate-pulse' : 
               lastSyncTime ? 'bg-green-500' : 'bg-gray-400'
             }`}></div>
             <span className="text-sm font-medium text-gray-700">
@@ -70,21 +79,21 @@ export const SyncButton: React.FC<SyncButtonProps> = ({
         
         <button
           onClick={handleSync}
-          disabled={isSyncing}
+          disabled={syncInProgress}
           className={`px-4 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 ${
-            isSyncing
+            syncInProgress
               ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
               : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-95'
           }`}
         >
           <SyncIcon 
-            className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} 
+            className={`w-4 h-4 ${syncInProgress ? 'animate-spin' : ''}`} 
           />
-          {isSyncing ? 'Syncing...' : 'Sync Orders'}
+          {syncInProgress ? 'Syncing...' : 'Sync Orders'}
         </button>
       </div>
       
-      {isSyncing && (
+      {syncInProgress && (
         <div className="mt-3 pt-3 border-t border-gray-200">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <div className="w-4 h-4 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
