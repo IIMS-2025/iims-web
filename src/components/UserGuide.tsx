@@ -23,7 +23,7 @@ const UserGuide: React.FC<UserGuideProps> = ({
   }, [enabled]);
 
   const handleJoyrideCallback = (data: CallBackProps) => {
-    const { status, action, type , index } = data;
+    const { status , index } = data;
     const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
 
     if (finishedStatuses.includes(status)) {

@@ -461,7 +461,7 @@ export default function InventoryInsights() {
             </section>
 
             {/* Inventory Metrics Cards */}
-            <section className="mb-10">
+            <section className="mb-10 user-guide-inventory-insights-overview">
                 <div className="grid grid-cols-3 gap-6">
                     {METRICS_DATA.map((metric, index) => (
                         <MetricCard key={index} {...metric} />
@@ -470,7 +470,7 @@ export default function InventoryInsights() {
             </section>
 
             {/* Anomaly Detection and Smart Notifications Section */}
-            <section className="mb-10">
+            <section className="mb-10 user-guide-inventory-insights-smart-notifications">
                 <div className="grid grid-cols-2 gap-6">
                     {/* Stock Anomaly Detection */}
                     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
@@ -597,7 +597,7 @@ export default function InventoryInsights() {
 
             {/* Charts Section */}
             <section className="mb-10">
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-6 user-guide-inventory-insights-forecast-graph">
                     <ChartContainer
                         title="Stock vs Forecast Usage"
                         actions={<SearchInput width="w-64" />}

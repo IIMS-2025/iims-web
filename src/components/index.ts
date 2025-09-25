@@ -7,5 +7,4 @@ export { default as UserGuide } from "./UserGuide";
 // Icon exports
 export * from "./icons/ChefSpaceIcons";
 export * from "./icons/InventoryIcons";
-export * from "./icons/GeneralIcons";
 export * from "./icons/RestockIcons";   

@@ -150,7 +150,7 @@ export default function ChefSpaceDetail() {
         {/* Right Column - Ingredients & Instructions */}
         <div className="flex flex-col gap-8">
           {/* Ingredients Section */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
+          <div className="user-guide-ingredients-list bg-white rounded-2xl shadow-sm p-6">
             <div className="flex justify-between items-center mb-6">
               <div>
                 <h3 className="text-xl font-bold text-gray-900">

@@ -53,7 +53,6 @@ const mock = {
   restockItems: [
     {
       id: "r1",
-      id: "Fresh Tomatoes",
       product_name: "Fresh Tomatoes",
       category: "Vegetables",
       current_stock: 150,
@@ -71,7 +70,6 @@ const mock = {
     },
     {
       id: "r2",
-      id: "Mozzarella Cheese",
       product_name: "Mozzarella Cheese",
       category: "Dairy",
       current_stock: 25,
@@ -89,7 +87,6 @@ const mock = {
     },
     {
       id: "r3",
-      id: "Olive Oil",
       product_name: "Olive Oil",
       category: "Oils & Spices",
       current_stock: 5,
@@ -107,7 +104,6 @@ const mock = {
     },
     {
       id: "r4",
-      id: "Chicken Breast",
       product_name: "Chicken Breast",
       category: "Meat",
       current_stock: 45,
@@ -125,7 +121,6 @@ const mock = {
     },
     {
       id: "r5",
-      id: "Basil Leaves",
       product_name: "Basil Leaves",
       category: "Herbs",
       current_stock: 200,
@@ -142,8 +137,7 @@ const mock = {
       created_at: new Date().toISOString(),
     },
     {
-      id: "r6",
-      id: "pasta-dough",
+      id: "r6", 
       product_name: "Pizza Dough",
       category: "Bakery",
       current_stock: 8,

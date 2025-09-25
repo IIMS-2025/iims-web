@@ -3,10 +3,12 @@ import inventoryReducer from "./slices/inventorySlice";
 import ordersReducer from "./slices/ordersSlice";
 import forecastsReducer from "./slices/forecastsSlice";
 import restockReducer from "./slices/restockSlice";
+import insightsReducer from "./slices/insightsSlice";
 import { cookbookApi } from "../services/cookbookApi";
 import { inventoryApi } from "../services/inventoryApi";
 import { inventoryInsightsApi } from "../services/inventoryInsightsApi";
 import { salesApi } from "../services/salesApi";
+import { ordersApi } from "../services/ordersApi";
 
 
 export const store = configureStore({
@@ -15,10 +17,12 @@ export const store = configureStore({
     orders: ordersReducer,
     forecasts: forecastsReducer,
     restock: restockReducer,
+    insights: insightsReducer,
     [cookbookApi.reducerPath]: cookbookApi.reducer,
     [inventoryApi.reducerPath]: inventoryApi.reducer,
     [inventoryInsightsApi.reducerPath]: inventoryInsightsApi.reducer,
     [salesApi.reducerPath]: salesApi.reducer,
+    [ordersApi.reducerPath]: ordersApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -26,6 +30,7 @@ export const store = configureStore({
       inventoryApi.middleware,
       inventoryInsightsApi.middleware,
       salesApi.middleware,
+      ordersApi.middleware,
     ),
 });
 

@@ -212,7 +212,7 @@
 @media (max-width: 768px) {
   .order-list-container table th:nth-child(3),
   .order-list-container table td:nth-child(3) {
-    display: none; /* Hide delivery time column on mobile */
+    display: none; /* Hide order time column on mobile */
   }
   
   .order-list-container table th:nth-child(4),

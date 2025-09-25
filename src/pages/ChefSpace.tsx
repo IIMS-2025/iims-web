@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import appConfig from "../config/appConfig";
 import { useGetCookbookQuery } from "../services/cookbookApi";
@@ -6,6 +6,7 @@ import { useState } from "react";
 
 export default function ChefSpace() {
   const [showAddMenuItemModal, setShowAddMenuItemModal] = useState(false);
+  const navigate = useNavigate();
   // Chef Space configuration (can be loaded from backend)
   const chefSpaceConfig = {
     branding: appConfig.branding,
@@ -71,7 +72,7 @@ export default function ChefSpace() {
         <div>
           {cookbookItems && cookbookItems.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 scrollbar-hide">
-              {cookbookItems?.map((item: any) => {
+              {cookbookItems?.map((item: any, index: number) => {
                 const category =
                   item.category || item.category_name || "Main Course";
                 const categoryStyle = chefSpaceConfig.categoryStyles[
@@ -81,7 +82,10 @@ export default function ChefSpace() {
                 return (
                   <div
                     key={item.id}
-                    className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+                    onClick={() => {
+                      navigate(`/chefspace/${item.id}`);
+                    }}
+                    className={`${index === 0 ? `user-guide-cook-book-list-first-item` : ''} bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow`}
                   >
                     <div className="relative">
                       <img

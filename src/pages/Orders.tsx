@@ -1,5 +1,9 @@
 // External libraries
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
+
+// API hooks
+import { useGetOrdersQuery, useSyncOrdersMutation } from '../services/ordersApi';
+import { useGetSalesMetricsQuery } from '../services/salesApi';
 
 // Shared components
 import {
@@ -7,19 +11,25 @@ import {
   OrderTable,
   OrderFilters,
   SyncButton,
-  ActiveFilters,
-  ResultsSummary
+  OrderDetailModal,
+  FilterTag,
+  LoadingState,
+  SyncStatus,
+  ApiErrorStatus
 } from '../components/orders';
 
-// Local utilities and data
-import { mockOrders, calculateOrderStats } from '../utils/orderData';
+// Utility functions and types
 import type { Order } from '../utils/orderData';
+import type { OrderFiltersState } from '../utils/orderPageHelpers';
 import {
-  filterAndSearchOrders,
-  simulateOrderSync,
+  useOrdersPageLogic,
+  createSyncHandler,
+  createFilterHandlers,
+  createOrderDetailHandlers,
   hasActiveFilters,
-  type OrderFiltersState
-} from '../utils/orderPageHelpers';
+  formatFilterText,
+  getStatusClasses
+} from '../utils/ordersPageLogic';
 
 // Styles
 import '../styles/orders.css';
@@ -30,114 +40,99 @@ export default function OrdersPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filters, setFilters] = useState<OrderFiltersState>({});
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isOrderDetailOpen, setIsOrderDetailOpen] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState<Date>(new Date(Date.now() - 5 * 60 * 1000));
+  const [syncStatus, setSyncStatus] = useState<{ success: boolean; message?: string; refreshing?: boolean } | null>(null);
 
-  // Computed values
-  const orderStats = useMemo(() => calculateOrderStats(mockOrders), []);
-  const filteredOrders = useMemo(() => 
-    filterAndSearchOrders(mockOrders, filters, searchTerm), 
-    [filters, searchTerm]
-  );
+  // Business logic
+  const {
+    startDate,
+    endDate,
+  } = useOrdersPageLogic(null, null, filters, searchTerm);
+
+  // API hooks
+  const { data: ordersData, error: ordersError, isLoading: ordersLoading, refetch: refetchOrders } = useGetOrdersQuery({
+    start_date: startDate,
+    end_date: endDate,
+  });
+  const [syncOrders, { isLoading: isSyncing }] = useSyncOrdersMutation();
+  const { data: salesMetrics, refetch: refetchSales } = useGetSalesMetricsQuery();
+
+  // Update business logic with real data
+  const finalLogic = useOrdersPageLogic(ordersData, salesMetrics, filters, searchTerm);
 
   // Event handlers
-  const handleOrderClick = (order: Order) => {
-    setSelectedOrder(order);
-    console.log('Order clicked:', order);
-  };
+  const handleSync = createSyncHandler(
+    syncOrders,
+    refetchOrders,
+    refetchSales,
+    setLastSyncTime,
+    setSyncStatus,
+    finalLogic.ordersToUse
+  );
 
-  const handleMoreClick = (order: Order) => {
-    console.log('More options for order:', order);
-  };
-
-  const handleFiltersChange = (newFilters: OrderFiltersState) => {
-    setFilters(newFilters);
-  };
-
-  const handleSync = async () => {
-    setLastSyncTime(new Date());
-    return simulateOrderSync();
-  };
+  const { handleFiltersChange, clearFilter, clearAllFilters } = createFilterHandlers(setFilters);
+  const { handleOrderDetailsClick, closeOrderDetail } = createOrderDetailHandlers(
+    setSelectedOrder,
+    setIsOrderDetailOpen
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="w-full">
         {/* Header */}
         <OrderHeader
-          totalOrders={orderStats.totalOrders}
-          todayRevenue={orderStats.revenue}
-          peakHours="12-2 PM"
+          totalOrders={finalLogic.orderStats.totalOrders}
+          todayRevenue={salesMetrics?.todaySales || finalLogic.orderStats.revenue}
+          peakHours={finalLogic.peakHours}
         />
 
         {/* Sync Button */}
         <SyncButton 
           onSync={handleSync}
           lastSyncTime={lastSyncTime}
+          isLoading={isSyncing}
         />
 
+        {/* Sync Status */}
+        <SyncStatus syncStatus={syncStatus} getStatusClasses={getStatusClasses} />
+
         {/* Active Filters Display */}
-        {(filters.status || filters.orderType || filters.paymentStatus) && (
-          <div className="bg-white rounded-xl p-4 mb-6 border border-gray-100">
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="text-sm font-medium text-gray-700">Active Filters:</span>
-              {filters.status && (
-                <span className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full">
-                  Status: {filters.status}
-                  <button 
-                    onClick={() => setFilters(prev => ({ ...prev, status: undefined }))}
-                    className="ml-2 text-blue-500 hover:text-blue-700"
-                  >
-                    ×
-                  </button>
-                </span>
-              )}
-              {filters.orderType && (
-                <span className="px-3 py-1 bg-green-100 text-green-700 text-sm rounded-full">
-                  Type: {filters.orderType.replace('-', ' ')}
-                  <button 
-                    onClick={() => setFilters(prev => ({ ...prev, orderType: undefined }))}
-                    className="ml-2 text-green-500 hover:text-green-700"
-                  >
-                    ×
-                  </button>
-                </span>
-              )}
-              {filters.paymentStatus && (
-                <span className="px-3 py-1 bg-purple-100 text-purple-700 text-sm rounded-full">
-                  Payment: {filters.paymentStatus}
-                  <button 
-                    onClick={() => setFilters(prev => ({ ...prev, paymentStatus: undefined }))}
-                    className="ml-2 text-purple-500 hover:text-purple-700"
-                  >
-                    ×
-                  </button>
-                </span>
-              )}
-              <button 
-                onClick={() => setFilters({})}
-                className="text-sm text-gray-500 hover:text-gray-700 underline"
-              >
-                Clear all
-              </button>
-            </div>
-          </div>
+        {hasActiveFilters(filters) && (
+          <ActiveFiltersSection
+            filters={filters}
+            clearFilter={clearFilter}
+            clearAllFilters={clearAllFilters}
+          />
         )}
+
+        {/* API Error Status */}
+        <ApiErrorStatus hasError={!!ordersError} />
 
         {/* Orders Table */}
         <div className="order-list-container">
-          <OrderTable
-            orders={filteredOrders}
-            onOrderClick={handleOrderClick}
-            onMoreClick={handleMoreClick}
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            onFilterClick={() => setIsFilterOpen(true)}
-          />
+          {ordersLoading ? (
+            <LoadingState startDate={finalLogic.startDate} endDate={finalLogic.endDate} />
+          ) : (
+            <OrderTable
+              orders={finalLogic.filteredOrders}
+              onMoreClick={handleOrderDetailsClick}
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              onFilterClick={() => setIsFilterOpen(true)}
+            />
+          )}
         </div>
 
         {/* Results Summary */}
-        {filteredOrders.length > 0 && (
+        {!ordersLoading && finalLogic.filteredOrders.length > 0 && (
           <div className="mt-6 text-center text-sm text-gray-600">
-            Showing {filteredOrders.length} of {mockOrders.length} orders
+            Showing {finalLogic.filteredOrders.length} of {finalLogic.ordersToUse.length} orders
+            {ordersData && (
+              <span className="ml-2 text-green-600">
+                • Live data from {finalLogic.startDate} to {finalLogic.endDate}
+              </span>
+            )}
           </div>
         )}
 
@@ -148,7 +143,67 @@ export default function OrdersPage() {
           filters={filters}
           onFiltersChange={handleFiltersChange}
         />
+
+        {/* Order Detail Modal */}
+        <OrderDetailModal
+          order={selectedOrder}
+          isOpen={isOrderDetailOpen}
+          onClose={closeOrderDetail}
+        />
       </div>
     </div>
   );
 }
+
+// Active Filters Section Component
+interface ActiveFiltersSectionProps {
+  filters: OrderFiltersState;
+  clearFilter: (filterKey: keyof OrderFiltersState) => void;
+  clearAllFilters: () => void;
+}
+
+const ActiveFiltersSection: React.FC<ActiveFiltersSectionProps> = ({
+  filters,
+  clearFilter,
+  clearAllFilters
+}) => (
+  <div className="bg-white rounded-xl p-4 mb-6 border border-gray-100">
+    <div className="flex items-center gap-3 flex-wrap">
+      <span className="text-sm font-medium text-gray-700">Active Filters:</span>
+      
+      {filters.status && (
+        <FilterTag
+          label={`Status: ${filters.status}`}
+          onRemove={() => clearFilter('status')}
+          colorClass="bg-blue-100 text-blue-700"
+          buttonColorClass="text-blue-500 hover:text-blue-700"
+        />
+      )}
+      
+      {filters.orderType && (
+        <FilterTag
+          label={`Type: ${formatFilterText('orderType', filters.orderType)}`}
+          onRemove={() => clearFilter('orderType')}
+          colorClass="bg-green-100 text-green-700"
+          buttonColorClass="text-green-500 hover:text-green-700"
+        />
+      )}
+      
+      {filters.paymentStatus && (
+        <FilterTag
+          label={`Payment: ${filters.paymentStatus}`}
+          onRemove={() => clearFilter('paymentStatus')}
+          colorClass="bg-purple-100 text-purple-700"
+          buttonColorClass="text-purple-500 hover:text-purple-700"
+        />
+      )}
+      
+      <button 
+        onClick={clearAllFilters}
+        className="text-sm text-gray-500 hover:text-gray-700 underline"
+      >
+        Clear all
+      </button>
+    </div>
+  </div>
+);

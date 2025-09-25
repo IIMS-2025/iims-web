@@ -212,10 +212,10 @@ const KitchenAgent: React.FC = () => {
         {messages.length === 1 && (
           <div className="quick-actions">
             <div className="quick-actions-grid">
-              {quickActions.map((action) => (
+              {quickActions.map((action, index) => (
                 <button
                   key={action.id}
-                  className="quick-action-card"
+                  className={`user-guide-kitchen-agent-quick-actions${index + 1} quick-action-card`}
                   onClick={() => handleQuickAction(action)}
                 >
                   <div className="action-icon" style={{ color: action.color }}>

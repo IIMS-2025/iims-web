@@ -223,7 +223,7 @@ export default function RestockList() {
               </select>
 
               <button
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 border-0 rounded-lg text-white text-sm font-semibold cursor-pointer transition-all duration-200 hover:bg-emerald-700 hover:-translate-y-px disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none"
+                className="user-guide-restock-export-btn flex items-center gap-2 px-4 py-2 bg-emerald-600 border-0 rounded-lg text-white text-sm font-semibold cursor-pointer transition-all duration-200 hover:bg-emerald-700 hover:-translate-y-px disabled:bg-gray-400 disabled:cursor-not-allowed disabled:transform-none"
                 onClick={handleExportList}
                 disabled={bulkLoading}
               >
