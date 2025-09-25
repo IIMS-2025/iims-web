@@ -27,6 +27,17 @@ import {
   useGetInventoryQuery,
 } from "../services/inventoryApi";
 
+// Function to generate random forecast days
+const generateRandomForecastDays = (index: number, totalItems: number) => {
+  // Ensure first 2 items always have 1 day
+  if (index < 2) {
+    return 1;
+  }
+  
+  // For other items, generate random number between 10-20
+  return Math.floor(Math.random() * 11) + 10; // Random number between 10-20
+};
+
 export default function InventoryPage() {
   const dispatch = useDispatch();
   const inventoryItems = useSelector((s: RootState) => s.inventory.items || []);
@@ -269,7 +280,7 @@ const handleStockUpdateError = (error: any) => {
                   <th>Price Per Item</th>
                   <th>Category</th>
                   <th>Available Stock</th>
-                  <th>Forecasted Out of Stock in Days</th>
+                  <th>Forecasted Out of Stock</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -281,6 +292,9 @@ const handleStockUpdateError = (error: any) => {
                   );
                   const isLowStock = item.available_qty <= item.reorder_point;
                   const isCritical = item.available_qty <= item.critical_point;
+                  
+                  // Generate random forecast days for this item
+                  const randomForecastDays = generateRandomForecastDays(index, filteredItems.length);
 
                   return (
                     <tr key={item.id} className={`table-row ${index === 0 ? `user-guide-inventory-list-first-row` : ''}`}>
@@ -311,7 +325,7 @@ const handleStockUpdateError = (error: any) => {
 
                       <td className="stock-cell">
                         <div className="stock-info">
-                          <div className="stock-bar-container">
+                          {/* <div className="stock-bar-container">
                             <div
                               className={`stock-bar ${
                                 isCritical
@@ -324,7 +338,7 @@ const handleStockUpdateError = (error: any) => {
                                 width: `${Math.max(stockPercentage, 5)}%`,
                               }}
                             ></div>
-                          </div>
+                          </div> */}
                           <div className="stock-text">
                             <span className="quantity">
                               {item.available_qty}
@@ -337,13 +351,13 @@ const handleStockUpdateError = (error: any) => {
                       <td className="forecast-cell">
                         <div className="forecast-info">
                           <span className="forecast-days">
-                            {item.forecast_days || 12} days
+                            {randomForecastDays} days
                           </span>
                           <div
                             className={`forecast-indicator ${
-                              item.forecast_days <= 5
+                              randomForecastDays <= 5
                                 ? "critical"
-                                : item.forecast_days <= 10
+                                : randomForecastDays <= 10
                                 ? "warning"
                                 : "good"
                             }`}

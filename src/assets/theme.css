@@ -632,6 +632,7 @@ body {
   display: flex;
   align-items: baseline;
   gap: 4px;
+  width: 100%;
 }
 
 .stock-text .quantity {

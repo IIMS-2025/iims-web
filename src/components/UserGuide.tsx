@@ -49,7 +49,7 @@ const UserGuide: React.FC<UserGuideProps> = ({
       showSkipButton={true}
       styles={{
         options: {
-          primaryColor: '#2563eb',
+          primaryColor: '#5F63F2',
           zIndex: 100000,
         },
         spotlight: {

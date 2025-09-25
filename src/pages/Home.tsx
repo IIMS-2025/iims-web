@@ -109,6 +109,7 @@ export default function HomePage() {
             label={dynamicMetricsData.totalSales.label}
             value={dynamicMetricsData.totalSales.value}
             trend={dynamicMetricsData.totalSales.trend}
+            description={dynamicMetricsData.totalSales.description}
             icon={<DollarIcon className="text-amber-600 w-5 h-5" />}
             isLoading={salesLoading}
           />

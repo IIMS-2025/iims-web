@@ -20,15 +20,15 @@ interface ForecastItem {
 const notifications: Notification[] = [
   {
     id: '1',
-    title: 'New Urgent Review from Sarah J.',
-    description: '"Pizza was cold when delivered..." - 2 hours ago',
+    title: 'Pending approval for new purchase order',
+    description: 'Order #1234567890 from Global Foods',
     priority: 'high',
     buttonText: 'Respond Now'
   },
   {
     id: '2',
-    title: 'Freezer Temperature Alert',
-    description: 'Unit #2 temperature is above threshold. Immediate check required.',
+    title: 'Chease is running out',
+    description: 'Only 9kg remaining in the fridge',
     priority: 'medium',
     buttonText: 'View Details'
   },

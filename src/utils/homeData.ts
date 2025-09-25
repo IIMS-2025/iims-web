@@ -128,8 +128,9 @@ export const createSalesMetricsData = (
   
   return {
     totalSales: {
-      label: "TOTAL SALES (7 DAYS)",
+      label: "TOTAL SALES ",
       value: isLoading ? loading : hasError ? error : formatCurrency(salesMetrics?.totalSales || 0),
+      description: "7-day period"
     },
     todaysSales: {
       label: "TODAY'S SALES",

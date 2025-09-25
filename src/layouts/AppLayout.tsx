@@ -19,45 +19,24 @@ const dashboardSteps: Step[] = [
   },
   {
     target: ".user-guide-order-tab",
-    content:
-      "Click here to access your orders and manage your orders here.",
+    content: "Click here to access your orders and manage your orders here.",
     placement: "right",
   },
   {
     target: ".user-guide-sync-orders",
-    content:
-      "Click here to sync your orders and manage your orders here.",
+    content: "Click here to sync your orders and manage your orders here.",
     placement: "left",
   },
   {
     target: ".user-guide-oders-list-first-row",
-    content: "Click here to view your latest order and manage your orders here.",
-    placement: "bottom",
-  },
-  {
-    target: ".user-guide-inventory-tab",
-    content: "Click here to access your inventory and manage your inventory here.",
-    placement: "bottom",
-  },
-  {
-    target: ".user-guide-inventory-list-first-row",
-    content: "Low stock items are highlighted.",
-    placement: "bottom",
-  },
-  {
-    target: ".user-guilde-restock-list-tab",
     content:
-      "Click here to access your restock list and manage your restock list here.",
-    placement: "right",
-  },
-  {
-    target: ".user-guide-restock-export-btn",
-    content: "Click here to export your restock list and manage your restock list here.",
+      "Click here to view your latest order and manage your orders here.",
     placement: "bottom",
   },
   {
     target: ".user-guide-cook-book-tab",
-    content: "Click here to access your cook book and manage your cook book here.",
+    content:
+      "Click here to access your cook book and manage your cook book here.",
     placement: "right",
   },
   {
@@ -76,8 +55,32 @@ const dashboardSteps: Step[] = [
     placement: "bottom",
   },
   {
+    target: ".user-guide-inventory-tab",
+    content:
+      "Click here to access your inventory and manage your inventory here.",
+    placement: "bottom",
+  },
+  {
+    target: ".user-guide-inventory-list-first-row",
+    content: "Low stock items are highlighted.",
+    placement: "bottom",
+  },
+  {
+    target: ".user-guilde-restock-list-tab",
+    content:
+      "Click here to access your restock list and manage your restock list here.",
+    placement: "right",
+  },
+  {
+    target: ".user-guide-restock-export-btn",
+    content:
+      "Click here to export your restock list and manage your restock list here.",
+    placement: "bottom",
+  },
+  {
     target: ".user-guide-insights-tab",
-    content: "Click here to access your insights and manage your insights here.",
+    content:
+      "Click here to access your insights and manage your insights here.",
     placement: "right",
   },
   {
@@ -187,29 +190,28 @@ export default function AppLayout() {
   };
 
   const handleStepChange = (index: number) => {
-
     switch (index) {
       case 1:
         // step home to orders
         navigate("/orders");
         break;
       case 4:
-        navigate("/inventory");
-        break;
-      case 6:
-        navigate("/restock");
-        break;
-      case 8:
         navigate("/chefspace");
         break;
-      case 10:
+      case 6:
         navigate("/chefspace/b2c3d4e5-f6a7-4b9c-0d1e-f2a3b4c5d6e7"); // ID of peporony piza
+        break;
+      case 8:
+        navigate("/inventory");
+        break;
+      case 10:
+        navigate("/restock");
         break;
       case 12:
         navigate("/insights");
         break;
       case 16:
-        dispatch(setActiveTab('Revenue'));
+        dispatch(setActiveTab("Revenue"));
         break;
       case 21:
         setTimeout(() => {
