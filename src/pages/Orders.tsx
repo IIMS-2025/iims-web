@@ -1,5 +1,5 @@
 // External libraries
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // API hooks
 import { useGetOrdersQuery, useSyncOrdersMutation } from '../services/ordersApi';
@@ -43,6 +43,7 @@ export default function OrdersPage() {
   const [isOrderDetailOpen, setIsOrderDetailOpen] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState<Date>(new Date(Date.now() - 5 * 60 * 1000));
   const [syncStatus, setSyncStatus] = useState<{ success: boolean; message?: string; refreshing?: boolean } | null>(null);
+  const [isAutoRefreshing, setIsAutoRefreshing] = useState<boolean>(false);
 
   // Business logic
   const {
@@ -50,16 +51,27 @@ export default function OrdersPage() {
     endDate,
   } = useOrdersPageLogic(null, null, filters, searchTerm);
 
-  // API hooks
-  const { data: ordersData, error: ordersError, isLoading: ordersLoading, refetch: refetchOrders } = useGetOrdersQuery({
-    start_date: startDate,
-    end_date: endDate,
-  });
+  // API hooks - use default 5-minute window (no parameters)
+  const { data: ordersData, error: ordersError, isLoading: ordersLoading, refetch: refetchOrders } = useGetOrdersQuery();
   const [syncOrders, { isLoading: isSyncing }] = useSyncOrdersMutation();
   const { data: salesMetrics, refetch: refetchSales } = useGetSalesMetricsQuery();
 
   // Update business logic with real data
   const finalLogic = useOrdersPageLogic(ordersData, salesMetrics, filters, searchTerm);
+
+  // Auto-refresh every 30 seconds to keep the 5-minute window current
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      setIsAutoRefreshing(true);
+      try {
+        await refetchOrders();
+      } finally {
+        setTimeout(() => setIsAutoRefreshing(false), 1000); // Show indicator for 1 second
+      }
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [refetchOrders]);
 
   // Event handlers
   const handleSync = createSyncHandler(
@@ -97,6 +109,16 @@ export default function OrdersPage() {
         {/* Sync Status */}
         <SyncStatus syncStatus={syncStatus} getStatusClasses={getStatusClasses} />
 
+        {/* Auto-refresh indicator */}
+        {isAutoRefreshing && (
+          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-sm text-blue-700">Auto-refreshing orders...</span>
+            </div>
+          </div>
+        )}
+
         {/* Active Filters Display */}
         {hasActiveFilters(filters) && (
           <ActiveFiltersSection
@@ -130,9 +152,16 @@ export default function OrdersPage() {
             Showing {finalLogic.filteredOrders.length} of {finalLogic.ordersToUse.length} orders
             {ordersData && (
               <span className="ml-2 text-green-600">
-                • Live data from {finalLogic.startDate} to {finalLogic.endDate}
+                • Live data from last 5 minutes ({finalLogic.startDate} - {finalLogic.endDate})
               </span>
             )}
+          </div>
+        )}
+
+        {/* Empty State Message */}
+        {!ordersLoading && finalLogic.filteredOrders.length === 0 && (
+          <div className="mt-6 text-center text-sm text-gray-500">
+            No orders found in the last 5 minutes. Click "Sync Orders" to fetch recent orders.
           </div>
         )}
 

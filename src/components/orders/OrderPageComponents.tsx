@@ -37,9 +37,9 @@ export const LoadingState: React.FC<LoadingStateProps> = ({ startDate, endDate }
   <div className="bg-white rounded-xl p-8 text-center">
     <div className="flex items-center justify-center gap-3 mb-4">
       <LoadingSpinnerIcon className="w-6 h-6 animate-spin text-blue-600" />
-      <span className="text-gray-600">Loading orders...</span>
+      <span className="text-gray-600">Loading recent orders...</span>
     </div>
-    <p className="text-sm text-gray-500">Fetching orders from {startDate} to {endDate}</p>
+    <p className="text-sm text-gray-500">Fetching orders from last 5 minutes ({startDate} - {endDate})</p>
   </div>
 );
 
