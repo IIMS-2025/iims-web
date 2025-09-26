@@ -196,7 +196,7 @@ export default function Sidebar({
             className="user-avatar"
           />
           <div className="user-info">
-            <div className="user-name">Anna Miller</div>
+            <div className="user-name">Ashwin Mehra</div>
             <div className="user-role">Store Manager</div>
           </div>
           <div className="flex flext-row items-center ">
