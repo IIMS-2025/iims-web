@@ -1,5 +1,5 @@
 // External libraries
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // API hooks
 import { useGetOrdersQuery, useSyncOrdersMutation } from '../services/ordersApi';
@@ -33,6 +33,7 @@ import {
 
 // Styles
 import '../styles/orders.css';
+import { useLazyGetInventoryQuery } from '../services/inventoryApi';
 
 export default function OrdersPage() {
   // State management
@@ -50,6 +51,8 @@ export default function OrdersPage() {
     endDate,
   } = useOrdersPageLogic(null, null, filters, searchTerm);
 
+  const [refetchInventory] = useLazyGetInventoryQuery();
+
   // API hooks
   const { data: ordersData, error: ordersError, isLoading: ordersLoading, refetch: refetchOrders } = useGetOrdersQuery({
     start_date: startDate,
@@ -61,6 +64,18 @@ export default function OrdersPage() {
   // Update business logic with real data
   const finalLogic = useOrdersPageLogic(ordersData, salesMetrics, filters, searchTerm);
 
+  useEffect(() => {
+    const handleWindowBlur = () => {
+      refetchInventory();
+    };
+
+    window.addEventListener('blur', handleWindowBlur);
+
+    return () => {
+      window.removeEventListener('blur', handleWindowBlur);
+    };
+  }, [refetchInventory]);
+
   // Event handlers
   const handleSync = createSyncHandler(
     syncOrders,
@@ -68,7 +83,8 @@ export default function OrdersPage() {
     refetchSales,
     setLastSyncTime,
     setSyncStatus,
-    finalLogic.ordersToUse
+    refetchInventory,
+    finalLogic.ordersToUse,
   );
 
   const { handleFiltersChange, clearFilter, clearAllFilters } = createFilterHandlers(setFilters);
