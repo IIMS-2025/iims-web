@@ -64,11 +64,23 @@ export const calculateSyncStats = (result: any) => {
 };
 
 /**
- * Generate date range for API queries
+ * Generate date range for API queries (now returns last 5 minutes range for display)
  */
 export const getDefaultDateRange = (daysBack: number = 10) => {
-  const endDate = new Date().toISOString().split('T')[0];
-  const startDate = new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const now = new Date();
+  const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+  
+  // Format for display
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: true 
+    });
+  };
+  
+  const startDate = formatTime(fiveMinutesAgo);
+  const endDate = formatTime(now);
   
   return { startDate, endDate };
 };

@@ -18,11 +18,11 @@ export const ordersApi = createApi({
     // GET /api/v1/orders
     getOrders: builder.query<
       OrdersResponse,
-      { start_date: string; end_date: string }
+      { start_date?: string; end_date?: string } | void
     >({
-      query: ({ start_date, end_date }) => ({
+      query: (params) => ({
         url: "/api/v1/orders",
-        params: { start_date, end_date },
+        params: params || {},
       }),
       transformResponse: (response: OrdersResponse) => {
         return response;
