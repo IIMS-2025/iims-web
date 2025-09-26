@@ -19,8 +19,6 @@ import {
   RawMaterialIcon,
   SubProductIcon,
   ExportIcon,
-  PreviousIcon,
-  NextIcon,
 } from "../components/icons/RestockIcons";
 import type { RootState } from "../store";
 import type { Tab } from "../components/Tabs";
@@ -308,7 +306,7 @@ export default function RestockList() {
                     <td className="px-6 py-4 align-middle">
                       <div className="flex flex-col gap-1">
                         <span className="font-medium text-sm leading-5 text-black">
-                          {item.available_qty} {item.unit}
+                          {parseFloat(item.available_qty)?.toFixed(2)} {item.unit}
                         </span>
                       </div>
                     </td>
@@ -316,15 +314,15 @@ export default function RestockList() {
                     <td className="px-6 py-4 align-middle">
                       <div className="flex flex-col gap-1">
                         <span className="font-medium text-sm leading-5 text-black">
-                          {item.reorder_point} {item.unit}
+                          {parseFloat(item.reorder_point)?.toFixed(2)} {item.unit}
                         </span>
                       </div>
                     </td>
 
                     <td className="px-6 py-4 align-middle">
                       <div className="flex flex-row items-center gap-2">
-                        <span className="font-semibold text-sm leading-5 text-gray-800">
-                          {Math.max(0, parseFloat(item.reorder_point) - parseFloat(item.available_qty))} {item.unit}
+                        <span className="font-semibold text-sm leading-5 text-gray-800 min-w-[70px]">
+                          {Math.max(0, parseFloat(item.reorder_point) - parseFloat(item.available_qty))?.toFixed(2)} {item.unit}
                         </span>
                         {/* button for incemet quantity */}
                         <button className="bg-emerald-600 text-white px-2 py-[2px] rounded-md text-sm">

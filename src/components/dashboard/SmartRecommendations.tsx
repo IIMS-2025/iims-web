@@ -25,13 +25,13 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
   const getButtonClasses = () => {
     switch (type) {
       case "alert":
-        return "mt-3 px-3 py-1 bg-blue-700 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors border border-blue-500 align-right";
+        return "absolute bottom-0 right-2 mt-3 px-3 py-1 bg-blue-700 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors border border-blue-500 align-right";
       case "opportunity":
-        return "mt-3 px-3 py-1 bg-green-700 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition-colors border border-green-500 align-right";
+        return "absolute bottom-0 right-2 mt-3 px-3 py-1 bg-green-700 text-white text-xs font-medium rounded-lg hover:bg-green-700 transition-colors border border-green-500 align-right";
       case "prevention":
-        return "mt-3 px-3 py-1 bg-orange-700 text-white text-xs font-medium rounded-lg hover:bg-orange-700 transition-colors border border-orange-500 align-right";
+        return "absolute bottom-0 right-2 mt-3 px-3 py-1 bg-orange-700 text-white text-xs font-medium rounded-lg hover:bg-orange-700 transition-colors border border-orange-500 align-right";
       default:
-        return "mt-3 px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors border border-gray-500 align-right";
+        return "absolute bottom-0 right-2 mt-3 px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-200 transition-colors border border-gray-500 align-right";
     }
   };
 
@@ -50,12 +50,12 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
 
   return (
     <div className={getRecommendationCardClasses(type)}>
-      <div className="flex items-start gap-3 w-[100%]">
+      <div className="flex items-start gap-3 w-[100%] min-h-[120px] relative">
         <div className={getIconContainerClasses()}>{icon}</div>
         <div className="w-[100%]">
-          <div className="min-h-[80px]">
+          <div>
           <h4 className="font-semibold text-gray-900 mb-2">{title}</h4>
-          <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
+          <p className="text-sm text-gray-600 leading-relaxed]">{description}</p>
           </div>
           <div className="flex justify-end items-end h-full">
           <button className={getButtonClasses()} onClick={onButtonClick}>
@@ -101,7 +101,7 @@ export const SmartRecommendations: React.FC = () => {
           type="prevention"
           title="Increase Tomatoes safety stock"
           description="Increase stock from 6 kg → 9 kg for the next two weekends. Expected festival demand uplift ~18%"
-          buttonText="Push Salads"
+          buttonText="Restock"
           icon={<SparkleIcon className="text-orange-600 w-4 h-4" />}
         />
       </div>

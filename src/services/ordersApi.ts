@@ -13,7 +13,7 @@ export const ordersApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Orders"],
+  tagTypes: ["Orders", "Inventory"],
   endpoints: (builder) => ({
     // GET /api/v1/orders
     getOrders: builder.query<
@@ -27,7 +27,7 @@ export const ordersApi = createApi({
       transformResponse: (response: OrdersResponse) => {
         return response;
       },
-      providesTags: ["Orders"],
+      providesTags: ["Orders", "Inventory"],
     }),
 
     // POST /api/v1/orders/sync
@@ -39,7 +39,7 @@ export const ordersApi = createApi({
       transformResponse: (response: OrderSyncResponse) => {
         return response;
       },
-      invalidatesTags: ["Orders"],
+      invalidatesTags: ["Orders", "Inventory"],
     }),
   }),
 });

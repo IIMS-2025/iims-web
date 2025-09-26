@@ -57,6 +57,7 @@ export const createSyncHandler = (
   refetchSales: any,
   setLastSyncTime: (date: Date) => void,
   setSyncStatus: (status: any) => void,
+  refetchInventory: any,
   ordersToUse: Order[]
 ) => {
   return async () => {
@@ -80,7 +81,8 @@ export const createSyncHandler = (
       // Refresh data after successful sync
       const [updatedOrdersResult, updatedSalesResult] = await Promise.all([
         refetchOrders(),
-        refetchSales()
+        refetchSales(),
+        refetchInventory()
       ]);
       
       // Calculate updated totals from refreshed data

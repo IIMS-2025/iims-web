@@ -1,6 +1,5 @@
 // External libraries
 import React, { useState, useEffect } from 'react';
-
 // API hooks
 import { useGetOrdersQuery, useSyncOrdersMutation } from '../services/ordersApi';
 import { useGetSalesMetricsQuery } from '../services/salesApi';
@@ -33,6 +32,7 @@ import {
 
 // Styles
 import '../styles/orders.css';
+import { useLazyGetInventoryQuery } from '../services/inventoryApi';
 
 export default function OrdersPage() {
   // State management
@@ -53,6 +53,8 @@ export default function OrdersPage() {
 
   // API hooks - use default 5-minute window (no parameters)
   const { data: ordersData, error: ordersError, isLoading: ordersLoading, refetch: refetchOrders } = useGetOrdersQuery();
+  const [refetchInventory] = useLazyGetInventoryQuery();
+
   const [syncOrders, { isLoading: isSyncing }] = useSyncOrdersMutation();
   const { data: salesMetrics, refetch: refetchSales } = useGetSalesMetricsQuery();
 
@@ -80,7 +82,8 @@ export default function OrdersPage() {
     refetchSales,
     setLastSyncTime,
     setSyncStatus,
-    finalLogic.ordersToUse
+    refetchInventory,
+    finalLogic.ordersToUse,
   );
 
   const { handleFiltersChange, clearFilter, clearAllFilters } = createFilterHandlers(setFilters);

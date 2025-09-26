@@ -75,6 +75,7 @@ export const inventoryApi = createApi({
 
 export const {
   useGetInventoryQuery,
+  useLazyGetInventoryQuery,
   useGetInventoryItemQuery,
   useUpdateStockSingleMutation,
   useUpdateStockBatchMutation,

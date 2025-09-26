@@ -51,7 +51,7 @@ export default function InventoryPage() {
   const [showStockUpdateModal, setShowStockUpdateModal] = useState(false);
   const [filteredItems, setFilteredItems] = useState<Inventory[]>([]);
 
-  const { data: inventory } = useGetInventoryQuery();
+  const { data: inventory, refetch: refetchInventory } = useGetInventoryQuery();
 
   const { inventoryList, summary } = inventory || {};
 
@@ -70,6 +70,19 @@ export default function InventoryPage() {
       setFilteredItems(inventoryItems);
     }
   }, [activeProductType, inventoryItems]);
+
+  // Call refetch inventory on window blur
+  useEffect(() => {
+    const handleWindowBlur = () => {
+      refetchInventory();
+    };
+
+    window.addEventListener('blur', handleWindowBlur);
+
+    return () => {
+      window.removeEventListener('blur', handleWindowBlur);
+    };
+  }, [refetchInventory]);
 
 
   const handleQuickFilterClick = (filterType: string) => {

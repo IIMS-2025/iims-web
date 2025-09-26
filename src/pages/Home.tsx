@@ -83,7 +83,7 @@ export default function HomePage() {
                   Performance Overview
                 </h1>
                 <p className={CSS_CLASSES.SUBTITLE}>
-                  AI-powered insights for smarter decisions
+                  Live insights for smarter decisions
                 </p>
               </div>
             </div>
@@ -94,7 +94,7 @@ export default function HomePage() {
                 <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
               )}
               <span className="text-sm font-medium text-indigo-700">
-                {salesLoading ? "Loading..." : "Live AI Analysis"}
+                {salesLoading ? "Loading..." : "Live Analysis"}
               </span>
             </div>
           </div>
