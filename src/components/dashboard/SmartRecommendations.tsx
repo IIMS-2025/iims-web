@@ -101,7 +101,7 @@ export const SmartRecommendations: React.FC = () => {
           type="prevention"
           title="Increase Tomatoes safety stock"
           description="Increase stock from 6 kg → 9 kg for the next two weekends. Expected festival demand uplift ~18%"
-          buttonText="Push Salads"
+          buttonText="Restock"
           icon={<SparkleIcon className="text-orange-600 w-4 h-4" />}
         />
       </div>
